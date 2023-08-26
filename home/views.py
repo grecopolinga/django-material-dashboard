@@ -28,6 +28,11 @@ def notification(request):
 def profile(request):
   return render(request, 'pages/profile.html', { 'segment': 'profile' })
 
+# Our Modified Pages
+def navigator(request):
+  return render(request, 'pages/navigator.html', { 'segment': 'navigator' }) 
+
+
 
 # Authentication
 class UserLoginView(LoginView):

@@ -1,5 +1,5 @@
 from django.urls import path
-from admin_material import views
+from . import views
 from django.contrib.auth import views as auth_views
 
 
@@ -11,6 +11,8 @@ urlpatterns = [
     path('rtl/', views.rtl, name='rtl'),
     path('notification/', views.notification, name='notification'),
     path('profile/', views.profile, name='profile'),
+    # Our modified URLS
+    path('navigator/', views.navigator, name='navigator'), 
 
     # Authentication
     path('accounts/login/', views.UserLoginView.as_view(), name='login'),

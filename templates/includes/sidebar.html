@@ -89,7 +89,7 @@
         </li>
         -->
 
-        <!-- Pages available for Superuser/Admin -->
+        <!-- #region Pages available for Superuser/Admin -->
         {% if request.user.is_authenticated and request.user.is_superuser %}
         <li class="nav-item">
           <a class="nav-link text-white {% if 'tables' in segment %} active {% endif %} " href="{% url 'tables' %}">
@@ -100,32 +100,11 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white {% if 'profile' in segment %} active {% endif %} " href="{% url 'profile' %}">
-            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons opacity-10">person</i>
-            </div>
-            <span class="nav-link-text ms-1">Profile</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-white" href="{% url 'logged_out' %}">
-            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons opacity-10">logout</i>
-            </div>
-            <span class="nav-link-text ms-1">Logout</span>
-          </a>
-        </li>
-        {% endif %}
-
-
-        {% if request.user.is_authenticated and not request.user.is_superuser %}
-
-        <li class="nav-item">
-          <a class="nav-link text-white {% if 'tables' in segment %} active {% endif %} " href="{% url 'tables' %}">
+          <a class="nav-link text-white {% if 'navigator' in segment %} active {% endif %} " href="{% url 'navigator' %}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">table_view</i>
             </div>
-            <span class="nav-link-text ms-1">Tables</span>
+            <span class="nav-link-text ms-1">Bin Navigator</span>
           </a>
         </li>
         <li class="nav-item">
@@ -137,7 +116,7 @@
           </a>
         </li>
         <li class="nav-item mt-3">
-          <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account pages</h6>
+          <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account</h6>
         </li>
         <li class="nav-item">
           <a class="nav-link text-white {% if 'profile' in segment %} active {% endif %} " href="{% url 'profile' %}">
@@ -148,13 +127,62 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white" href="{% url 'logged_out' %}">
+          <a class="nav-link text-white" href="{% url 'logout' %}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">logout</i>
             </div>
             <span class="nav-link-text ms-1">Logout</span>
           </a>
         </li>
+        {% endif %}
+        <!-- #endregion -->
+
+        <!-- #region Pages available for Regular Users -->
+        {% if request.user.is_authenticated and not request.user.is_superuser %}
+        <li class="nav-item">
+          <a class="nav-link text-white {% if 'tables' in segment %} active {% endif %} " href="{% url 'tables' %}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">table_view</i>
+            </div>
+            <span class="nav-link-text ms-1">Tables</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white {% if 'navigator' in segment %} active {% endif %} " href="{% url 'navigator' %}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">table_view</i>
+            </div>
+            <span class="nav-link-text ms-1">Bin Navigator</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white {% if 'notification' in segment %} active {% endif %} " href="{% url 'notification' %}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">notifications</i>
+            </div>
+            <span class="nav-link-text ms-1">Notifications</span>
+          </a>
+        </li>
+        <li class="nav-item mt-3">
+          <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account</h6>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white {% if 'profile' in segment %} active {% endif %} " href="{% url 'profile' %}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">person</i>
+            </div>
+            <span class="nav-link-text ms-1">Profile</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="{% url 'logout' %}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">logout</i>
+            </div>
+            <span class="nav-link-text ms-1">Logout</span>
+          </a>
+        </li>
+        <!-- #endregion -->
         {% endif %}
       </ul>
     </div>
