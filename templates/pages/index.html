@@ -12,7 +12,8 @@
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card" id="binCard1">
             <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute">
+              <div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute" 
+              id="b1_FLCard">
                 <!-- Icon for Bin 1 -->
                 <i class="material-icons icon opacity-10 mt-n2" style="font-size: 42px;">delete</i>
               </div>
@@ -34,7 +35,8 @@
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card" id="binCard2">
             <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute">
+              <div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute" 
+              id="b2_FLCard">
                 <!-- Icon for Bin 2 -->
                 <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;">delete</i>
               </div>
@@ -56,7 +58,8 @@
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card" id="binCard3">
             <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
+              id="b3_FLCard">
                 <!-- Icon for Bin 3 -->
                 <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;">delete_outline</i>
               </div>
@@ -78,7 +81,8 @@
         <div class="col-xl-3 col-sm-6">
           <div class="card" id="binCard4">
             <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
+              id="b4_FLCard">
                 <!-- Icon for Bin 4 -->
                 <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;">delete_outline</i>
               </div>
@@ -420,4 +424,33 @@
       },
     });
   </script>
+  <script>
+    function checkFill() {
+        var value = document.getElementById("inputValue").value;
+
+        if (value > 90) {
+            window.alert("The Smart Bin is full! Please collect it immediately!");
+            document.getElementById("icon1").style.color = "red";
+        }
+        else if (value > 75) {
+            window.alert("The Smart Bin is almost full!");
+            document.getElementById("icon1").style.color = "orange";
+        }
+        else {
+            document.getElementById("icon1").style.color = "green";
+        }
+    }
+    function checkFire() {
+        var flamevalue = document.getElementById("flamevalue").value;
+        // CHANGE TO 0, FLAME == 0
+        if (flamevalue == 1) { 
+            window.alert("Flame detected! Please collect the bin immediately!");
+        }
+    }
+    function checkNotifs() {
+        checkFire();
+        checkFill();
+    }
+    window.onload = checkNotifs; // run checkValue() when the page is loaded
+</script>
   {% endblock scripts %}
