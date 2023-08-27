@@ -5,11 +5,11 @@ from django.contrib.auth import logout
 
 # region - Our libraries and dependencies
 
-from .models import ProcessedData
+from .models import ProcessedData, RawData
 from django.http import HttpResponse
 from datetime import datetime, timedelta
 from django.utils import timezone
-from .serializers import ProcessedDataSerializer
+from .serializers import ProcessedDataSerializer, RawDataSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import datetime
@@ -37,8 +37,14 @@ collected_times = []
 # region - Pages
 # Create your views here.
 def index(request):
+    # Call the processing() function to generate the context data
+    context = processing()
 
-  return render(request, 'pages/index.html', { 'segment': 'index' })
+    # Add the 'segment' key to the context
+    context['segment'] = 'index'
+
+    # Render the template with the generated context data
+    return render(request, 'pages/index.html', context)
 
 def billing(request):
   return render(request, 'pages/billing.html', { 'segment': 'billing' })
@@ -328,7 +334,6 @@ def get_recent_sensor_data():
     return sensor_data      
 
 # endregion
-
 
 # region - Authentication
 class UserLoginView(LoginView):
