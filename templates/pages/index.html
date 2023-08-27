@@ -12,10 +12,10 @@
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card" id="binCard1">
             <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute" 
+              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
               id="b1_FLCard">
                 <!-- Icon for Bin 1 -->
-                <i class="material-icons icon opacity-10 mt-n2" style="font-size: 42px;">delete</i>
+                <i class="material-icons icon opacity-10 mt-n2" style="font-size: 42px;" id="icon1">delete</i>
               </div>
               <div class="text-end pt-1">
                 <p class="text-md mb-0 text-capitalize">Bin 1 Fill Level</p>
@@ -38,7 +38,7 @@
               <div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute" 
               id="b2_FLCard">
                 <!-- Icon for Bin 2 -->
-                <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;">delete</i>
+                <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;" id="icon2">delete</i>
               </div>
               <div class="text-end pt-1">
                 <p class="text-md mb-0 text-capitalize">Bin 2 Fill Level</p>
@@ -58,10 +58,10 @@
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card" id="binCard3">
             <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
+              <div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute" 
               id="b3_FLCard">
                 <!-- Icon for Bin 3 -->
-                <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;">delete_outline</i>
+                <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;" id="icon3">delete</i>
               </div>
               <div class="text-end pt-1">
                 <p class="text-md mb-0 text-capitalize">Bin 3 Fill Level</p>
@@ -81,10 +81,10 @@
         <div class="col-xl-3 col-sm-6">
           <div class="card" id="binCard4">
             <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
+              <div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute" 
               id="b4_FLCard">
                 <!-- Icon for Bin 4 -->
-                <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;">delete_outline</i>
+                <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;" id="icon4">delete_outline</i>
               </div>
               <div class="text-end pt-1">
                 <p class="text-md mb-0 text-capitalize">Bin 4 Fill Level</p>
@@ -424,7 +424,7 @@
       },
     });
   </script>
-  <script>
+  <!-- <script>
     function checkFill() {
         var value = document.getElementById("inputValue").value;
 
@@ -452,5 +452,39 @@
         checkFill();
     }
     window.onload = checkNotifs; // run checkValue() when the page is loaded
+</script> -->
+
+<script>
+  function updateBinCard(binId, fillLevel, iconNum) {
+    const b_FLCard = document.getElementById(binId);
+    const icon = document.getElementById(iconNum);
+
+    if (fillLevel >= 90) {
+      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute';
+      icon.innerText = 'delete';
+    } else if (fillLevel >= 75) {
+      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-warning shadow-warning text-center border-radius-xl mt-n4 position-absolute';
+      icon.innerText = 'delete_outline';
+    } else {
+      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute';
+      icon.innerText = 'delete_outline';
+    }
+  }
+
+  // Update Bin 1
+  const bin1FillLevel = '{{Bin1_Fill_Level}}'; // Value from context
+  updateBinCard('b1_FLCard', bin1FillLevel, 'icon1');
+
+  // Update Bin 2
+  const bin2FillLevel = '{{Bin2_Fill_Level}}'; // Value from context
+  updateBinCard('b2_FLCard', bin2FillLevel,  'icon2');
+
+  // Update Bin 3
+  const bin3FillLevel = '{{Bin3_Fill_Level}}'; // Value from context
+  updateBinCard('b3_FLCard', bin3FillLevel, 'icon3');
+
+  // Update Bin 4
+  const bin4FillLevel = '{{Bin4_Fill_Level}}'; // Value from context
+  updateBinCard('b4_FLCard', bin4FillLevel,  'icon4');
 </script>
   {% endblock scripts %}
