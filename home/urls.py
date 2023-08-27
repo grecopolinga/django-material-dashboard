@@ -11,8 +11,11 @@ urlpatterns = [
     path('rtl/', views.rtl, name='rtl'),
     path('notification/', views.notification, name='notification'),
     path('profile/', views.profile, name='profile'),
+    
     # Our modified URLS
     path('navigator/', views.navigator, name='navigator'), 
+    path('get', views.getData, name='getData'),
+    path('api/sensor-data', views.receive_sensor_data, name='receive_sensor_data'),
 
     # Authentication
     path('accounts/login/', views.UserLoginView.as_view(), name='login'),
