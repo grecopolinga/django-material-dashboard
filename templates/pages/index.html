@@ -107,26 +107,56 @@
       <!-- Row 1 (1 chart) -->
       <div class="row mt-4">
         <div class="mt-4 mb-4">
-          <div class="card z-index-2 ">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-              <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
-                <div class="chart">
-                  <canvas id="chart-bars" class="chart-canvas" height="300"></canvas>
+            <div class="card z-index-2">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent" style="background-color: black;">
+                    <div class="graph-bg shadow-primary border-radius-lg py-3 pe-1">
+                        <div class="chart">
+                            <canvas id="chart-fill-level" class="chart-canvas" height="300"></canvas>
+                        </div>
+                    </div>
                 </div>
-              </div>
+                <div class="card-body d-flex flex-column align-items-start">
+                    <div class="d-flex">
+                        <button class="btn btn-secondary btn-sm mb-2" id="filterBtn" style="background-color: rgb(216, 216, 216); color: #344767;">
+                            <i class="material-icons opacity-10 me-1" style="font-size: 30px;">tune</i>
+                        </button>
+                        <div id="binFilters" class="d-none ms-3" style="background-color: rgb(240, 238, 238); padding-top: 11px; padding-right: 11px; border-radius: 30px;">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="bin1" name="bin1" checked>
+                                <label class="form-check-label" for="bin1">Bin 1</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="bin2" name="bin2" checked>
+                                <label class="form-check-label" for="bin2">Bin 2</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="bin3" name="bin3" checked>
+                                <label class="form-check-label" for="bin3">Bin 3</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="bin4" name="bin4" checked>
+                                <label class="form-check-label" for="bin4">Bin 4</label>
+                            </div>
+                        </div>
+                    </div>
+                    <h6 class="mb-0" style="padding-top: 15px;">Bin Capacity and Fill-up Trend</h6>
+                    <p class="text-sm">Tracked data over time</p>
+                    <hr class="dark horizontal">
+                    <div class="d-flex">
+                        <i class="material-icons text-sm my-auto me-1">schedule</i>
+                        <p class="mb-0 text-sm">Recently retrieved from database</p>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-              <h6 class="mb-0 ">Bin Capacity and Fill-up Trend</h6>
-              <p class="text-sm ">Tracked data over time</p>
-              <hr class="dark horizontal">
-              <div class="d-flex ">
-                <i class="material-icons text-sm my-auto me-1">schedule</i>
-                <p class="mb-0 text-sm"> recently retrieved from database</p>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
+    </div>
+    
+    <script>
+        document.getElementById('filterBtn').addEventListener('click', function() {
+            var binFilters = document.getElementById('binFilters');
+            binFilters.classList.toggle('d-none');
+        });
+    </script>
       <!-- Row 2 (2 Charts) -->
       <div class="row mt-2 justify-content-center d-flex justify-content-evenly">
         <div class="col-lg-6 mt-4 mb-4">
@@ -178,22 +208,83 @@
 
   {% block scripts %}
   <script>
-    var ctx = document.getElementById("chart-bars").getContext("2d");
+    var fill_levels = "{{ fill_levels }}";
+    var timestamps = "{{ timestamps }}";
+    // var bin_ids = "{{ bin_ids }}";
+    // Convert values to JavaScript array
+    fill_levels = JSON.parse(fill_levels.replace(/&quot;/g, '"'));
+    timestamps = JSON.parse(timestamps.replace(/&quot;/g, '"'));
+
+    // Create an array to store parsed timestamps
+    var parsedTimestamps = [];
+
+    // Generate all possible timestamps from 00:00 to 23:59
+    for (var hour = 0; hour < 24; hour++) {
+        for (var minute = 0; minute < 60; minute += 30) {
+            var timestamp = ('0' + hour).slice(-2) + ':' + ('0' + minute).slice(-2);
+            parsedTimestamps.push(timestamp);
+        }
+    }
+
+    // Create an object to store fill levels with timestamps as keys
+    var fillLevelMap = {};
+
+    // Populate fill levels based on existing data
+    for (var i = 0; i < timestamps.length; i++) {
+        fillLevelMap[timestamps[i]] = fill_levels[i];
+    }
+
+    // Create an array to store final fill levels
+    var finalFillLevels = [];
+
+    // Iterate through parsed timestamps and find closest data points
+    for (var i = 0; i < parsedTimestamps.length; i++) {
+        var currentTimestamp = parsedTimestamps[i];
+        var closestTimestamp = getClosestDataPoint(currentTimestamp);
+        finalFillLevels.push(fillLevelMap[closestTimestamp] || 0);
+    }
+
+    // Function to get the closest data point within a 15-minute range
+    function getClosestDataPoint(targetTimestamp) {
+        var targetTime = new Date('2000-01-01T' + targetTimestamp + ':00');
+        var closestTimestamp = null;
+        var minTimeDiff = Number.MAX_VALUE;
+
+        for (var i = 0; i < timestamps.length; i++) {
+            var currTime = new Date('2000-01-01T' + timestamps[i] + ':00'); // Corrected line
+            var timeDiff = Math.abs(currTime - targetTime) / 60000; // Convert to minutes
+
+            if (timeDiff <= 15 && timeDiff < minTimeDiff) {
+                minTimeDiff = timeDiff;
+                closestTimestamp = timestamps[i];
+            }
+        }
+
+        return closestTimestamp;
+    }
+    
+    var ctx = document.getElementById("chart-fill-level").getContext("2d");
 
     new Chart(ctx, {
-      type: "bar",
+      type: "line",
       data: {
-        labels: ["M", "T", "W", "T", "F", "S", "S"],
+        labels: parsedTimestamps,
         datasets: [{
-          label: "Sales",
-          tension: 0.4,
+          label: "Fill Level",
+          tension: 0,
           borderWidth: 0,
-          borderRadius: 4,
-          borderSkipped: false,
-          backgroundColor: "rgba(255, 255, 255, .8)",
-          data: [50, 20, 10, 22, 50, 10, 40],
+          pointRadius: 5,
+          pointBackgroundColor: "rgba(255, 255, 255, .8)",
+          pointBorderColor: "transparent",
+          borderColor: "rgba(255, 255, 255, .8)",
+          borderColor: "rgba(255, 255, 255, .8)",
+          borderWidth: 4,
+          backgroundColor: "transparent",
+          fill: true,
+          data: finalFillLevels,
           maxBarThickness: 6
-        }, ],
+
+        }],
       },
       options: {
         responsive: true,
@@ -218,9 +309,8 @@
               color: 'rgba(255, 255, 255, .2)'
             },
             ticks: {
-              suggestedMin: 0,
-              suggestedMax: 500,
-              beginAtZero: true,
+              display: true,
+              color: '#f8f9fa',
               padding: 10,
               font: {
                 size: 14,
@@ -229,17 +319,15 @@
                 style: 'normal',
                 lineHeight: 2
               },
-              color: "#fff"
-            },
+            }
           },
           x: {
             grid: {
               drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
+              display: false,
+              drawOnChartArea: false,
               drawTicks: false,
-              borderDash: [5, 5],
-              color: 'rgba(255, 255, 255, .2)'
+              borderDash: [5, 5]
             },
             ticks: {
               display: true,
