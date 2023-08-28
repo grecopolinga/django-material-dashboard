@@ -220,7 +220,7 @@ def processing():
     processed_data = ProcessedData.objects.filter(timestamp__gte=start_of_day, timestamp__lt=end_of_day)
     # Extract the fill level and timestamp data for the filtered ProcessedData objects
     fill_levels = [data.fill_level for data in processed_data]
-    #bin_ids = [data.bin_id for data in processed_data]
+    #bin_ids = [data.node_ID for data in processed_data]
     timestamps = [data.timestamp.astimezone(ph_tz).strftime('%H:%M') for data in processed_data]
     # Pass fill_levels and timestamps as JSON objects
     #bin_ids_json = json.dumps(bin_ids)
@@ -280,7 +280,7 @@ def processing():
     reading = ProcessedData(
     node_ID = Node1["Node_ID"],
     fill_level= int(Bin1_Fill_Level),
-    weight_kg = Bin1_Weight,
+    weight = Bin1_Weight,
     mttc = Bin1_MTTC,
     mq2_ppm = Node1["MQ2_Data"],
     mq3_ppm = Node1["MQ3_Data"],
@@ -295,7 +295,7 @@ def processing():
     reading2 = ProcessedData(
     node_ID = Node2["Node_ID"],
     fill_level=int(Bin2_Fill_Level),
-    weight_kg = Bin2_Weight,
+    weight = Bin2_Weight,
     mttc=Bin2_MTTC,
     mq2_ppm=Node2["MQ2_Data"],
     mq3_ppm=Node2["MQ3_Data"],
@@ -310,7 +310,7 @@ def processing():
     reading3 = ProcessedData(
     node_ID = Node3["Node_ID"],
     fill_level=int(Bin3_Fill_Level),
-    weight_kg = Bin3_Weight,
+    weight = Bin3_Weight,
     mttc=Bin3_MTTC,
     mq2_ppm=Node3["MQ2_Data"],
     mq3_ppm=Node3["MQ3_Data"],
@@ -325,7 +325,7 @@ def processing():
     reading4 = ProcessedData(
     node_ID = Node4["Node_ID"],
     fill_level=int(Bin4_Fill_Level),
-    weight_kg = Bin4_Weight,
+    weight = Bin4_Weight,
     mttc=Bin4_MTTC,
     mq2_ppm=Node4["MQ2_Data"],
     mq3_ppm=Node4["MQ3_Data"],
