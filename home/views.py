@@ -224,7 +224,7 @@ def processing():
     # Pass fill_levels and timestamps as JSON objects
     fill_levels_json = json.dumps(fill_levels)
     timestamps_json = json.dumps(timestamps)
-    print(int(Node1["Flame_Data"]))
+    print("Flame data: " + str(int(Node1["Flame_Data"])))
     context = {
         'Bin1_ID': int(Node1["Node_ID"]),
         'Bin1_Fill_Level': int(Bin1_Fill_Level),
