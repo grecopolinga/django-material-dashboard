@@ -7,7 +7,9 @@ from django.utils import timezone
 
 # Create your models here.
 class ProcessedData(models.Model):
+    node_ID =  models.IntegerField()
     fill_level = models.IntegerField()
+    weight = models.DecimalField(max_digits=6, decimal_places=2)
     mttc = models.CharField(max_length=50)
     mq2_ppm = models.DecimalField(max_digits=6, decimal_places=2)
     mq3_ppm = models.DecimalField(max_digits=6, decimal_places=2)
@@ -15,6 +17,7 @@ class ProcessedData(models.Model):
     mq2_change = models.DecimalField(max_digits=6, decimal_places=2)
     mq3_change = models.DecimalField(max_digits=6, decimal_places=2)
     mq6_change = models.DecimalField(max_digits=6, decimal_places=2)
+    flame = models.IntegerField()
     timestamp = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):
