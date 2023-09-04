@@ -14,7 +14,7 @@ urlpatterns = [
     
     # Our modified URLS
     path('navigator/', views.navigator, name='navigator'), 
-    path('get', views.getData, name='getData'),
+    path('api/getData', views.getData, name='getData'),
     path('api/sensor-data', views.receive_sensor_data, name='receive_sensor_data'),
 
     # Authentication
