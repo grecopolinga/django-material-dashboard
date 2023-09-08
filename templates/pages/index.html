@@ -106,57 +106,51 @@
       <!--#region Start of div for Line Graphs and Charts-->
       <!-- Row 1 (1 chart) -->
       <div class="row mt-4">
-        <div class="mt-4 mb-4">
-            <div class="card z-index-2">
-                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent" style="background-color: black;">
-                    <div class="graph-bg shadow-primary border-radius-lg py-3 pe-1">
-                        <div class="chart">
-                            <canvas id="chart-fill-level" class="chart-canvas" height="300"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body d-flex flex-column align-items-start">
-                    <div class="d-flex">
-                        <button class="btn btn-secondary btn-sm mb-2" id="filterBtn" style="background-color: rgb(216, 216, 216); color: #344767;">
-                            <i class="material-icons opacity-10 me-1" style="font-size: 30px;">tune</i>
-                        </button>
-                        <div id="binFilters" class="d-none ms-3" style="background-color: rgb(240, 238, 238); padding-top: 11px; padding-right: 11px; border-radius: 30px;">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="bin1" name="bin1" checked>
-                                <label class="form-check-label" for="bin1">Bin 1</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="bin2" name="bin2" checked>
-                                <label class="form-check-label" for="bin2">Bin 2</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="bin3" name="bin3" checked>
-                                <label class="form-check-label" for="bin3">Bin 3</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="bin4" name="bin4" checked>
-                                <label class="form-check-label" for="bin4">Bin 4</label>
-                            </div>
-                        </div>
-                    </div>
-                    <h6 class="mb-0" style="padding-top: 15px;">Bin Capacity and Fill-up Trend</h6>
-                    <p class="text-sm">Tracked data over time</p>
-                    <hr class="dark horizontal">
-                    <div class="d-flex">
-                        <i class="material-icons text-sm my-auto me-1">schedule</i>
-                        <p class="mb-0 text-sm">Recently retrieved from database</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        document.getElementById('filterBtn').addEventListener('click', function() {
-            var binFilters = document.getElementById('binFilters');
-            binFilters.classList.toggle('d-none');
-        });
-    </script>
+          <div class="mt-4 mb-4">
+              <div class="card z-index-2">
+                  <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent" style="background-color: black;">
+                      <div class="shadow-primary border-radius-lg py-3 pe-1 graph1-bg">
+                          <div class="chart">
+                              <canvas id="chart-fill-level" class="chart-canvas" height="300"></canvas>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="card-body d-flex flex-column align-items-start">
+                      <div class="d-flex">
+                          <button class="btn btn-secondary btn-sm mb-2" id="filterBtn" style="background-color: rgb(216, 216, 216); color: #344767;">
+                              <i class="material-icons opacity-10 me-1" style="font-size: 30px;">tune</i>
+                          </button>
+                          <div id="binFilters" class="d-none ms-3" style="background-color: rgb(240, 238, 238); padding-top: 11px; padding-right: 11px; border-radius: 30px;">
+                              <div class="form-check form-check-inline">
+                                  <input class="form-check-input bin-checkbox" type="checkbox" id="bin1" name="bin1" checked data-bin-id="1">
+                                  <label class="form-check-label" for="bin1">Bin 1</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                  <input class="form-check-input bin-checkbox" type="checkbox" id="bin2" name="bin2" checked data-bin-id="2">
+                                  <label class="form-check-label" for="bin2">Bin 2</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                  <input class="form-check-input bin-checkbox" type="checkbox" id="bin3" name="bin3" checked data-bin-id="3">
+                                  <label class="form-check-label" for="bin3">Bin 3</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                  <input class="form-check-input bin-checkbox" type="checkbox" id="bin4" name="bin4" checked data-bin-id="4">
+                                  <label class="form-check-label" for="bin4">Bin 4</label>
+                              </div>
+                          </div>
+                      </div>
+                      <h6 class="mb-0" style="padding-top: 15px;">Bin Capacity and Fill-up Trend</h6>
+                      <p class="text-sm">Tracked data over time</p>
+                      <hr class="dark horizontal">
+                      <div class="d-flex">
+                          <i class="material-icons text-sm my-auto me-1">schedule</i>
+                          <p class="mb-0 text-sm">Recently retrieved from database</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
       <!-- Row 2 (2 Charts) -->
       <div class="row mt-2 justify-content-center d-flex justify-content-evenly">
         <div class="col-lg-6 mt-4 mb-4">
@@ -209,142 +203,222 @@
   {% block scripts %}
   <script>
     var fill_levels = "{{ fill_levels }}";
-    var timestamps = "{{ timestamps }}";
-    // var bin_ids = "{{ bin_ids }}";
-    // Convert values to JavaScript array
-    fill_levels = JSON.parse(fill_levels.replace(/&quot;/g, '"'));
-    timestamps = JSON.parse(timestamps.replace(/&quot;/g, '"'));
+      var timestamps = "{{ timestamps }}";
+      var bin_ids = "{{ bin_ids }}";
 
-    // Create an array to store parsed timestamps
-    var parsedTimestamps = [];
+      // Convert values to JavaScript arrays
+      fill_levels = JSON.parse(fill_levels.replace(/&quot;/g, '"'));
+      timestamps = JSON.parse(timestamps.replace(/&quot;/g, '"'));
+      bin_ids = JSON.parse(bin_ids.replace(/&quot;/g, '"'));
+      console.log(fill_levels);
+      console.log(timestamps);
+      console.log(bin_ids);
+      // Create an array to store parsed timestamps
+      var parsedTimestamps = [];
 
-    // Generate all possible timestamps from 00:00 to 23:59
-    for (var hour = 0; hour < 24; hour++) {
-        for (var minute = 0; minute < 60; minute += 30) {
-            var timestamp = ('0' + hour).slice(-2) + ':' + ('0' + minute).slice(-2);
-            parsedTimestamps.push(timestamp);
-        }
-    }
-
-    // Create an object to store fill levels with timestamps as keys
-    var fillLevelMap = {};
-
-    // Populate fill levels based on existing data
-    for (var i = 0; i < timestamps.length; i++) {
-        fillLevelMap[timestamps[i]] = fill_levels[i];
-    }
-
-    // Create an array to store final fill levels
-    var finalFillLevels = [];
-
-    // Iterate through parsed timestamps and find closest data points
-    for (var i = 0; i < parsedTimestamps.length; i++) {
-        var currentTimestamp = parsedTimestamps[i];
-        var closestTimestamp = getClosestDataPoint(currentTimestamp);
-        finalFillLevels.push(fillLevelMap[closestTimestamp] || 0);
-    }
-
-    // Function to get the closest data point within a 15-minute range
-    function getClosestDataPoint(targetTimestamp) {
-        var targetTime = new Date('2000-01-01T' + targetTimestamp + ':00');
-        var closestTimestamp = null;
-        var minTimeDiff = Number.MAX_VALUE;
-
-        for (var i = 0; i < timestamps.length; i++) {
-            var currTime = new Date('2000-01-01T' + timestamps[i] + ':00'); // Corrected line
-            var timeDiff = Math.abs(currTime - targetTime) / 60000; // Convert to minutes
-
-            if (timeDiff <= 15 && timeDiff < minTimeDiff) {
-                minTimeDiff = timeDiff;
-                closestTimestamp = timestamps[i];
-            }
-        }
-
-        return closestTimestamp;
-    }
-    
-    var ctx = document.getElementById("chart-fill-level").getContext("2d");
-
-    new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: parsedTimestamps,
-        datasets: [{
-          label: "Fill Level",
-          tension: 0,
-          borderWidth: 0,
-          pointRadius: 5,
-          pointBackgroundColor: "rgba(255, 255, 255, .8)",
-          pointBorderColor: "transparent",
-          borderColor: "rgba(255, 255, 255, .8)",
-          borderColor: "rgba(255, 255, 255, .8)",
-          borderWidth: 4,
-          backgroundColor: "transparent",
-          fill: true,
-          data: finalFillLevels,
-          maxBarThickness: 6
-
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
+      // Generate all possible timestamps from 00:00 to 23:59
+      for (var hour = 0; hour < 24; hour++) {
+          for (var minute = 0; minute < 60; minute += 30) {
+              var timestamp = ('0' + hour).slice(-2) + ':' + ('0' + minute).slice(-2);
+              parsedTimestamps.push(timestamp);
           }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: 'rgba(255, 255, 255, .2)'
-            },
-            ticks: {
-              display: true,
-              color: '#f8f9fa',
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
+      }
+
+      // Create an object to store fill levels with timestamps as keys for each bin
+      var fillLevelMaps = {};
+
+      // Initialize fill level maps for each bin
+      for (var i = 1; i <= 4; i++) {
+          fillLevelMaps[i] = {};
+      }
+
+      // Populate fill levels based on existing data for each bin
+      for (var i = 0; i < timestamps.length; i++) {
+          fillLevelMaps[bin_ids[i]][timestamps[i]] = fill_levels[i];
+      }
+
+      // Create an object to store final fill levels for each bin
+      var finalFillLevelsBins = {};
+
+      // Iterate through parsed timestamps and find closest data points for each bin
+      for (var bin_id in fillLevelMaps) {
+          finalFillLevelsBins[bin_id] = [];
+      }
+
+      for (var i = 0; i < parsedTimestamps.length; i++) {
+          var currentTimestamp = parsedTimestamps[i];
+          for (var bin_id in fillLevelMaps) {
+              var closestTimestamp = getClosestDataPoint(currentTimestamp, fillLevelMaps[bin_id]);
+              finalFillLevelsBins[bin_id].push(fillLevelMaps[bin_id][closestTimestamp] || 0);
+          }
+      }
+      console.log(finalFillLevelsBins);
+      // Function to get the closest data point within a 15-minute range for a specific bin
+      function getClosestDataPoint(targetTimestamp, binFillLevelMap) {
+          var targetTime = new Date('2000-01-01T' + targetTimestamp + ':00');
+          var closestTimestamp = null;
+          var minTimeDiff = Number.MAX_VALUE;
+
+          for (var timestamp in binFillLevelMap) {
+              var currTime = new Date('2000-01-01T' + timestamp + ':00');
+              var timeDiff = Math.abs(currTime - targetTime) / 60000;
+
+              if (timeDiff <= 15 && timeDiff < minTimeDiff) {
+                  minTimeDiff = timeDiff;
+                  closestTimestamp = timestamp;
+              }
+          }
+
+          return closestTimestamp;
+      }
+
+      var ctx = document.getElementById("chart-fill-level").getContext("2d");
+
+      var chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: parsedTimestamps,
+          datasets: [
+              {
+                label: "Bin 1",
+                tension: 0,
+                borderWidth: 0,
+                pointRadius: 5,
+                pointBackgroundColor: "rgba(0, 128, 0, 0.7)",
+                pointBorderColor: "transparent",
+                borderColor: "rgba(0, 128, 0, 0.7)",
+                borderWidth: 4,
+                backgroundColor: "transparent",
+                fill: true,
+                data: finalFillLevelsBins['1'],
+                maxBarThickness: 6
               },
+              {
+                label: "Bin 2",
+                tension: 0,
+                borderWidth: 0,
+                pointRadius: 5,
+                pointBackgroundColor: "rgba(0, 0, 128, 0.7)",
+                pointBorderColor: "transparent",
+                borderColor: "rgba(0, 0, 128, 0.7)",
+                borderWidth: 4,
+                backgroundColor: "transparent",
+                fill: true,
+                data: finalFillLevelsBins['2'],
+                maxBarThickness: 6
+              },
+              {
+                label: "Bin 3",
+                tension: 0,
+                borderWidth: 0,
+                pointRadius: 5,
+                pointBackgroundColor: "rgba(128, 0, 0, 0.7)",
+                pointBorderColor: "transparent",
+                borderColor: "rgba(128, 0, 0, 0.7)",
+                borderWidth: 4,
+                backgroundColor: "transparent",
+                fill: true,
+                data: finalFillLevelsBins['3'],
+                maxBarThickness: 6
+              },
+              {
+                label: "Bin 4",
+                tension: 0,
+                borderWidth: 0,
+                pointRadius: 5,
+                pointBackgroundColor: "rgba(128, 0, 128, 0.7)",
+                pointBorderColor: "transparent",
+                borderColor: "rgba(128, 0, 128, 0.7)",
+                borderWidth: 4,
+                backgroundColor: "transparent",
+                fill: true,
+                data: finalFillLevelsBins['4'],
+                maxBarThickness: 6
+              },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
             }
           },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: false,
-              drawOnChartArea: false,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              color: '#f8f9fa',
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
+          interaction: {
+            intersect: false,
+            mode: 'index',
           },
+          scales: {
+            y: {
+              suggestedMin: 0,  // Suggested minimum value
+              suggestedMax: 100, // Suggested maximum value
+              grid: {
+                drawBorder: false,
+                display: true,
+                drawOnChartArea: true,
+                drawTicks: false,
+                borderDash: [5, 5],
+                color: 'black'
+              },
+              ticks: {
+                display: true,
+                color: 'black',
+                padding: 10,
+                font: {
+                  size: 14,
+                  weight: 300,
+                  family: "Roboto",
+                  style: 'normal',
+                  lineHeight: 2
+                },
+              }
+            },
+            x: {
+              grid: {
+                drawBorder: false,
+                display: false,
+                drawOnChartArea: false,
+                drawTicks: false,
+                borderDash: [5, 5]
+              },
+              ticks: {
+                display: true,
+                color: 'black',
+                padding: 10,
+                font: {
+                  size: 14,
+                  weight: 300,
+                  family: "Roboto",
+                  style: 'normal',
+                  lineHeight: 2
+                },
+              }
+            },
+          },
+          animation: {
+            duration: 1000, // Animation duration in milliseconds
+            easing: 'easeInOutQuad', // Easing function (linear, easeInQuad, easeOutQuad, easeInOutQuad, etc.)
+            },
         },
-      },
-    });
+      });
+      
+      // Add event listener to checkboxes
+      var checkboxes = document.querySelectorAll('.bin-checkbox');
+      checkboxes.forEach(function (checkbox) {
+          checkbox.addEventListener('change', function () {
+              var binId = this.getAttribute('data-bin-id');
+              var datasetIndex = parseInt(binId) - 1; // Datasets are zero-based
+              chart.data.datasets[datasetIndex].hidden = !this.checked;
+              chart.update();
+          });
+      });
+
+      // Toggle binFilters visibility
+      document.getElementById('filterBtn').addEventListener('click', function() {
+          var binFilters = document.getElementById('binFilters');
+          binFilters.classList.toggle('d-none');
+      });
 
 
     var ctx2 = document.getElementById("chart-line").getContext("2d");
