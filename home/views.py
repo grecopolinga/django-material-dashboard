@@ -19,10 +19,10 @@ import serial
 import threading
 import pytz
 
-Node1 = {"Node_ID": 0, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
-Node2 = {"Node_ID": 0, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
-Node3 = {"Node_ID": 0, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
-Node4 = {"Node_ID": 0, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
+Node1 = {"Node_ID": 1, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
+Node2 = {"Node_ID": 2, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
+Node3 = {"Node_ID": 3, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
+Node4 = {"Node_ID": 4, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
 
 
 running = True
@@ -213,18 +213,19 @@ def processing():
     now = timezone.now()
 
     # Create a datetime object for the start of the current day
-    start_of_day = datetime.datetime.combine(datetime.date(2023, 3, 14), datetime.time.min).astimezone()
-    end_of_day = datetime.datetime.combine(datetime.date(2023, 3, 14), datetime.time.max).astimezone()
+    start_of_day = datetime.datetime.combine(datetime.date(2023, 8, 28), datetime.time.min).astimezone()
+    end_of_day = datetime.datetime.combine(datetime.date(2023, 8, 28), datetime.time.max).astimezone()
 
     # Query the database for ProcessedData objects that occurred within the current day
     processed_data = ProcessedData.objects.filter(timestamp__gte=start_of_day, timestamp__lt=end_of_day)
     # Extract the fill level and timestamp data for the filtered ProcessedData objects
     fill_levels = [data.fill_level for data in processed_data]
+    bin_ids = [data.node_ID for data in processed_data]
     timestamps = [data.timestamp.astimezone(ph_tz).strftime('%H:%M') for data in processed_data]
     # Pass fill_levels and timestamps as JSON objects
+    bin_ids_json = json.dumps(bin_ids)
     fill_levels_json = json.dumps(fill_levels)
     timestamps_json = json.dumps(timestamps)
-    print("Flame data: " + str(int(Node1["Flame_Data"])))
     context = {
         'Bin1_ID': int(Node1["Node_ID"]),
         'Bin1_Fill_Level': int(Bin1_Fill_Level),
@@ -242,6 +243,7 @@ def processing():
         'data': processed_data, 
         'timestamps': timestamps_json, 
         'fill_levels': fill_levels_json,
+        'bin_ids': bin_ids_json,
 
         'Bin2_ID': int(Node2["Node_ID"]),
         'Bin2_Fill_Level': int(Bin2_Fill_Level),
@@ -275,59 +277,63 @@ def processing():
     }
 
     #For Bin1
-    reading = ProcessedData(node_ID = int(Node1["Node_ID"]),
-              fill_level = int(Bin1_Fill_Level),
-              weight = Bin1_Weight,
-              mttc = Bin1_MTTC,
-              mq2_ppm = Node1["MQ2_Data"],
-              mq3_ppm = Node1["MQ3_Data"],
-              mq6_ppm = Node1["MQ6_Data"],
-              mq2_change = Bin1_MQ2_Change,
-              mq3_change = Bin1_MQ3_Change,
-              mq6_change = Bin1_MQ6_Change,
-              flame = int(Node1["Flame_Data"]))
+    reading = ProcessedData(
+    node_ID = Node1["Node_ID"],
+    fill_level= int(Bin1_Fill_Level),
+    weight = Bin1_Weight,
+    mttc = Bin1_MTTC,
+    mq2_ppm = Node1["MQ2_Data"],
+    mq3_ppm = Node1["MQ3_Data"],
+    mq6_ppm = Node1["MQ6_Data"],
+    mq2_change = Bin1_MQ2_Change,
+    mq3_change = Bin1_MQ3_Change,
+    mq6_change = Bin1_MQ6_Change,
+    flame = int(Node1["Flame_Data"]))
     reading.save()
 
     # For Bin2
-    reading2 = ProcessedData(node_ID = int(Node2["Node_ID"]),
-              fill_level=int(Bin2_Fill_Level),
-              weight = Bin2_Weight,
-              mttc=Bin2_MTTC,
-              mq2_ppm=Node2["MQ2_Data"],
-              mq3_ppm=Node2["MQ3_Data"],
-              mq6_ppm=Node2["MQ6_Data"],
-              mq2_change=Bin2_MQ2_Change,
-              mq3_change=Bin2_MQ3_Change,
-              mq6_change=Bin2_MQ6_Change,
-              flame = int(Node2["Flame_Data"]))
+    reading2 = ProcessedData(
+    node_ID = Node2["Node_ID"],
+    fill_level=int(Bin2_Fill_Level),
+    weight = Bin2_Weight,
+    mttc=Bin2_MTTC,
+    mq2_ppm=Node2["MQ2_Data"],
+    mq3_ppm=Node2["MQ3_Data"],
+    mq6_ppm=Node2["MQ6_Data"],
+    mq2_change=Bin2_MQ2_Change,
+    mq3_change=Bin2_MQ3_Change,
+    mq6_change=Bin2_MQ6_Change,
+    flame = int(Node2["Flame_Data"]))
     reading2.save()
     
     # For Bin3
-    reading3 = ProcessedData(node_ID = int(Node3["Node_ID"]),
-              fill_level=int(Bin3_Fill_Level),
-              weight = Bin3_Weight,
-              mttc=Bin3_MTTC,
-              mq2_ppm=Node3["MQ2_Data"],
-              mq3_ppm=Node3["MQ3_Data"],
-              mq6_ppm=Node3["MQ6_Data"],
-              mq2_change=Bin3_MQ2_Change,
-              mq3_change=Bin3_MQ3_Change,
-              mq6_change=Bin3_MQ6_Change,
-              flame = int(Node3["Flame_Data"]))
+    reading3 = ProcessedData(
+    node_ID = Node3["Node_ID"],
+    fill_level=int(Bin3_Fill_Level),
+    weight = Bin3_Weight,
+    mttc=Bin3_MTTC,
+    mq2_ppm=Node3["MQ2_Data"],
+    mq3_ppm=Node3["MQ3_Data"],
+    mq6_ppm=Node3["MQ6_Data"],
+    mq2_change=Bin3_MQ2_Change,
+    mq3_change=Bin3_MQ3_Change,
+    mq6_change=Bin3_MQ6_Change,
+    flame = int(Node3["Flame_Data"]))
     reading3.save()
     
     # For Bin4
-    reading4 = ProcessedData(node_ID = int(Node4["Node_ID"]),
-              fill_level=int(Bin4_Fill_Level),
-              weight = Bin4_Weight,
-              mttc=Bin4_MTTC,
-              mq2_ppm=Node4["MQ2_Data"],
-              mq3_ppm=Node4["MQ3_Data"],
-              mq6_ppm=Node4["MQ6_Data"],
-              mq2_change=Bin4_MQ2_Change,
-              mq3_change=Bin4_MQ3_Change,
-              mq6_change=Bin4_MQ6_Change,
-              flame = int(Node4["Flame_Data"]))
+    reading4 = ProcessedData(
+    node_ID = Node4["Node_ID"],
+    fill_level=int(Bin4_Fill_Level),
+    weight = Bin4_Weight,
+    mttc=Bin4_MTTC,
+    mq2_ppm=Node4["MQ2_Data"],
+    mq3_ppm=Node4["MQ3_Data"],
+    mq6_ppm=Node4["MQ6_Data"],
+    mq2_change=Bin4_MQ2_Change,
+    mq3_change=Bin4_MQ3_Change,
+    mq6_change=Bin4_MQ6_Change,
+    flame = int(Node4["Flame_Data"]))
     reading4.save()
 
     return context
