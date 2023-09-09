@@ -269,7 +269,7 @@ def processing():
         
         'Bin2_ID': int(Node2["Node_ID"]),
         'Bin2_Fill_Level': int(Bin2_Fill_Level),
-        'Bin1_Weight': "{:.2f}".format(float(Bin2_Weight)),
+        'Bin2_Weight': "{:.2f}".format(float(Bin2_Weight)),
         'Bin2_MTTC': Bin2_MTTC,
         'Bin2_MQ2_PPM': "{:.2f}".format(float(Node2["MQ2_Data"])),
         'Bin2_MQ3_PPM': "{:.2f}".format(float(Node2["MQ3_Data"])),
