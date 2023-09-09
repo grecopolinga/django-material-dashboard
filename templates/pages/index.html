@@ -48,7 +48,7 @@
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
-              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder">0 kg</span>
+              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder">{{Bin2_Weight}} kg</span>
                 <span style="font-size: 14px; opacity: 0.4;"> (Limit: 50 kg)</span>
               </p>
             </div>
@@ -71,7 +71,7 @@
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
-              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder">0 kg</span>
+              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder">{{Bin3_Weight}} kg</span>
                 <span style="font-size: 14px; opacity: 0.4;"> (Limit: 50 kg)</span>
               </p>
             </div>
@@ -94,7 +94,7 @@
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
-              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder">0 kg</span>
+              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder">{{Bin4_Weight}} kg</span>
                 <span style="font-size: 14px; opacity: 0.4;"> (Limit: 50 kg)</span>
               </p>
             </div>
@@ -225,6 +225,7 @@
 
   {% block scripts %}
   <script>
+      // ==================================== GRAPH 1 =========================================
       var fill_levels = "{{ fill_levels }}";
       var timestamps = "{{ timestamps }}";
       var bin_ids = "{{ bin_ids }}";
@@ -437,6 +438,8 @@
           });
       });
 
+      // ==================================== END GRAPH 1 =========================================
+      // ======================================== GRAPH 2 =========================================
       var mttc_checkboxes = document.querySelectorAll('.bin-checkbox');
       mttc_checkboxes.forEach(function (checkbox) {
           checkbox.addEventListener('change', function () {
@@ -695,6 +698,7 @@
         },
       });
 
+    // ==================================== END GRAPH 2 =========================================  
     var ctx3 = document.getElementById("chart-line-tasks").getContext("2d");
 
     new Chart(ctx3, {
