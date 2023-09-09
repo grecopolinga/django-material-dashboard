@@ -266,8 +266,10 @@ def processing():
         'mttc_data': mttc_data_json,
         'mttc_bin_ids': mttc_bin_ids_json,
         'mttc_timestamps': mttc_timestamps_json,
+        
         'Bin2_ID': int(Node2["Node_ID"]),
         'Bin2_Fill_Level': int(Bin2_Fill_Level),
+        'Bin1_Weight': "{:.2f}".format(float(Bin2_Weight)),
         'Bin2_MTTC': Bin2_MTTC,
         'Bin2_MQ2_PPM': "{:.2f}".format(float(Node2["MQ2_Data"])),
         'Bin2_MQ3_PPM': "{:.2f}".format(float(Node2["MQ3_Data"])),
@@ -275,9 +277,11 @@ def processing():
         'Bin2_MQ2_Change': "{:.2f}".format(float(Bin2_MQ2_Change)),
         'Bin2_MQ3_Change': "{:.2f}".format(float(Bin2_MQ3_Change)),
         'Bin2_MQ6_Change': "{:.2f}".format(float(Bin2_MQ6_Change)),
+        'Bin2_Flame': int(Node2["Flame_Data"]),
         
         'Bin3_ID': int(Node3["Node_ID"]),
         'Bin3_Fill_Level': int(Bin3_Fill_Level),
+        'Bin3_Weight': "{:.2f}".format(float(Bin3_Weight)),
         'Bin3_MTTC': Bin3_MTTC,
         'Bin3_MQ2_PPM': "{:.2f}".format(float(Node3["MQ2_Data"])),
         'Bin3_MQ3_PPM': "{:.2f}".format(float(Node3["MQ3_Data"])),
@@ -285,9 +289,11 @@ def processing():
         'Bin3_MQ2_Change': "{:.2f}".format(float(Bin3_MQ2_Change)),
         'Bin3_MQ3_Change': "{:.2f}".format(float(Bin3_MQ3_Change)),
         'Bin3_MQ6_Change': "{:.2f}".format(float(Bin3_MQ6_Change)),
+        'Bin3_Flame': int(Node3["Flame_Data"]),
         
         'Bin4_ID': int(Node4["Node_ID"]),
         'Bin4_Fill_Level': int(Bin4_Fill_Level),
+        'Bin4_Weight': "{:.2f}".format(float(Bin4_Weight)),
         'Bin4_MTTC': Bin4_MTTC,
         'Bin4_MQ2_PPM': "{:.2f}".format(float(Node4["MQ2_Data"])),
         'Bin4_MQ3_PPM': "{:.2f}".format(float(Node4["MQ3_Data"])),
@@ -295,6 +301,7 @@ def processing():
         'Bin4_MQ2_Change': "{:.2f}".format(float(Bin4_MQ2_Change)),
         'Bin4_MQ3_Change': "{:.2f}".format(float(Bin4_MQ3_Change)),
         'Bin4_MQ6_Change': "{:.2f}".format(float(Bin4_MQ6_Change)),
+        'Bin4_Flame': int(Node4["Flame_Data"]),
     }
 
     #For Bin1
