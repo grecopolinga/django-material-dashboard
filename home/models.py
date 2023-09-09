@@ -7,7 +7,7 @@ from django.utils import timezone
 
 # Create your models here.
 class ProcessedData(models.Model):
-    node_ID =  models.IntegerField()
+    node_ID = models.IntegerField()
     fill_level = models.IntegerField()
     weight = models.DecimalField(max_digits=6, decimal_places=2)
     mttc = models.CharField(max_length=50)

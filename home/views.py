@@ -19,10 +19,10 @@ import serial
 import threading
 import pytz
 
-Node1 = {"Node_ID": 0, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
-Node2 = {"Node_ID": 0, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
-Node3 = {"Node_ID": 0, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
-Node4 = {"Node_ID": 0, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
+Node1 = {"Node_ID": 1, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
+Node2 = {"Node_ID": 2, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
+Node3 = {"Node_ID": 3, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
+Node4 = {"Node_ID": 4, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
 
 
 running = True
@@ -211,20 +211,40 @@ def processing():
     ph_tz = pytz.timezone('Asia/Manila')
     # Get the current date and time
     now = timezone.now()
-
+    #For the Fill-level graph
     # Create a datetime object for the start of the current day
-    start_of_day = datetime.datetime.combine(datetime.date(2023, 3, 14), datetime.time.min).astimezone()
-    end_of_day = datetime.datetime.combine(datetime.date(2023, 3, 14), datetime.time.max).astimezone()
-
+    start_of_day = datetime.datetime.combine(datetime.date(2023, 8, 28), datetime.time.min).astimezone()
+    end_of_day = datetime.datetime.combine(datetime.date(2023, 8, 28), datetime.time.max).astimezone()
     # Query the database for ProcessedData objects that occurred within the current day
     processed_data = ProcessedData.objects.filter(timestamp__gte=start_of_day, timestamp__lt=end_of_day)
     # Extract the fill level and timestamp data for the filtered ProcessedData objects
     fill_levels = [data.fill_level for data in processed_data]
+    bin_ids = [data.node_ID for data in processed_data]
     timestamps = [data.timestamp.astimezone(ph_tz).strftime('%H:%M') for data in processed_data]
     # Pass fill_levels and timestamps as JSON objects
+    bin_ids_json = json.dumps(bin_ids)
     fill_levels_json = json.dumps(fill_levels)
     timestamps_json = json.dumps(timestamps)
-    print("Flame data: " + str(int(Node1["Flame_Data"])))
+    #End of code for the Fill-level graph
+
+    #For the MTTC graph
+    # Create datetime objects for the start and end of the 7-day period
+    end_date = timezone.now()  # Use the current date as the end date
+    start_date = end_date - datetime.timedelta(days=6)  # Calculate the start date
+
+    # Query the database for ProcessedData objects within the 7-day period
+    mttc_processed_data = ProcessedData.objects.filter(timestamp__range=(start_date, end_date))
+
+    # Extract the MTTC, timestamp, and bin ID data for the filtered ProcessedData objects
+    mttc_data = [data.mttc for data in mttc_processed_data]
+    mttc_bin_ids = [data.node_ID for data in mttc_processed_data]
+    mttc_timestamps = [data.timestamp.astimezone(ph_tz).strftime('%m-%d') for data in mttc_processed_data]
+
+    # Pass bin_ids, mttc_data, and timestamps as JSON objects
+    mttc_bin_ids_json = json.dumps(mttc_bin_ids)
+    mttc_data_json = json.dumps(mttc_data)
+    mttc_timestamps_json = json.dumps(mttc_timestamps)
+
     context = {
         'Bin1_ID': int(Node1["Node_ID"]),
         'Bin1_Fill_Level': int(Bin1_Fill_Level),
@@ -242,7 +262,10 @@ def processing():
         'data': processed_data, 
         'timestamps': timestamps_json, 
         'fill_levels': fill_levels_json,
-
+        'bin_ids': bin_ids_json,
+        'mttc_data': mttc_data_json,
+        'mttc_bin_ids': mttc_bin_ids_json,
+        'mttc_timestamps': mttc_timestamps_json,
         'Bin2_ID': int(Node2["Node_ID"]),
         'Bin2_Fill_Level': int(Bin2_Fill_Level),
         'Bin2_MTTC': Bin2_MTTC,
