@@ -156,13 +156,36 @@
         <div class="col-lg-6 mt-4 mb-4">
           <div class="card z-index-2  ">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-              <div class="bg-gradient-success shadow-success border-radius-lg py-3 pe-1">
+              <div class="shadow-success border-radius-lg py-3 pe-1 graph1-bg">
                 <div class="chart">
-                  <canvas id="chart-line" class="chart-canvas" height="200"></canvas>
+                  <canvas id="chart-mttc" class="chart-canvas" height="200"></canvas>
                 </div>
               </div>
             </div>
             <div class="card-body">
+              <div class="d-flex">
+                <button class="btn btn-secondary btn-sm mb-2" id="MTTCfilterBtn" style="background-color: rgb(216, 216, 216); color: #344767;">
+                    <i class="material-icons opacity-10 me-1" style="font-size: 30px;">tune</i>
+                </button>
+                <div id="MTTCbinFilters" class="d-none ms-3" style="background-color: rgb(240, 238, 238); padding-top: 11px; padding-right: 11px; border-radius: 30px;">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input bin-checkbox" type="checkbox" id="MTTCbin1" name="MTTCbin1" checked mttc-data-bin-id="1">
+                        <label class="form-check-label" for="bin1">Bin 1</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input bin-checkbox" type="checkbox" id="MTTCbin2" name="MTTCbin2" checked mttc-data-bin-id="2">
+                        <label class="form-check-label" for="bin2">Bin 2</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input bin-checkbox" type="checkbox" id="MTTCbin3" name="MTTCbin3" checked mttc-data-bin-id="3">
+                        <label class="form-check-label" for="bin3">Bin 3</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input bin-checkbox" type="checkbox" id="MTTCbin4" name="MTTCbin4" checked mttc-data-bin-id="4">
+                        <label class="form-check-label" for="bin4">Bin 4</label>
+                    </div>
+                </div>
+            </div>
               <h6 class="mb-0 "> Mean Time to Collect </h6>
               <p class="text-sm "> (<span class="font-weight-bolder">+15%</span>) increase in today's mean time collection. </p>
               <hr class="dark horizontal">
@@ -202,7 +225,7 @@
 
   {% block scripts %}
   <script>
-    var fill_levels = "{{ fill_levels }}";
+      var fill_levels = "{{ fill_levels }}";
       var timestamps = "{{ timestamps }}";
       var bin_ids = "{{ bin_ids }}";
 
@@ -404,8 +427,8 @@
       });
       
       // Add event listener to checkboxes
-      var checkboxes = document.querySelectorAll('.bin-checkbox');
-      checkboxes.forEach(function (checkbox) {
+      var fill_level_checkboxes = document.querySelectorAll('.bin-checkbox');
+      fill_level_checkboxes.forEach(function (checkbox) {
           checkbox.addEventListener('change', function () {
               var binId = this.getAttribute('data-bin-id');
               var datasetIndex = parseInt(binId) - 1; // Datasets are zero-based
@@ -414,95 +437,263 @@
           });
       });
 
+      var mttc_checkboxes = document.querySelectorAll('.bin-checkbox');
+      mttc_checkboxes.forEach(function (checkbox) {
+          checkbox.addEventListener('change', function () {
+              var binId = this.getAttribute('mttc-data-bin-id');
+              var datasetIndex = parseInt(binId) - 1; // Datasets are zero-based
+              chart2.data.datasets[datasetIndex].hidden = !this.checked;
+              chart2.update();
+          });
+      });
+
       // Toggle binFilters visibility
       document.getElementById('filterBtn').addEventListener('click', function() {
           var binFilters = document.getElementById('binFilters');
           binFilters.classList.toggle('d-none');
       });
+      // Toggle binFilters visibility
+      document.getElementById('MTTCfilterBtn').addEventListener('click', function() {
+          var binFilters = document.getElementById('MTTCbinFilters');
+          binFilters.classList.toggle('d-none');
+      });
 
+    
+    var mttc_timestamps = "{{ mttc_timestamps }}";
+    var mttc_bin_ids = "{{ mttc_bin_ids }}";
+    var mttc_data = "{{ mttc_data }}";
 
-    var ctx2 = document.getElementById("chart-line").getContext("2d");
+    mttc_timestamps = JSON.parse(mttc_timestamps.replace(/&quot;/g, '"'));
+    mttc_bin_ids = JSON.parse(mttc_bin_ids.replace(/&quot;/g, '"'));
+    mttc_data = JSON.parse(mttc_data.replace(/&quot;/g, '"'));
 
-    new Chart(ctx2, {
+    console.log(mttc_timestamps);
+    console.log(bin_ids);
+    console.log(mttc_data);
+    var mttcDataByBin = {};
+
+      // Create variables for each bin with 7 data points
+    var mttc_bin1 = [];
+    var mttc_bin2 = [];
+    var mttc_bin3 = [];
+    var mttc_bin4 = [];
+
+    // Process the data for each bin and add 7 data points
+    for (var binId = 1; binId <= 4; binId++) {
+        var binData = [];
+
+        for (var i = 0; i < mttc_bin_ids.length; i++) {
+            if (mttc_bin_ids[i] === binId) {
+                binData.push({
+                    mttc: mttc_data[i],
+                    timestamp: mttc_timestamps[i],
+                });
+                
+            }
+        }
+
+        var binMTTC = [];
+        // Create labels for the graph
+        var binLabels = [];
+        // Iterate over the last 7 days and find the latest data point for each day
+        for (var day = 6; day >= 0; day--) {
+            var currentDate = new Date();
+            currentDate.setDate(currentDate.getDate() - day);
+
+            var currentMonth = ('0' + (currentDate.getMonth() + 1)).slice(-2); // Get current month
+            var currentDay = ('0' + currentDate.getDate()).slice(-2); // Get current day
+
+            var currentDateString = currentMonth + '-' + currentDay; // Create a formatted date string
+            binLabels.push(currentDateString);
+            console.log(currentDateString)
+            var latestData = binData.find(function (data) {
+                if (typeof data.timestamp === 'string') {
+                    // Extract the month and day from data.timestamp
+                    var parts = data.timestamp.split('-');
+                    if (parts.length === 2) {
+                        var dataMonth = parseInt(parts[0]); // Parse as integer
+                        var dataDay = parseInt(parts[1]); // Parse as integer
+
+                        // Compare the extracted date with the current date
+                        return dataMonth === parseInt(currentMonth) && dataDay === parseInt(currentDay);
+                    }
+                }
+                return false;
+            });
+
+            if (latestData) {
+                binMTTC.push(latestData.mttc);
+            } else {
+                binMTTC.push("01m 45.00s"); // Set the default value to "01m 00.00s"
+            }
+        }
+
+        // Reverse the array to maintain the chronological order
+        binMTTC.reverse();
+
+        // Assign the data to the respective bin variable
+        switch (binId) {
+            case 1:
+                mttc_bin1 = binMTTC;
+                break;
+            case 2:
+                mttc_bin2 = binMTTC;
+                break;
+            case 3:
+                mttc_bin3 = binMTTC;
+                break;
+            case 4:
+                mttc_bin4 = binMTTC;
+                break;
+        }
+    }
+
+    function parseMTTCValue(mttcString) {
+        // Split the string into minutes and seconds parts
+        var parts = mttcString.split(" ");
+        if (parts.length === 2) {
+            var minutes = parseFloat(parts[0].replace("m", ""));
+            var seconds = parseFloat(parts[1].replace("s", ""));
+            return minutes + seconds / 60; // Convert seconds to minutes as a decimal number
+        }
+        return 0; // Default value if parsing fails
+    }
+    mttc_bin1 = mttc_bin1.map(parseMTTCValue);
+    mttc_bin2 = mttc_bin2.map(parseMTTCValue);
+    mttc_bin3 = mttc_bin3.map(parseMTTCValue);
+    mttc_bin4 = mttc_bin4.map(parseMTTCValue);
+    console.log(mttc_bin1);
+    console.log(mttc_bin2);
+    console.log(mttc_bin3);
+    console.log(mttc_bin4);
+    var ctx2 = document.getElementById("chart-mttc").getContext("2d");
+
+    var chart2 = new Chart(ctx2, {
       type: "line",
-      data: {
-        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [{
-          label: "Mobile apps",
-          tension: 0,
-          borderWidth: 0,
-          pointRadius: 5,
-          pointBackgroundColor: "rgba(255, 255, 255, .8)",
-          pointBorderColor: "transparent",
-          borderColor: "rgba(255, 255, 255, .8)",
-          borderColor: "rgba(255, 255, 255, .8)",
-          borderWidth: 4,
-          backgroundColor: "transparent",
-          fill: true,
-          data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
-          maxBarThickness: 6
-
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: 'rgba(255, 255, 255, .2)'
-            },
-            ticks: {
-              display: true,
-              color: '#f8f9fa',
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
+        data: {
+          labels: binLabels,
+          datasets: [
+              {
+                label: "Bin 1",
+                tension: 0,
+                borderWidth: 0,
+                pointRadius: 5,
+                pointBackgroundColor: "rgba(0, 128, 0, 0.7)",
+                pointBorderColor: "transparent",
+                borderColor: "rgba(0, 128, 0, 0.7)",
+                borderWidth: 4,
+                backgroundColor: "transparent",
+                fill: true,
+                data: mttc_bin1,
+                maxBarThickness: 6
               },
+              {
+                label: "Bin 2",
+                tension: 0,
+                borderWidth: 0,
+                pointRadius: 5,
+                pointBackgroundColor: "rgba(0, 0, 128, 0.7)",
+                pointBorderColor: "transparent",
+                borderColor: "rgba(0, 0, 128, 0.7)",
+                borderWidth: 4,
+                backgroundColor: "transparent",
+                fill: true,
+                data: mttc_bin2,
+                maxBarThickness: 6
+              },
+              {
+                label: "Bin 3",
+                tension: 0,
+                borderWidth: 0,
+                pointRadius: 5,
+                pointBackgroundColor: "rgba(128, 0, 0, 0.7)",
+                pointBorderColor: "transparent",
+                borderColor: "rgba(128, 0, 0, 0.7)",
+                borderWidth: 4,
+                backgroundColor: "transparent",
+                fill: true,
+                data: mttc_bin3,
+                maxBarThickness: 6
+              },
+              {
+                label: "Bin 4",
+                tension: 0,
+                borderWidth: 0,
+                pointRadius: 5,
+                pointBackgroundColor: "rgba(128, 0, 128, 0.7)",
+                pointBorderColor: "transparent",
+                borderColor: "rgba(128, 0, 128, 0.7)",
+                borderWidth: 4,
+                backgroundColor: "transparent",
+                fill: true,
+                data: mttc_bin4,
+                maxBarThickness: 6
+              },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
             }
           },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: false,
-              drawOnChartArea: false,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              color: '#f8f9fa',
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
+          interaction: {
+            intersect: false,
+            mode: 'index',
           },
+          scales: {
+            y: {
+              grid: {
+                drawBorder: false,
+                display: true,
+                drawOnChartArea: true,
+                drawTicks: false,
+                borderDash: [5, 5],
+                color: 'black'
+              },
+              ticks: {
+                display: true,
+                color: 'black',
+                padding: 10,
+                font: {
+                  size: 14,
+                  weight: 300,
+                  family: "Roboto",
+                  style: 'normal',
+                  lineHeight: 2
+                },
+              }
+            },
+            x: {
+              grid: {
+                drawBorder: false,
+                display: false,
+                drawOnChartArea: false,
+                drawTicks: false,
+                borderDash: [5, 5]
+              },
+              ticks: {
+                display: true,
+                color: 'black',
+                padding: 10,
+                font: {
+                  size: 14,
+                  weight: 300,
+                  family: "Roboto",
+                  style: 'normal',
+                  lineHeight: 2
+                },
+              }
+            },
+          },
+          animation: {
+            duration: 1000, // Animation duration in milliseconds
+            easing: 'linear', // Easing function (linear, easeInQuad, easeOutQuad, easeInOutQuad, etc.)
+            },
         },
-      },
-    });
+      });
 
     var ctx3 = document.getElementById("chart-line-tasks").getContext("2d");
 
