@@ -35,7 +35,7 @@
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card" id="binCard2">
             <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute" 
+              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
               id="b2_FLCard">
                 <!-- Icon for Bin 2 -->
                 <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;" id="icon2">delete</i>
@@ -48,7 +48,7 @@
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
-              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder">...</span>
+              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder" id="bin2Weight">...</span>
                 <span style="font-size: 14px; opacity: 0.4;"> (Limit: 50 kg)</span>
               </p>
             </div>
@@ -58,7 +58,7 @@
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card" id="binCard3">
             <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute" 
+              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
               id="b3_FLCard">
                 <!-- Icon for Bin 3 -->
                 <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;" id="icon3">delete</i>
@@ -71,7 +71,7 @@
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
-              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder">...</span>
+              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder" id="bin3Weight">...</span>
                 <span style="font-size: 14px; opacity: 0.4;"> (Limit: 50 kg)</span>
               </p>
             </div>
@@ -81,7 +81,7 @@
         <div class="col-xl-3 col-sm-6">
           <div class="card" id="binCard4">
             <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute" 
+              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
               id="b4_FLCard">
                 <!-- Icon for Bin 4 -->
                 <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;" id="icon4">delete_outline</i>
@@ -89,12 +89,12 @@
               <div class="text-end pt-1">
                 <p class="text-md mb-0 text-capitalize">Bin 4 Fill Level</p>
                 <!-- Fill level Percentage Bin 4 -->
-                <h4 class="mb-0" id="bin1FillLevel">...</h4>
+                <h4 class="mb-0" id="bin4FillLevel">...</h4>
               </div>
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
-              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder">...</span>
+              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder" id="bin4Weight">...</span>
                 <span style="font-size: 14px; opacity: 0.4;"> (Limit: 50 kg)</span>
               </p>
             </div>
@@ -217,6 +217,21 @@
           </div>
         </div>
       </div>
+      <div class="position-fixed bottom-1 end-1 z-index-2">
+        <div class="toast fade hide p-2 bg-gradient-danger" role="alert" aria-live="assertive" id="fullBin" aria-atomic="true" data-bs-autohide="false">
+          <div class="toast-header border-0 bg-transparent">
+            <i class="material-icons text-white me-2">campaign</i>
+            <span class="me-auto font-weight-bold text-white">Bin is already full!</span>
+            <i class="fas fa-times text-md ms-3 text-white cursor-pointer" data-bs-dismiss="toast" aria-label="Close"></i>
+          </div>
+          <hr class="horizontal dark m-0">
+          <div class="toast-body text-white">
+            This is a notification message.
+          </div>
+        </div>
+
+
+      </div> 
       <!--#endregion-->
 
       {% include 'includes/footer.html' %}
@@ -781,80 +796,142 @@
       },
     });
   </script>
-  <!-- <script>
-    function checkFill() {
-        var value = document.getElementById("inputValue").value;
-
-        if (value > 90) {
-            window.alert("The Smart Bin is full! Please collect it immediately!");
-            document.getElementById("icon1").style.color = "red";
-        }
-        else if (value > 75) {
-            window.alert("The Smart Bin is almost full!");
-            document.getElementById("icon1").style.color = "orange";
-        }
-        else {
-            document.getElementById("icon1").style.color = "green";
-        }
-    }
-    function checkFire() {
-        var flamevalue = document.getElementById("flamevalue").value;
-        // CHANGE TO 0, FLAME == 0
-        if (flamevalue == 1) { 
-            window.alert("Flame detected! Please collect the bin immediately!");
-        }
-    }
-    function checkNotifs() {
-        checkFire();
-        checkFill();
-    }
-    window.onload = checkNotifs; // run checkValue() when the page is loaded
-</script> -->
-
-<script>
-  function updateBinCardColor(binId, fillLevel, iconNum) {
-    const b_FLCard = document.getElementById(binId);
-    const icon = document.getElementById(iconNum);
-
-    if (fillLevel >= 90) {
-      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute';
-      icon.innerText = 'delete';
-    } else if (fillLevel >= 75) {
-      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-warning shadow-warning text-center border-radius-xl mt-n4 position-absolute';
-      icon.innerText = 'delete_outline';
-    } else {
-      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute';
-      icon.innerText = 'delete_outline';
-    }
-  }
-  // Update Bin 1
-  const bin1FillLevel = '{{Bin1_Fill_Level}}'; // Value from context
-  updateBinCardColor('b1_FLCard', bin1FillLevel, 'icon1');
-
-  // Update Bin 2
-  const bin2FillLevel = '{{Bin2_Fill_Level}}'; // Value from context
-  updateBinCardColor('b2_FLCard', bin2FillLevel,  'icon2');
-
-  // Update Bin 3
-  const bin3FillLevel = '{{Bin3_Fill_Level}}'; // Value from context
-  updateBinCardColor('b3_FLCard', bin3FillLevel, 'icon3');
-
-  // Update Bin 4
-  const bin4FillLevel = '{{Bin4_Fill_Level}}'; // Value from context
-  updateBinCardColor('b4_FLCard', bin4FillLevel,  'icon4');
-</script>
-
-
 <!-- Include jQuery (you can download it or use a CDN) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+  function updateBinCardColor(binId, cardId, fillLevel, iconNum) {
+  const b_FLCard = document.getElementById(cardId);
+  const icon = document.getElementById(iconNum);
+
+  // Find existing notification for this bin (if any)
+  const existingToast = document.querySelector(`[data-bin="${binId}"]`);
+
+  if (fillLevel >= 90) {
+    b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute';
+    icon.innerText = 'delete';
+
+    if (!existingToast) {
+      // Create a new toast for this bin
+      const toastElement = document.createElement('div');
+      toastElement.className = 'toast fade p-2 bg-gradient-danger my-2';
+      toastElement.setAttribute('role', 'alert');
+      toastElement.setAttribute('aria-live', 'assertive');
+      toastElement.setAttribute('aria-atomic', 'true');
+      toastElement.setAttribute('data-bs-autohide', 'false');
+      toastElement.setAttribute('data-bin', binId);
+
+      const toastHeader = document.createElement('div');
+      toastHeader.className = 'toast-header border-0 bg-transparent';
+
+      const toastIcon = document.createElement('i');
+      toastIcon.className = 'material-icons text-white me-2';
+      toastIcon.innerText = 'campaign';
+
+      const toastTitle = document.createElement('span');
+      toastTitle.className = 'me-auto font-weight-bold text-white';
+      toastTitle.textContent = 'Bin ' + binId + ' is already full!';
+
+      const toastCloseIcon = document.createElement('i');
+      toastCloseIcon.className = 'fas fa-times text-md ms-3 text-white cursor-pointer';
+      toastCloseIcon.setAttribute('data-bs-dismiss', 'toast');
+      toastCloseIcon.setAttribute('aria-label', 'Close');
+
+      toastHeader.appendChild(toastIcon);
+      toastHeader.appendChild(toastTitle);
+      toastHeader.appendChild(toastCloseIcon);
+
+      const toastHr = document.createElement('hr');
+      toastHr.className = 'horizontal dark m-0';
+
+      const toastBody = document.createElement('div');
+      toastBody.className = 'toast-body text-white';
+      toastBody.textContent = 'Please collect immediately';
+
+      toastElement.appendChild(toastHeader);
+      toastElement.appendChild(toastHr);
+      toastElement.appendChild(toastBody);
+
+      // Append the toast element to the .position-fixed div
+      document.querySelector('.position-fixed').appendChild(toastElement);
+
+      // Create a new Bootstrap Toast instance and show it
+      const toast = new bootstrap.Toast(toastElement);
+      toast.show();
+    }
+  } else if (fillLevel >= 75) {
+    b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-warning shadow-warning text-center border-radius-xl mt-n4 position-absolute';
+    icon.innerText = 'delete_outline';
+
+    if (!existingToast) {
+      // Create a new toast for this bin
+      const toastElement = document.createElement('div');
+      toastElement.className = 'toast fade p-2 bg-gradient-warning my-2';
+      toastElement.setAttribute('role', 'alert');
+      toastElement.setAttribute('aria-live', 'assertive');
+      toastElement.setAttribute('aria-atomic', 'true');
+      toastElement.setAttribute('data-bs-autohide', 'false');
+      toastElement.setAttribute('data-bin', binId);
+
+      const toastHeader = document.createElement('div');
+      toastHeader.className = 'toast-header border-0 bg-transparent';
+
+      const toastIcon = document.createElement('i');
+      toastIcon.className = 'material-icons text-white me-2';
+      toastIcon.innerText = 'campaign';
+
+      const toastTitle = document.createElement('span');
+      toastTitle.className = 'me-auto font-weight-bold text-white';
+      toastTitle.textContent = 'Bin ' + binId + ' is almost full';
+
+      const toastCloseIcon = document.createElement('i');
+      toastCloseIcon.className = 'fas fa-times text-md ms-3 text-white cursor-pointer';
+      toastCloseIcon.setAttribute('data-bs-dismiss', 'toast');
+      toastCloseIcon.setAttribute('aria-label', 'Close');
+
+      toastHeader.appendChild(toastIcon);
+      toastHeader.appendChild(toastTitle);
+      toastHeader.appendChild(toastCloseIcon);
+
+      const toastHr = document.createElement('hr');
+      toastHr.className = 'horizontal dark m-0';
+
+      const toastBody = document.createElement('div');
+      toastBody.className = 'toast-body text-white';
+      toastBody.textContent = 'Please collect soon to avoid overflowing of trash';
+
+      toastElement.appendChild(toastHeader);
+      toastElement.appendChild(toastHr);
+      toastElement.appendChild(toastBody);
+
+      // Append the toast element to the .position-fixed div
+      document.querySelector('.position-fixed').appendChild(toastElement);
+
+      // Create a new Bootstrap Toast instance and show it
+      const toast = new bootstrap.Toast(toastElement);
+      toast.show();
+    }
+  } else {
+    b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute';
+    icon.innerText = 'delete_outline';
+      // Remove the existing notification
+    if (existingToast) {
+      existingToast.remove();
+    }
+  }
+
+
+}
+
+
   // Function to update the bin card with new data
   function updateBinCard(binNumber, data) {
     $('#bin' + binNumber + 'FillLevel').text(data.fill_level + '%');
     $('#bin' + binNumber + 'Weight').text(data.weight + ' kg');
     
-    binID = "b"+ binNumber + "_FLCard"
-    updateBinCardColor(binID, data.fill_level, 'icon1');
+    cardID = "b"+ binNumber + "_FLCard";
+    iconID = "icon" + binNumber;
+    updateBinCardColor(binNumber, cardID, data.fill_level, iconID);
+    
     // Update other fields as needed
   }
 
@@ -866,17 +943,11 @@
       dataType: 'json',
       success: function (data) {
         console.log('Data received:', data);
-        if (data.Bin1.length > 0) {
-          updateBinCard(1, data.Bin1[0]); // data.Bin1 is a list, only get the 1st element
-        }
-        if (data.Bin2.length > 0) {
-          updateBinCard(2, data.Bin2[0]);
-        }
-        if (data.Bin3.length > 0) {
-          updateBinCard(3, data.Bin3[0]);
-        }
-        if (data.Bin4.length > 0) {
-          updateBinCard(4, data.Bin4[0]);
+        for (let binNumber = 1; binNumber <= 4; binNumber++) {
+          if (data['Bin' + binNumber].length > 0) {
+            const binData = data['Bin' + binNumber][0];
+            updateBinCard(binNumber, binData);
+          }
         }
       },
       error: function (xhr, status, error) {
@@ -890,6 +961,5 @@
   // Initial data fetch when the page loads
   fetchData();
 </script>
-
 
   {% endblock scripts %}
