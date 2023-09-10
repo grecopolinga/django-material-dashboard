@@ -70,12 +70,27 @@ def navigator(request):
 
 # endregion
 
-# region Original App Functions
-@api_view(['GET'])
+# This API endpoint gets the whole array of attributes for each bin ID
+@api_view(['GET']) 
 def getData(request):
-    data = ProcessedData.objects.all()
-    serializer = ProcessedDataSerializer(data, many=True)
-    return Response(serializer.data)
+    bin_data = {
+        'Bin1': ProcessedData.objects.filter(node_ID=1).values(),
+        'Bin2': ProcessedData.objects.filter(node_ID=2).values(),
+        'Bin3': ProcessedData.objects.filter(node_ID=3).values(),
+        'Bin4': ProcessedData.objects.filter(node_ID=4).values(),
+    }
+    return Response(bin_data)
+
+# This API endpoint gets only 10 elements from the whole array of attributes for each bin ID
+@api_view(['GET'])
+def getLatestData(request):
+    bin_data = {
+        'Bin1': ProcessedData.objects.filter(node_ID=1).order_by('-timestamp')[:10].values(),
+        'Bin2': ProcessedData.objects.filter(node_ID=2).order_by('-timestamp')[:10].values(),
+        'Bin3': ProcessedData.objects.filter(node_ID=3).order_by('-timestamp')[:10].values(),
+        'Bin4': ProcessedData.objects.filter(node_ID=4).order_by('-timestamp')[:10].values(),
+    }
+    return Response(bin_data)    
 
 @api_view(['POST'])
 def receive_sensor_data(request):
