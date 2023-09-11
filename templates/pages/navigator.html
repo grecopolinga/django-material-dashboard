@@ -17,14 +17,29 @@
             </div>
             <!-- Insert Map Inside this Div-->
             <div class="card-body px-4 pb-2">
-              <!-- Embed the map using an iframe -->
-              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15446.406210044228!2d120.97471108717345!3d14.564763476661692!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c97ed286459b%3A0x5927068d997eae2a!2sDe%20La%20Salle%20University%20Manila!5e0!3m2!1sen!2sph!4v1693049921786!5m2!1sen!2sph" 
-              width="100%" 
-              height="450" 
-              style="border:0;" 
-              allowfullscreen="" 
-              loading="lazy" 
-              referrerpolicy="no-referrer-when-downgrade"></iframe>
+              <!-- Plot the areas on the img -->
+              <!-- <map name="map_zones">
+                <area
+                    href="https://facebook.com"
+                    alt="Zone 1 area"
+                    target="_blank"
+                    shape="poly"
+                    coords="2.1%,42%, 48%,42%, 48%,87.1%, 2.1%,87.1%"
+                >
+              </map> -->
+              <img 
+                  src="{% static '/img/map.png' %}"
+                  alt="Zone 1"
+                  width="100%"
+                  height="450"
+                  usemap="#map_zones"
+              >
+              <a href="#" alt="Zone 1"><div style="position: absolute; left: 5%; top: 50%; width: 43%; height: 37%; background-color: rgba(0, 0, 0, .25);"></div></a>
+              <a href="#" alt="Zone 2a"><div style="position: absolute; left: 33%; top: 27%; width: 23%; height: 18%; background-color: rgba(0, 0, 0, .25);"></div></a>
+              <a href="#" alt="Zone 2b"><div style="position: absolute; left: 49%; top: 50%; width: 6%; height: 37%; background-color: rgba(0, 0, 0, .25);"></div></a>
+              <a href="#" alt="Zone 2c"><div style="position: absolute; left: 56%; top: 46%; width: 12%; height: 19%; background-color: rgba(0, 0, 0, .25);"></div></a>
+              <a href="#" alt="Zone 3a"><div style="position: absolute; left: 66%; top: 67%; width: 25%; height: 20%; background-color: rgba(0, 0, 0, .25);"></div></a>
+              <a href="#" alt="Zone 3b"><div style="position: absolute; left: 75%; top: 43%; width: 22%; height: 21%; background-color: rgba(0, 0, 0, .25);"></div></a>
             </div>
           </div>
         </div>
