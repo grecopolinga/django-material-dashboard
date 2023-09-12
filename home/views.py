@@ -260,6 +260,18 @@ def processing():
     mttc_data_json = json.dumps(mttc_data)
     mttc_timestamps_json = json.dumps(mttc_timestamps)
 
+    #For the weight graph
+    # Query the database for ProcessedData objects within the 7-day period
+    weight_processed_data = ProcessedData.objects.filter(timestamp__range=(start_date, end_date))
+    # Extract the Weight, timestamp, and bin ID data for the filtered ProcessedData objects
+    weight_data = [data.weight for data in weight_processed_data]
+    weight_data_float = [float(value) for value in weight_data]
+    weight_bin_ids = [data.node_ID for data in weight_processed_data]
+    weight_timestamps = [data.timestamp.astimezone(ph_tz).strftime('%m-%d') for data in weight_processed_data]
+
+    weight_data_json = json.dumps(weight_data_float)
+    weight_bin_ids_json = json.dumps(weight_bin_ids)
+    weight_timestamps_json = json.dumps(weight_timestamps)
     context = {
         'Bin1_ID': int(Node1["Node_ID"]),
         'Bin1_Fill_Level': int(Bin1_Fill_Level),
@@ -281,6 +293,9 @@ def processing():
         'mttc_data': mttc_data_json,
         'mttc_bin_ids': mttc_bin_ids_json,
         'mttc_timestamps': mttc_timestamps_json,
+        'weight_data': weight_data_json,
+        'weight_bin_ids': weight_bin_ids_json,
+        'weight_timestamps': weight_timestamps_json,
         
         'Bin2_ID': int(Node2["Node_ID"]),
         'Bin2_Fill_Level': int(Bin2_Fill_Level),
