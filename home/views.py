@@ -160,7 +160,7 @@ def Fill_Level(distance):
     return Fill_Level
 
 def lbs_to_kg(lbs):
-    kg = lbs * 0.45359237
+    kg = lbs/1000
     if kg < 0:
         return 0
     else:
