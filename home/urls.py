@@ -14,7 +14,8 @@ urlpatterns = [
     
     # Our modified URLS
     path('navigator/', views.navigator, name='navigator'), 
-    path('api/getData', views.getData, name='getData'),
+    path('api/getWeightData', views.getWeightData, name='getWeightData'),
+    path('api/getWeightTimeData', views.getWeightTimeData, name='getWeightTimeData'),
     path('api/getLatestData', views.getLatestData, name='getLatestData'),
     path('api/sensor-data', views.receive_sensor_data, name='receive_sensor_data'),
 
