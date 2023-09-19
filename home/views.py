@@ -72,14 +72,56 @@ def navigator(request):
 
 # This API endpoint gets the whole array of attributes for each bin ID
 @api_view(['GET']) 
-def getData(request):
+def getWeightData(request):
     bin_data = {
-        'Bin1': ProcessedData.objects.filter(node_ID=1).values(),
-        'Bin2': ProcessedData.objects.filter(node_ID=2).values(),
-        'Bin3': ProcessedData.objects.filter(node_ID=3).values(),
-        'Bin4': ProcessedData.objects.filter(node_ID=4).values(),
+        'Bin1': (ProcessedData.objects.filter(node_ID=1).values_list('weight', flat=True)),
+        'Bin2': (ProcessedData.objects.filter(node_ID=2).values_list('weight', flat=True)),
+        'Bin3': (ProcessedData.objects.filter(node_ID=3).values_list('weight', flat=True)),
+        'Bin4': (ProcessedData.objects.filter(node_ID=4).values_list('weight', flat=True)),
     }
     return Response(bin_data)
+
+from django.db.models import Q
+
+@api_view(['GET']) 
+def getWeightTimeData(request):
+    # Get the startDate and endDate from query parameters (assuming you pass them as query parameters)
+    start_date_str = request.GET.get('startDate')
+    end_date_str = request.GET.get('endDate')
+
+    # Convert the date strings to datetime objects
+    start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d')
+    # Add one day to the end date to make it inclusive
+    end_date = end_date + timedelta(days=1)
+    bin_data = {
+        'Bin1': {
+            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+                node_ID=1, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+            'weights': list(ProcessedData.objects.filter(
+                Q(node_ID=1) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+        },
+        'Bin2': {
+            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+                node_ID=2, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+            'weights': list(ProcessedData.objects.filter(
+                Q(node_ID=2) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+        },
+        'Bin3': {
+            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+                node_ID=3, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+            'weights': list(ProcessedData.objects.filter(
+                Q(node_ID=3) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+        },
+        'Bin4': {
+            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+                node_ID=4, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+            'weights': list(ProcessedData.objects.filter(
+                Q(node_ID=4) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+        },
+    }
+    return Response(bin_data)
+
 
 # This API endpoint gets only 10 elements from the whole array of attributes for each bin ID
 @api_view(['GET'])
