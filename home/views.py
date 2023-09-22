@@ -73,14 +73,56 @@ def navigator(request):
 
 # This API endpoint gets the whole array of attributes for each bin ID
 @api_view(['GET']) 
-def getData(request):
+def getWeightData(request):
     bin_data = {
-        'Bin1': ProcessedData.objects.filter(node_ID=1).values(),
-        'Bin2': ProcessedData.objects.filter(node_ID=2).values(),
-        'Bin3': ProcessedData.objects.filter(node_ID=3).values(),
-        'Bin4': ProcessedData.objects.filter(node_ID=4).values(),
+        'Bin1': (ProcessedData.objects.filter(node_ID=1).values_list('weight', flat=True)),
+        'Bin2': (ProcessedData.objects.filter(node_ID=2).values_list('weight', flat=True)),
+        'Bin3': (ProcessedData.objects.filter(node_ID=3).values_list('weight', flat=True)),
+        'Bin4': (ProcessedData.objects.filter(node_ID=4).values_list('weight', flat=True)),
     }
     return Response(bin_data)
+
+from django.db.models import Q
+
+@api_view(['GET']) 
+def getWeightTimeData(request):
+    # Get the startDate and endDate from query parameters (assuming you pass them as query parameters)
+    start_date_str = request.GET.get('startDate')
+    end_date_str = request.GET.get('endDate')
+
+    # Convert the date strings to datetime objects
+    start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d')
+    # Add one day to the end date to make it inclusive
+    end_date = end_date + timedelta(days=1)
+    bin_data = {
+        'Bin1': {
+            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+                node_ID=1, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+            'weights': list(ProcessedData.objects.filter(
+                Q(node_ID=1) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+        },
+        'Bin2': {
+            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+                node_ID=2, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+            'weights': list(ProcessedData.objects.filter(
+                Q(node_ID=2) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+        },
+        'Bin3': {
+            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+                node_ID=3, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+            'weights': list(ProcessedData.objects.filter(
+                Q(node_ID=3) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+        },
+        'Bin4': {
+            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+                node_ID=4, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+            'weights': list(ProcessedData.objects.filter(
+                Q(node_ID=4) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+        },
+    }
+    return Response(bin_data)
+
 
 # This API endpoint gets only 10 elements from the whole array of attributes for each bin ID
 @api_view(['GET'])
@@ -296,6 +338,18 @@ def processing():
     mttc_data_json = json.dumps(mttc_data)
     mttc_timestamps_json = json.dumps(mttc_timestamps)
 
+    #For the weight graph
+    # Query the database for ProcessedData objects within the 7-day period
+    weight_processed_data = ProcessedData.objects.filter(timestamp__range=(start_date, end_date))
+    # Extract the Weight, timestamp, and bin ID data for the filtered ProcessedData objects
+    weight_data = [data.weight for data in weight_processed_data]
+    weight_data_float = [float(value) for value in weight_data]
+    weight_bin_ids = [data.node_ID for data in weight_processed_data]
+    weight_timestamps = [data.timestamp.astimezone(ph_tz).strftime('%m-%d') for data in weight_processed_data]
+
+    weight_data_json = json.dumps(weight_data_float)
+    weight_bin_ids_json = json.dumps(weight_bin_ids)
+    weight_timestamps_json = json.dumps(weight_timestamps)
     context = {
         'Bin1_ID': int(Node1["Node_ID"]),
         'Bin1_Fill_Level': int(Bin1_Fill_Level),
@@ -317,6 +371,9 @@ def processing():
         'mttc_data': mttc_data_json,
         'mttc_bin_ids': mttc_bin_ids_json,
         'mttc_timestamps': mttc_timestamps_json,
+        'weight_data': weight_data_json,
+        'weight_bin_ids': weight_bin_ids_json,
+        'weight_timestamps': weight_timestamps_json,
         
         'Bin2_ID': int(Node2["Node_ID"]),
         'Bin2_Fill_Level': int(Bin2_Fill_Level),
@@ -356,59 +413,63 @@ def processing():
     }
 
     #For Bin1
-    reading = ProcessedData(node_ID = int(Node1["Node_ID"]),
-              fill_level = int(Bin1_Fill_Level),
-              weight = Bin1_Weight,
-              mttc = Bin1_MTTC,
-              mq2_ppm = Node1["MQ2_Data"],
-              mq3_ppm = Node1["MQ3_Data"],
-              mq6_ppm = Node1["MQ6_Data"],
-              mq2_change = Bin1_MQ2_Change,
-              mq3_change = Bin1_MQ3_Change,
-              mq6_change = Bin1_MQ6_Change,
-              flame = int(Node1["Flame_Data"]))
+    reading = ProcessedData(
+    node_ID = Node1["Node_ID"],
+    fill_level= int(Bin1_Fill_Level),
+    weight = Bin1_Weight,
+    mttc = Bin1_MTTC,
+    mq2_ppm = Node1["MQ2_Data"],
+    mq3_ppm = Node1["MQ3_Data"],
+    mq6_ppm = Node1["MQ6_Data"],
+    mq2_change = Bin1_MQ2_Change,
+    mq3_change = Bin1_MQ3_Change,
+    mq6_change = Bin1_MQ6_Change,
+    flame = int(Node1["Flame_Data"]))
     reading.save()
 
     # For Bin2
-    reading2 = ProcessedData(node_ID = int(Node2["Node_ID"]),
-              fill_level=int(Bin2_Fill_Level),
-              weight = Bin2_Weight,
-              mttc=Bin2_MTTC,
-              mq2_ppm=Node2["MQ2_Data"],
-              mq3_ppm=Node2["MQ3_Data"],
-              mq6_ppm=Node2["MQ6_Data"],
-              mq2_change=Bin2_MQ2_Change,
-              mq3_change=Bin2_MQ3_Change,
-              mq6_change=Bin2_MQ6_Change,
-              flame = int(Node2["Flame_Data"]))
+    reading2 = ProcessedData(
+    node_ID = Node2["Node_ID"],
+    fill_level=int(Bin2_Fill_Level),
+    weight = Bin2_Weight,
+    mttc=Bin2_MTTC,
+    mq2_ppm=Node2["MQ2_Data"],
+    mq3_ppm=Node2["MQ3_Data"],
+    mq6_ppm=Node2["MQ6_Data"],
+    mq2_change=Bin2_MQ2_Change,
+    mq3_change=Bin2_MQ3_Change,
+    mq6_change=Bin2_MQ6_Change,
+    flame = int(Node2["Flame_Data"]))
     reading2.save()
     
     # For Bin3
-    reading3 = ProcessedData(node_ID = int(Node3["Node_ID"]),
-              fill_level=int(Bin3_Fill_Level),
-              weight = Bin3_Weight,
-              mttc=Bin3_MTTC,
-              mq2_ppm=Node3["MQ2_Data"],
-              mq3_ppm=Node3["MQ3_Data"],
-              mq6_ppm=Node3["MQ6_Data"],
-              mq2_change=Bin3_MQ2_Change,
-              mq3_change=Bin3_MQ3_Change,
-              mq6_change=Bin3_MQ6_Change,
-              flame = int(Node3["Flame_Data"]))
+    reading3 = ProcessedData(
+    node_ID = Node3["Node_ID"],
+    fill_level=int(Bin3_Fill_Level),
+    weight = Bin3_Weight,
+    mttc=Bin3_MTTC,
+    mq2_ppm=Node3["MQ2_Data"],
+    mq3_ppm=Node3["MQ3_Data"],
+    mq6_ppm=Node3["MQ6_Data"],
+    mq2_change=Bin3_MQ2_Change,
+    mq3_change=Bin3_MQ3_Change,
+    mq6_change=Bin3_MQ6_Change,
+    flame = int(Node3["Flame_Data"]))
     reading3.save()
     
     # For Bin4
-    reading4 = ProcessedData(node_ID = int(Node4["Node_ID"]),
-              fill_level=int(Bin4_Fill_Level),
-              weight = Bin4_Weight,
-              mttc=Bin4_MTTC,
-              mq2_ppm=Node4["MQ2_Data"],
-              mq3_ppm=Node4["MQ3_Data"],
-              mq6_ppm=Node4["MQ6_Data"],
-              mq2_change=Bin4_MQ2_Change,
-              mq3_change=Bin4_MQ3_Change,
-              mq6_change=Bin4_MQ6_Change,
-              flame = int(Node4["Flame_Data"]))
+    reading4 = ProcessedData(
+    node_ID = Node4["Node_ID"],
+    fill_level=int(Bin4_Fill_Level),
+    weight = Bin4_Weight,
+    mttc=Bin4_MTTC,
+    mq2_ppm=Node4["MQ2_Data"],
+    mq3_ppm=Node4["MQ3_Data"],
+    mq6_ppm=Node4["MQ6_Data"],
+    mq2_change=Bin4_MQ2_Change,
+    mq3_change=Bin4_MQ3_Change,
+    mq6_change=Bin4_MQ6_Change,
+    flame = int(Node4["Flame_Data"]))
     reading4.save()
 
     return context
@@ -421,7 +482,7 @@ def get_recent_sensor_data():
         data.date_time = timezone.localtime(data.date_time)
     return sensor_data      
 
-# endregion
+
 
 # region - Authentication
 class UserLoginView(LoginView):
