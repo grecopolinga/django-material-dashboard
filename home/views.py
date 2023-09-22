@@ -12,6 +12,7 @@ from django.utils import timezone
 from .serializers import ProcessedDataSerializer, RawDataSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from collections import defaultdict
 import datetime
 import json
 import time
@@ -92,30 +93,64 @@ def getLatestData(request):
     }
     return Response(bin_data)    
 
+# @api_view(['POST'])
+# def receive_sensor_data(request):
+#     global Node1, Node2, Node3, Node4
+    
+#     if request.method == 'POST':
+#         # deserialize the sensor data
+#         serializer = RawDataSerializer(data=request.data)
+#         if serializer.is_valid():
+#             sensor_data = request.data
+            
+#             #If statement to check what node to store the data
+#             node_id = sensor_data.get('Node_ID')
+#             if node_id == 1:
+#                 node = Node1
+#             elif node_id == 2:
+#                 node = Node2
+#             elif node_id == 3:
+#                 node = Node3
+#             elif node_id == 4:
+#                 node = Node4
+#             else:
+#                 return Response({'error': 'Invalid node ID.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+#             node["Node_ID"] = sensor_data.get('Node_ID')
+#             node["Ultrasonic_CM"] = sensor_data.get('Ultrasonic_CM')
+#             node["MQ2_Data"] = sensor_data.get('MQ2_ppm')
+#             node["MQ3_Data"] = sensor_data.get('MQ3_ppm')
+#             node["MQ6_Data"] = sensor_data.get('MQ6_ppm')
+#             node["Flame_Data"] = sensor_data.get('Flame_Data')
+#             node["Weight_lbs"] = sensor_data.get('Weight_lbs')
+            
+#             processing()
+            
+#             return Response(serializer.data)
+    
+#     # return an error response if the request method is not POST
+#     return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+active_nodes = defaultdict(dict)
+
 @api_view(['POST'])
 def receive_sensor_data(request):
-    global Node1, Node2, Node3, Node4
-    
     if request.method == 'POST':
-        # deserialize the sensor data
+        # Deserialize the sensor data
         serializer = RawDataSerializer(data=request.data)
         if serializer.is_valid():
-            sensor_data = request.data
+            sensor_data = serializer.validated_data
             
-            #If statement to check what node to store the data
+            # Get the node ID from the sensor data
             node_id = sensor_data.get('Node_ID')
-            if node_id == 1:
-                node = Node1
-            elif node_id == 2:
-                node = Node2
-            elif node_id == 3:
-                node = Node3
-            elif node_id == 4:
-                node = Node4
-            else:
-                return Response({'error': 'Invalid node ID.'}, status=status.HTTP_400_BAD_REQUEST)
             
-            node["Node_ID"] = sensor_data.get('Node_ID')
+            # Check if the node is active
+            if node_id not in active_nodes:
+                return Response({'error': 'Invalid node ID or inactive node.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Store sensor data in the respective node dictionary
+            node = active_nodes[node_id]
+            node["Node_ID"] = node_id
             node["Ultrasonic_CM"] = sensor_data.get('Ultrasonic_CM')
             node["MQ2_Data"] = sensor_data.get('MQ2_ppm')
             node["MQ3_Data"] = sensor_data.get('MQ3_ppm')
@@ -123,11 +158,12 @@ def receive_sensor_data(request):
             node["Flame_Data"] = sensor_data.get('Flame_Data')
             node["Weight_lbs"] = sensor_data.get('Weight_lbs')
             
-            processing()
+            # Perform processing specific to the active node
+            processing(node)
             
             return Response(serializer.data)
     
-    # return an error response if the request method is not POST
+    # Return an error response if the request method is not POST
     return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
 def get_rate_of_change(value):
