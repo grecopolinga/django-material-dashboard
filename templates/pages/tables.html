@@ -46,424 +46,55 @@
           </div>
         </div>
         <div class="col-12">
-          <div class="card my-4">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-              <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">Authors table</h6>
+          <div class="mt-4 mb-4">
+              <div class="card z-index-2">
+                  <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent" style="background-color: black;">
+                      <div class="shadow-primary border-radius-lg py-3 pe-1 graph1-bg">
+                          <div class="chart">
+                              <canvas id="chart-fill-level-perday" class="chart-canvas" height="300"></canvas>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="card-body d-flex flex-column align-items-start">
+                      <div class="d-flex" style="padding-bottom: 10px;">
+                        <input type="text" name="fill-level-date" value="10/24/1984" />
+                        <i class="material-icons opacity-10 me-1" style="font-size: 25px;">event</i>
+                      </div>
+                      <div class="d-flex">
+                          <button class="btn btn-secondary btn-sm mb-2" id="filterBtn" style="background-color: rgb(216, 216, 216); color: #344767;">
+                              <i class="material-icons opacity-10 me-1" style="font-size: 30px;">tune</i>
+                          </button>
+                          
+                          <div id="binFilters" class="d-none ms-3" style="background-color: rgb(240, 238, 238); padding-top: 11px; padding-right: 11px; border-radius: 30px;">
+                              <div class="form-check form-check-inline">
+                                  <input class="form-check-input bin-checkbox" type="checkbox" id="bin1" name="bin1" checked data-bin-id="1">
+                                  <label class="form-check-label" for="bin1">Bin 1</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                  <input class="form-check-input bin-checkbox" type="checkbox" id="bin2" name="bin2" checked data-bin-id="2">
+                                  <label class="form-check-label" for="bin2">Bin 2</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                  <input class="form-check-input bin-checkbox" type="checkbox" id="bin3" name="bin3" checked data-bin-id="3">
+                                  <label class="form-check-label" for="bin3">Bin 3</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                  <input class="form-check-input bin-checkbox" type="checkbox" id="bin4" name="bin4" checked data-bin-id="4">
+                                  <label class="form-check-label" for="bin4">Bin 4</label>
+                              </div>
+                          </div>
+                      </div>
+                      
+                      <h6 class="mb-0" style="padding-top: 10px;">Bin Capacity and Fill-up Trend History</h6>
+                      <p class="text-sm">Tracked data over time</p>
+                    
+                      <div class="d-flex">
+                          <i class="material-icons text-sm my-auto me-1">schedule</i>
+                          <p class="mb-0 text-sm">Recently retrieved from database</p>
+                      </div>
+                  </div>
               </div>
             </div>
-            <div class="card-body px-0 pb-2">
-              <div class="table-responsive p-0">
-                <table class="table align-items-center mb-0">
-                  <thead>
-                    <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Author</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Function</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Employed</th>
-                      <th class="text-secondary opacity-7"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="{% static 'img/team-2.jpg' %}" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">John Michael</h6>
-                            <p class="text-xs text-secondary mb-0">john@creative-tim.com</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">Manager</p>
-                        <p class="text-xs text-secondary mb-0">Organization</p>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="badge badge-sm bg-gradient-success">Online</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
-                      </td>
-                      <td class="align-middle">
-                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                          Edit
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="{% static 'img/team-3.jpg' %}" class="avatar avatar-sm me-3 border-radius-lg" alt="user2">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Alexa Liras</h6>
-                            <p class="text-xs text-secondary mb-0">alexa@creative-tim.com</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">Programator</p>
-                        <p class="text-xs text-secondary mb-0">Developer</p>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="badge badge-sm bg-gradient-secondary">Offline</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">11/01/19</span>
-                      </td>
-                      <td class="align-middle">
-                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                          Edit
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="{% static 'img/team-4.jpg' %}" class="avatar avatar-sm me-3 border-radius-lg" alt="user3">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Laurent Perrier</h6>
-                            <p class="text-xs text-secondary mb-0">laurent@creative-tim.com</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">Executive</p>
-                        <p class="text-xs text-secondary mb-0">Projects</p>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="badge badge-sm bg-gradient-success">Online</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">19/09/17</span>
-                      </td>
-                      <td class="align-middle">
-                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                          Edit
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="{% static 'img/team-3.jpg' %}" class="avatar avatar-sm me-3 border-radius-lg" alt="user4">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Michael Levi</h6>
-                            <p class="text-xs text-secondary mb-0">michael@creative-tim.com</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">Programator</p>
-                        <p class="text-xs text-secondary mb-0">Developer</p>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="badge badge-sm bg-gradient-success">Online</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">24/12/08</span>
-                      </td>
-                      <td class="align-middle">
-                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                          Edit
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="{% static 'img/team-2.jpg' %}" class="avatar avatar-sm me-3 border-radius-lg" alt="user5">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Richard Gran</h6>
-                            <p class="text-xs text-secondary mb-0">richard@creative-tim.com</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">Manager</p>
-                        <p class="text-xs text-secondary mb-0">Executive</p>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="badge badge-sm bg-gradient-secondary">Offline</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">04/10/21</span>
-                      </td>
-                      <td class="align-middle">
-                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                          Edit
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="{% static 'img/team-4.jpg' %}" class="avatar avatar-sm me-3 border-radius-lg" alt="user6">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Miriam Eric</h6>
-                            <p class="text-xs text-secondary mb-0">miriam@creative-tim.com</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">Programator</p>
-                        <p class="text-xs text-secondary mb-0">Developer</p>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="badge badge-sm bg-gradient-secondary">Offline</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">14/09/20</span>
-                      </td>
-                      <td class="align-middle">
-                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                          Edit
-                        </a>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="card my-4">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-              <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">Projects table</h6>
-              </div>
-            </div>
-            <div class="card-body px-0 pb-2">
-              <div class="table-responsive p-0">
-                <table class="table align-items-center justify-content-center mb-0">
-                  <thead>
-                    <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Project</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Budget</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2">Completion</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2">
-                          <div>
-                            <img src="{% static 'img/small-logos/logo-asana.svg' %}" class="avatar avatar-sm rounded-circle me-2" alt="spotify">
-                          </div>
-                          <div class="my-auto">
-                            <h6 class="mb-0 text-sm">Asana</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-sm font-weight-bold mb-0">$2,500</p>
-                      </td>
-                      <td>
-                        <span class="text-xs font-weight-bold">working</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <div class="d-flex align-items-center justify-content-center">
-                          <span class="me-2 text-xs font-weight-bold">60%</span>
-                          <div>
-                            <div class="progress">
-                              <div class="progress-bar bg-gradient-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="align-middle">
-                        <button class="btn btn-link text-secondary mb-0">
-                          <i class="fa fa-ellipsis-v text-xs"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2">
-                          <div>
-                            <img src="{% static 'img/small-logos/github.svg' %}" class="avatar avatar-sm rounded-circle me-2" alt="invision">
-                          </div>
-                          <div class="my-auto">
-                            <h6 class="mb-0 text-sm">Github</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-sm font-weight-bold mb-0">$5,000</p>
-                      </td>
-                      <td>
-                        <span class="text-xs font-weight-bold">done</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <div class="d-flex align-items-center justify-content-center">
-                          <span class="me-2 text-xs font-weight-bold">100%</span>
-                          <div>
-                            <div class="progress">
-                              <div class="progress-bar bg-gradient-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="align-middle">
-                        <button class="btn btn-link text-secondary mb-0" aria-haspopup="true" aria-expanded="false">
-                          <i class="fa fa-ellipsis-v text-xs"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2">
-                          <div>
-                            <img src="{% static 'img/small-logos/logo-atlassian.svg' %}" class="avatar avatar-sm rounded-circle me-2" alt="jira">
-                          </div>
-                          <div class="my-auto">
-                            <h6 class="mb-0 text-sm">Atlassian</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-sm font-weight-bold mb-0">$3,400</p>
-                      </td>
-                      <td>
-                        <span class="text-xs font-weight-bold">canceled</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <div class="d-flex align-items-center justify-content-center">
-                          <span class="me-2 text-xs font-weight-bold">30%</span>
-                          <div>
-                            <div class="progress">
-                              <div class="progress-bar bg-gradient-danger" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="30" style="width: 30%;"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="align-middle">
-                        <button class="btn btn-link text-secondary mb-0" aria-haspopup="true" aria-expanded="false">
-                          <i class="fa fa-ellipsis-v text-xs"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2">
-                          <div>
-                            <img src="{% static 'img/small-logos/bootstrap.svg' %}" class="avatar avatar-sm rounded-circle me-2" alt="webdev">
-                          </div>
-                          <div class="my-auto">
-                            <h6 class="mb-0 text-sm">Bootstrap</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-sm font-weight-bold mb-0">$14,000</p>
-                      </td>
-                      <td>
-                        <span class="text-xs font-weight-bold">working</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <div class="d-flex align-items-center justify-content-center">
-                          <span class="me-2 text-xs font-weight-bold">80%</span>
-                          <div>
-                            <div class="progress">
-                              <div class="progress-bar bg-gradient-info" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="80" style="width: 80%;"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="align-middle">
-                        <button class="btn btn-link text-secondary mb-0" aria-haspopup="true" aria-expanded="false">
-                          <i class="fa fa-ellipsis-v text-xs"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2">
-                          <div>
-                            <img src="{% static 'img/small-logos/logo-slack.svg' %}" class="avatar avatar-sm rounded-circle me-2" alt="slack">
-                          </div>
-                          <div class="my-auto">
-                            <h6 class="mb-0 text-sm">Slack</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-sm font-weight-bold mb-0">$1,000</p>
-                      </td>
-                      <td>
-                        <span class="text-xs font-weight-bold">canceled</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <div class="d-flex align-items-center justify-content-center">
-                          <span class="me-2 text-xs font-weight-bold">0%</span>
-                          <div>
-                            <div class="progress">
-                              <div class="progress-bar bg-gradient-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width: 0%;"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="align-middle">
-                        <button class="btn btn-link text-secondary mb-0" aria-haspopup="true" aria-expanded="false">
-                          <i class="fa fa-ellipsis-v text-xs"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2">
-                          <div>
-                            <img src="{% static 'img/small-logos/devto.svg' %}" class="avatar avatar-sm rounded-circle me-2" alt="xd">
-                          </div>
-                          <div class="my-auto">
-                            <h6 class="mb-0 text-sm">Devto</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-sm font-weight-bold mb-0">$2,300</p>
-                      </td>
-                      <td>
-                        <span class="text-xs font-weight-bold">done</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <div class="d-flex align-items-center justify-content-center">
-                          <span class="me-2 text-xs font-weight-bold">100%</span>
-                          <div>
-                            <div class="progress">
-                              <div class="progress-bar bg-gradient-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="align-middle">
-                        <button class="btn btn-link text-secondary mb-0" aria-haspopup="true" aria-expanded="false">
-                          <i class="fa fa-ellipsis-v text-xs"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       {% include 'includes/footer.html' %}
@@ -479,6 +110,11 @@
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
   <script>
     let Bin1Total, Bin2Total, Bin3Total, Bin4Total;
+      // Toggle binFilters visibility
+      document.getElementById('filterBtn').addEventListener('click', function() {
+          var binFilters = document.getElementById('binFilters');
+          binFilters.classList.toggle('d-none');
+      });
     // Function to fetch data from the API
     function fetchData() {
       fetch('/api/getWeightData') 
@@ -807,6 +443,267 @@
 
         return dailyWeights;
       }
+      var FillLevelChart;
+      // Add event listener to checkboxes
+    var fill_level_checkboxes = document.querySelectorAll('.bin-checkbox');
+      fill_level_checkboxes.forEach(function (checkbox) {
+          checkbox.addEventListener('change', function () {
+              var binId = this.getAttribute('data-bin-id');
+              var datasetIndex = parseInt(binId) - 1; // Datasets are zero-based
+              FillLevelChart.data.datasets[datasetIndex].hidden = !this.checked;
+              FillLevelChart.update();
+          });
+      });
+      // Single Date Picker
+      $(function() {
+        $('input[name="fill-level-date"]').daterangepicker({
+          singleDatePicker: true,
+          showDropdowns: true,
+          minYear: 1901,
+          maxYear: parseInt(moment().format('YYYY'), 10),
+          startDate: moment(), // Set today's date as the default
+          startView: 'months', // Specify the start view as 'months'
+          format: 'MM/DD/YYYY', // Specify the desired date format
+          maxDate: moment(), // Prevent selecting dates later than today
+        }, function(start, end, label) {
+            fetchFillLevelData(start);
+        });
+      });
+      function fetchFillLevelData(Date) {
+        const url = `/api/getFillLevelData?Date=${Date.format('YYYY-MM-DD')}`;
+
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            console.log(data)
+            const bin1Data = data['Bin1'];
+            const bin2Data = data['Bin2'];
+            const bin3Data = data['Bin3'];
+            const bin4Data = data['Bin4'];
+            const parsedTimestamps = [];
+            // Generate all possible timestamps from 00:00 to 23:59
+            for (var hour = 0; hour < 24; hour++) {
+                for (var minute = 0; minute < 60; minute += 30) {
+                    var timestamp = ('0' + hour).slice(-2) + ':' + ('0' + minute).slice(-2);
+                    parsedTimestamps.push(timestamp);
+                }
+            }
+            fillLevelsBin1 = getFillLevelsPerBin(bin1Data, parsedTimestamps);
+            fillLevelsBin2 = getFillLevelsPerBin(bin2Data, parsedTimestamps);
+            fillLevelsBin3 = getFillLevelsPerBin(bin3Data, parsedTimestamps);
+            fillLevelsBin4 = getFillLevelsPerBin(bin4Data, parsedTimestamps);
+            var ctx3 = document.getElementById("chart-fill-level-perday").getContext("2d");
+            if (FillLevelChart) {
+                FillLevelChart.destroy(); // Destroy the existing chart if it exists
+              }
+            FillLevelChart = new Chart(ctx3, {
+              type: "line",
+              data: {
+                labels: parsedTimestamps,
+                datasets: [
+                    {
+                      label: "Bin 1",
+                      tension: 0,
+                      borderWidth: 0,
+                      pointRadius: 5,
+                      pointBackgroundColor: "rgba(0, 128, 0, 0.7)",
+                      pointBorderColor: "transparent",
+                      borderColor: "rgba(0, 128, 0, 0.7)",
+                      borderWidth: 4,
+                      backgroundColor: "transparent",
+                      fill: true,
+                      data: fillLevelsBin1,
+                      maxBarThickness: 6
+                    },
+                    {
+                      label: "Bin 2",
+                      tension: 0,
+                      borderWidth: 0,
+                      pointRadius: 5,
+                      pointBackgroundColor: "rgba(0, 0, 128, 0.7)",
+                      pointBorderColor: "transparent",
+                      borderColor: "rgba(0, 0, 128, 0.7)",
+                      borderWidth: 4,
+                      backgroundColor: "transparent",
+                      fill: true,
+                      data: fillLevelsBin2,
+                      maxBarThickness: 6
+                    },
+                    {
+                      label: "Bin 3",
+                      tension: 0,
+                      borderWidth: 0,
+                      pointRadius: 5,
+                      pointBackgroundColor: "rgba(128, 0, 0, 0.7)",
+                      pointBorderColor: "transparent",
+                      borderColor: "rgba(128, 0, 0, 0.7)",
+                      borderWidth: 4,
+                      backgroundColor: "transparent",
+                      fill: true,
+                      data: fillLevelsBin3,
+                      maxBarThickness: 6
+                    },
+                    {
+                      label: "Bin 4",
+                      tension: 0,
+                      borderWidth: 0,
+                      pointRadius: 5,
+                      pointBackgroundColor: "rgba(128, 0, 128, 0.7)",
+                      pointBorderColor: "transparent",
+                      borderColor: "rgba(128, 0, 128, 0.7)",
+                      borderWidth: 4,
+                      backgroundColor: "transparent",
+                      fill: true,
+                      data: fillLevelsBin4,
+                      maxBarThickness: 6
+                    },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    display: true,
+                  }
+                },
+                interaction: {
+                  intersect: false,
+                  mode: 'index',
+                },
+                scales: {
+                  y: {
+                    suggestedMin: 0,
+                    suggestedMax: 100,
+                    grid: {
+                      drawBorder: false,
+                      display: true,
+                      drawOnChartArea: true,
+                      drawTicks: false,
+                      borderDash: [5, 5],
+                      color: 'black'
+                    },
+                    ticks: {
+                      display: true,
+                      color: 'black',
+                      padding: 10,
+                      font: {
+                        size: 14,
+                        weight: 300,
+                        family: "Roboto",
+                        style: 'normal',
+                        lineHeight: 2
+                      },
+                    },
+                    title: {
+                      display: true,
+                      text: 'Fill-level (%)', // Your y-axis label
+                      color: 'black',
+                      font: {
+                        size: 14,
+                        weight: 300,
+                        family: "Roboto",
+                        style: 'normal',
+                        lineHeight: 2
+                      },
+                      padding: {
+                        top: 10 // Adjust the top padding to position the label as needed
+                      }
+                    }
+                  },
+                x: {
+                  grid: {
+                    drawBorder: false,
+                    display: false,
+                    drawOnChartArea: false,
+                    drawTicks: false,
+                    borderDash: [5, 5]
+                  },
+                  ticks: {
+                    display: true,
+                    color: 'black',
+                    padding: 10,
+                    font: {
+                      size: 14,
+                      weight: 300,
+                      family: "Roboto",
+                      style: 'normal',
+                      lineHeight: 2
+                    },
+                  },
+                  title: {
+                    display: true,
+                    text: 'Time', // Your x-axis label
+                    color: 'black',
+                    font: {
+                      size: 14,
+                      weight: 300,
+                      family: "Roboto",
+                      style: 'normal',
+                      lineHeight: 2
+                    },
+                    padding: {
+                      top:1 // Adjust the top padding to position the label as needed
+                    }
+                  }
+                },
+                },
+                animation: {
+                  duration: 1000, // Animation duration in milliseconds
+                  easing: 'easeInOutQuad', // Easing function (linear, easeInQuad, easeOutQuad, easeInOutQuad, etc.)
+                  },
+              },
+            });
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+          });
+      }
+
+      function getFillLevelsPerBin(binData, parsedTimestamps) {
+
+          // Initialize fillLevelMaps
+          var fillLevelMaps = {};
+
+          const timestamps = binData.map(item => item.timestamp_time);
+          const fillLevels = binData.map(item => item.fill_level);
+
+          // Populate fill levels based on existing data for each bin
+          for (var i = 0; i < timestamps.length; i++) {
+              fillLevelMaps[timestamps[i]] = fillLevels[i];
+          }
+          console.log(fillLevelMaps);
+          console.log(timestamps);
+          console.log(fillLevels);
+          var finalFillLevels = [];
+          for (var i = 0; i < parsedTimestamps.length; i++) {
+                var currentTimestamp = parsedTimestamps[i];
+                var closestTimestamp = getClosestDataPoint(currentTimestamp, fillLevelMaps);
+                finalFillLevels.push(fillLevelMaps[closestTimestamp] || 0);
+          }
+          console.log(finalFillLevels);
+          return finalFillLevels;
+      }
+
+      // Function to get the closest data point within a 15-minute range for a specific bin
+      function getClosestDataPoint(targetTimestamp, binFillLevelMap) {
+          var targetTime = new Date('2000-01-01T' + targetTimestamp + ':00');
+          var closestTimestamp = null;
+          var minTimeDiff = Number.MAX_VALUE;
+
+          for (var timestamp in binFillLevelMap) {
+              var currTime = new Date('2000-01-01T' + timestamp + ':00');
+              var timeDiff = Math.abs(currTime - targetTime) / 60000;
+
+              if (timeDiff <= 15 && timeDiff < minTimeDiff) {
+                  minTimeDiff = timeDiff;
+                  closestTimestamp = timestamp;
+              }
+          }
+
+          return closestTimestamp;
+      }
+      
       fetchData();
 
        

@@ -122,6 +122,57 @@ def getWeightTimeData(request):
     }
     return Response(bin_data)
 
+@api_view(['GET']) 
+def getFillLevelData(request):
+    # Get the date from query parameters (assuming you pass it as a query parameter)
+    date_str = request.GET.get('Date')
+    
+    # Convert the date string to a datetime object in the default timezone (assuming it's UTC)
+    date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+    
+    # Convert the date to the desired timezone (Asia/Manila)
+    ph_tz = pytz.timezone('Asia/Manila')
+
+    # Query the database to get fill level and timestamp data for all bins on the specified date
+    fill_level_data = {
+        'Bin1': [
+            {
+                'timestamp_time': timestamp.astimezone(ph_tz).strftime('%H:%M'),
+                'fill_level': fill_level,
+            }
+            for timestamp, fill_level in ProcessedData.objects.filter(
+                Q(node_ID=1) & Q(timestamp__date=date)
+            ).values_list('timestamp', 'fill_level')
+        ],
+        'Bin2': [
+            {
+                'timestamp_time': timestamp.astimezone(ph_tz).strftime('%H:%M'),
+                'fill_level': fill_level,
+            }
+            for timestamp, fill_level in ProcessedData.objects.filter(
+                Q(node_ID=2) & Q(timestamp__date=date)
+            ).values_list('timestamp', 'fill_level')
+        ],
+        'Bin3': [
+            {
+                'timestamp_time': timestamp.astimezone(ph_tz).strftime('%H:%M'),
+                'fill_level': fill_level,
+            }
+            for timestamp, fill_level in ProcessedData.objects.filter(
+                Q(node_ID=3) & Q(timestamp__date=date)
+            ).values_list('timestamp', 'fill_level')
+        ],
+        'Bin4': [
+            {
+                'timestamp_time': timestamp.astimezone(ph_tz).strftime('%H:%M'),
+                'fill_level': fill_level,
+            }
+            for timestamp, fill_level in ProcessedData.objects.filter(
+                Q(node_ID=4) & Q(timestamp__date=date)
+            ).values_list('timestamp', 'fill_level')
+        ],
+    }
+    return Response(fill_level_data)
 
 # This API endpoint gets only 10 elements from the whole array of attributes for each bin ID
 @api_view(['GET'])
