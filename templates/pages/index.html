@@ -1224,7 +1224,18 @@
                 plugins: {
                   legend: {
                     display: true,
-                  }
+                  },
+                  title: {
+                    display: true,
+                    text: 'Bin 1',
+                    font: {
+                      size: 24, // Adjust the font size as needed
+                      family: 'Roboto', // Adjust the font family as needed
+                    },
+                    padding: {
+                      top: 5, // Adjust the top padding to position the title as needed
+                    },
+                  },
                 },
                 interaction: {
                   intersect: false,
@@ -1313,43 +1324,51 @@
         });
     }
     function updateChartDatasets(binId) {
-      let mq2Data, mq3Data, mq6Data;
+        let mq2Data, mq3Data, mq6Data;
+        let binTitle;
 
-      // Determine the selected data based on the bin ID
-      switch (binId) {
-        case '1':
-          mq2Data = Bin1_mq2_change;
-          mq3Data = Bin1_mq3_change;
-          mq6Data = Bin1_mq6_change;
-          break;
-        case '2':
-          mq2Data = Bin2_mq2_change;
-          mq3Data = Bin2_mq3_change;
-          mq6Data = Bin2_mq6_change;
-          break;
-        case '3':
-          mq2Data = Bin3_mq2_change;
-          mq3Data = Bin3_mq3_change;
-          mq6Data = Bin3_mq6_change;
-          break;
-        case '4':
-          mq2Data = Bin4_mq2_change;
-          mq3Data = Bin4_mq3_change;
-          mq6Data = Bin4_mq6_change;
-          break;
-        default:
-          // Handle default case if needed
-          break;
+        // Determine the selected data and title based on the bin ID
+        switch (binId) {
+          case '1':
+            mq2Data = Bin1_mq2_change;
+            mq3Data = Bin1_mq3_change;
+            mq6Data = Bin1_mq6_change;
+            binTitle = 'Bin 1';
+            break;
+          case '2':
+            mq2Data = Bin2_mq2_change;
+            mq3Data = Bin2_mq3_change;
+            mq6Data = Bin2_mq6_change;
+            binTitle = 'Bin 2';
+            break;
+          case '3':
+            mq2Data = Bin3_mq2_change;
+            mq3Data = Bin3_mq3_change;
+            mq6Data = Bin3_mq6_change;
+            binTitle = 'Bin 3';
+            break;
+          case '4':
+            mq2Data = Bin4_mq2_change;
+            mq3Data = Bin4_mq3_change;
+            mq6Data = Bin4_mq6_change;
+            binTitle = 'Bin 4';
+            break;
+          default:
+            // Handle default case if needed
+            break;
+        }
+
+        // Update the chart title
+        RateOfChangeChart.options.plugins.title.text = binTitle;
+
+        // Update the chart datasets
+        RateOfChangeChart.data.datasets[0].data = mq2Data;
+        RateOfChangeChart.data.datasets[1].data = mq3Data;
+        RateOfChangeChart.data.datasets[2].data = mq6Data;
+
+        // Update the chart
+        RateOfChangeChart.update();
       }
-
-      // Update the chart datasets
-      RateOfChangeChart.data.datasets[0].data = mq2Data;
-      RateOfChangeChart.data.datasets[1].data = mq3Data;
-      RateOfChangeChart.data.datasets[2].data = mq6Data;
-
-      // Update the chart
-      RateOfChangeChart.update();
-    }
 
         // Add event listeners to the radio buttons
     binRadioButtons.forEach(radioButton => {
