@@ -140,7 +140,7 @@
                           </div>
                       </div>
                       <h6 class="mb-0" style="padding-top: 10px;">Bin Capacity and Fill-up Trend</h6>
-                      <p class="text-sm">Tracked data over time</p>
+                      <p class="text-sm">The graph shows the fill level trend of each bin for the day with 30-minute intervals.</p>
                     
                       <div class="d-flex">
                           <i class="material-icons text-sm my-auto me-1">schedule</i>
@@ -151,7 +151,56 @@
           </div>
       </div>
 
-      <!-- Row 2 (2 Charts) -->
+      <!-- Row 2 (1 chart) -->
+      <div class="row mt-4">
+        <div class="mt-4 mb-4">
+            <div class="card z-index-2">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent" style="background-color: black;">
+                    <div class="shadow-primary border-radius-lg py-3 pe-1 graph1-bg">
+                        <div class="chart">
+                            <canvas id="chart-rate-of-change" class="chart-canvas" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-column align-items-start">
+                    <div class="d-flex">
+                      <button class="btn btn-secondary btn-sm mb-2" id="RateOfChangefilterBtn" style="background-color: rgb(216, 216, 216); color: #344767;">
+                        <i class="material-icons opacity-10 me-1" style="font-size: 30px;">tune</i>
+                    </button>
+                    <div id="RateOfChangebinFilters" class="ms-3 d-none" style="background-color: rgb(240, 238, 238); padding-top: 11px; padding-right: 11px; border-radius: 30px;">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input bin-radio" type="radio" id="bin1" name="binSelection" data-bin-id="1" checked>
+                            <label class="form-check-label" for="bin1">Bin 1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input bin-radio" type="radio" id="bin2" name="binSelection" data-bin-id="2">
+                            <label class="form-check-label" for="bin2">Bin 2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input bin-radio" type="radio" id="bin3" name="binSelection" data-bin-id="3">
+                            <label class="form-check-label" for="bin3">Bin 3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input bin-radio" type="radio" id="bin4" name="binSelection" data-bin-id="4">
+                            <label class="form-check-label" for="bin4">Bin 4</label>
+                        </div>
+                    </div>
+                    
+                    
+                    </div>
+                    <h6 class="mb-0" style="padding-top: 10px;">Gas Sensors Rate of Change Graph</h6>
+                    <p class="text-sm">The graph shows the rate of change of each gas sensors for the past 30 minutes.</p>
+                  
+                    <div class="d-flex">
+                        <i class="material-icons text-sm my-auto me-1">schedule</i>
+                        <p class="mb-0 text-sm">Recently retrieved from database</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+      <!-- Row 3 (2 Charts) -->
       <div class="row mt-2 justify-content-center d-flex justify-content-evenly">
         <div class="col-lg-6 mt-4 mb-4">
           <div class="card z-index-2  ">
@@ -523,6 +572,13 @@
       // Toggle binFilters visibility
       document.getElementById('MTTCfilterBtn').addEventListener('click', function() {
           var binFilters = document.getElementById('MTTCbinFilters');
+          binFilters.classList.toggle('d-none');
+      });
+
+      // Toggle binFilters visibility
+    // Toggle binFilters visibility
+      document.getElementById('RateOfChangefilterBtn').addEventListener('click', function() {
+          var binFilters = document.getElementById('RateOfChangebinFilters');
           binFilters.classList.toggle('d-none');
       });
 
@@ -1040,6 +1096,292 @@
     percentWeight.textContent = '+' + percentageIncreaseWeight + '%';
     console.log(percentageIncreaseWeight);
     // ==================================== END GRAPH 3 =========================================
+    // ====================================  GRAPH 4 ============================================
+    let Bin1_data, Bin2_data, Bin3_data, Bin4_data;
+    let Bin1_mq2_change, Bin1_mq3_change, Bin1_mq6_change;
+    let Bin2_mq2_change, Bin2_mq3_change, Bin2_mq6_change;
+    let Bin3_mq2_change, Bin3_mq3_change, Bin3_mq6_change;
+    let Bin4_mq2_change, Bin4_mq3_change, Bin4_mq6_change;
+    var RateOfChangeChart;
+    const binRadioButtons = document.querySelectorAll(".bin-radio");
+    function fetchRateOfChange() {
+        fetch('/api/getRateOfChange', {
+            method: 'GET'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Save data to respective variables
+            console.log(data);
+            Bin1_data = data['Bin1'];
+            Bin2_data = data['Bin2'];
+            Bin3_data = data['Bin3'];
+            Bin4_data = data['Bin4'];
+            const parsedTimestamps = [];
+            const currentTime = new Date(); // Current time
+            const seenTimestamps = new Set();
+
+            // Generate timestamps for each minute for the past 30 minutes
+            for (let i = 29; i >= 0; i--) {
+                const minute = ('0' + currentTime.getMinutes()).slice(-2);
+                const hour = ('0' + currentTime.getHours()).slice(-2);
+                const timestamp = `${hour}:${minute}`;
+
+                // Only add unique timestamps
+                if (!seenTimestamps.has(timestamp)) {
+                    parsedTimestamps.unshift(timestamp);
+                    seenTimestamps.add(timestamp);
+                }
+
+                // Move back one minute
+                currentTime.setTime(currentTime.getTime() - 60 * 1000);
+            }
+            console.log(parsedTimestamps);
+            //For Bin 1
+            Bin1_data = getDataPoints(Bin1_data,parsedTimestamps);
+            Bin1_mq2_change = Bin1_data.map(entry => entry.mq2_change);
+            Bin1_mq3_change = Bin1_data.map(entry => entry.mq3_change);
+            Bin1_mq6_change = Bin1_data.map(entry => entry.mq6_change);
+            //For Bin 2
+            Bin2_data = getDataPoints(Bin2_data,parsedTimestamps);
+            Bin2_mq2_change = Bin2_data.map(entry => entry.mq2_change);
+            Bin2_mq3_change = Bin2_data.map(entry => entry.mq3_change);
+            Bin2_mq6_change = Bin2_data.map(entry => entry.mq6_change);
+            //For Bin 3
+            Bin3_data = getDataPoints(Bin3_data,parsedTimestamps);
+            Bin3_mq2_change = Bin3_data.map(entry => entry.mq2_change);
+            Bin3_mq3_change = Bin3_data.map(entry => entry.mq3_change);
+            Bin3_mq6_change = Bin3_data.map(entry => entry.mq6_change);
+            //For Bin 4
+            Bin4_data = getDataPoints(Bin4_data,parsedTimestamps);
+            Bin4_mq2_change = Bin4_data.map(entry => entry.mq2_change);
+            Bin4_mq3_change = Bin4_data.map(entry => entry.mq3_change);
+            Bin4_mq6_change = Bin4_data.map(entry => entry.mq6_change);
+            console.log('bin1',Bin1_data);
+            console.log('bin2',Bin2_data);
+            console.log('bin3',Bin3_data);
+            console.log('bin4',Bin4_data);
+            var ctx4 = document.getElementById("chart-rate-of-change").getContext("2d");
+            if (RateOfChangeChart) {
+              RateOfChangeChart.destroy(); // Destroy the existing chart if it exists
+              }
+              RateOfChangeChart = new Chart(ctx4, {
+              type: "line",
+              data: {
+                labels: parsedTimestamps,
+                datasets: [
+                    {
+                      label: "MQ2",
+                      tension: 0,
+                      borderWidth: 0,
+                      pointRadius: 5,
+                      pointBackgroundColor: "rgba(0, 128, 0, 0.7)",
+                      pointBorderColor: "transparent",
+                      borderColor: "rgba(0, 128, 0, 0.7)",
+                      borderWidth: 4,
+                      backgroundColor: "transparent",
+                      fill: true,
+                      data: Bin1_mq2_change,
+                      maxBarThickness: 6
+                    },
+                    {
+                      label: "MQ3",
+                      tension: 0,
+                      borderWidth: 0,
+                      pointRadius: 5,
+                      pointBackgroundColor: "rgba(0, 0, 128, 0.7)",
+                      pointBorderColor: "transparent",
+                      borderColor: "rgba(0, 0, 128, 0.7)",
+                      borderWidth: 4,
+                      backgroundColor: "transparent",
+                      fill: true,
+                      data: Bin1_mq3_change,
+                      maxBarThickness: 6
+                    },
+                    {
+                      label: "MQ6",
+                      tension: 0,
+                      borderWidth: 0,
+                      pointRadius: 5,
+                      pointBackgroundColor: "rgba(128, 0, 0, 0.7)",
+                      pointBorderColor: "transparent",
+                      borderColor: "rgba(128, 0, 0, 0.7)",
+                      borderWidth: 4,
+                      backgroundColor: "transparent",
+                      fill: true,
+                      data: Bin1_mq6_change,
+                      maxBarThickness: 6
+                    },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    display: true,
+                  }
+                },
+                interaction: {
+                  intersect: false,
+                  mode: 'index',
+                },
+                scales: {
+                  y: {
+                    grid: {
+                      drawBorder: false,
+                      display: true,
+                      drawOnChartArea: true,
+                      drawTicks: false,
+                      borderDash: [5, 5],
+                      color: 'black'
+                    },
+                    ticks: {
+                      display: true,
+                      color: 'black',
+                      padding: 10,
+                      font: {
+                        size: 14,
+                        weight: 300,
+                        family: "Roboto",
+                        style: 'normal',
+                        lineHeight: 2
+                      },
+                    },
+                    title: {
+                      display: true,
+                      text: 'Rate of change', // Your y-axis label
+                      color: 'black',
+                      font: {
+                        size: 14,
+                        weight: 300,
+                        family: "Roboto",
+                        style: 'normal',
+                        lineHeight: 2
+                      },
+                      padding: {
+                        top: 10 // Adjust the top padding to position the label as needed
+                      }
+                    }
+                  },
+                x: {
+                  grid: {
+                    drawBorder: false,
+                    display: false,
+                    drawOnChartArea: false,
+                    drawTicks: false,
+                    borderDash: [5, 5]
+                  },
+                  ticks: {
+                    display: true,
+                    color: 'black',
+                    padding: 10,
+                    font: {
+                      size: 14,
+                      weight: 300,
+                      family: "Roboto",
+                      style: 'normal',
+                      lineHeight: 2
+                    },
+                  },
+                  title: {
+                    display: true,
+                    text: 'Time (Last 30 minutes)', // Your x-axis label
+                    color: 'black',
+                    font: {
+                      size: 14,
+                      weight: 300,
+                      family: "Roboto",
+                      style: 'normal',
+                      lineHeight: 2
+                    },
+                    padding: {
+                      top:1 // Adjust the top padding to position the label as needed
+                    }
+                  }
+                },
+                },
+              },
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+    }
+    function updateChartDatasets(binId) {
+      let mq2Data, mq3Data, mq6Data;
+
+      // Determine the selected data based on the bin ID
+      switch (binId) {
+        case '1':
+          mq2Data = Bin1_mq2_change;
+          mq3Data = Bin1_mq3_change;
+          mq6Data = Bin1_mq6_change;
+          break;
+        case '2':
+          mq2Data = Bin2_mq2_change;
+          mq3Data = Bin2_mq3_change;
+          mq6Data = Bin2_mq6_change;
+          break;
+        case '3':
+          mq2Data = Bin3_mq2_change;
+          mq3Data = Bin3_mq3_change;
+          mq6Data = Bin3_mq6_change;
+          break;
+        case '4':
+          mq2Data = Bin4_mq2_change;
+          mq3Data = Bin4_mq3_change;
+          mq6Data = Bin4_mq6_change;
+          break;
+        default:
+          // Handle default case if needed
+          break;
+      }
+
+      // Update the chart datasets
+      RateOfChangeChart.data.datasets[0].data = mq2Data;
+      RateOfChangeChart.data.datasets[1].data = mq3Data;
+      RateOfChangeChart.data.datasets[2].data = mq6Data;
+
+      // Update the chart
+      RateOfChangeChart.update();
+    }
+
+        // Add event listeners to the radio buttons
+    binRadioButtons.forEach(radioButton => {
+      radioButton.addEventListener('change', function(event) {
+        if (event.target.checked) {
+          const selectedBinId = event.target.getAttribute('data-bin-id');
+          updateChartDatasets(selectedBinId);
+        }
+      });
+    });
+
+
+    function getDataPoints(bin_data, parsedTimestamps) {
+        const filledDataPoints = parsedTimestamps.map(timestamp => {
+            const matchingDataPoint = bin_data.find(entry => entry.timestamp_time === timestamp);
+
+            if (matchingDataPoint) {
+                return matchingDataPoint; // Use the existing data point if the timestamp matches
+            } else {
+                // Create a new data point with all mq_change values set to 1
+                return {
+                    timestamp_time: timestamp,
+                    mq2_change: 1,
+                    mq3_change: 1,
+                    mq6_change: 1,
+                };
+            }
+        });
+
+        return filledDataPoints;
+    }
+    // ==================================== END GRAPH 4 =========================================
   </script>
 <!-- Include jQuery (you can download it or use a CDN) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -1205,6 +1547,7 @@
   setInterval(fetchData, 5000);
   // Initial data fetch when the page loads
   fetchData();
+  fetchRateOfChange();
 </script>
 
   {% endblock scripts %}
