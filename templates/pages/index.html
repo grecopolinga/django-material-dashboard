@@ -7,100 +7,57 @@
 
     <div class="container-fluid py-4">
       <!--#region Start of div for Bin Cards -->
-      <div class="row">
-        <!-- Format Card for Bin 1 -->
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-          <div class="card" id="binCard1">
-            <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
-              id="b1_FLCard">
-                <!-- Icon for Bin 1 -->
-                <i class="material-icons icon opacity-10 mt-n2" style="font-size: 42px;" id="icon1">delete</i>
-              </div>
-              <div class="text-end pt-1">
-                <p class="text-md mb-0 text-capitalize">Bin 1 Fill Level</p>
-                <!-- Fill level Percentage Bin 1-->
-                <h4 class="mb-0" id="bin1FillLevel">...</h4>
-              </div>
-            </div>
-            <hr class="dark horizontal my-0">
-            <div class="card-footer p-3">
-              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder" id="bin1Weight">...</span>
-                <span style="font-size: 14px; opacity: 0.4;"> (Limit: 50 kg)</span>
-              </p>
-            </div>
+      <div class="row" id="binsRow">
+  <!-- Bins will be dynamically added here -->
+</div>
+<script>
+// Function to generate HTML for a bin card
+function generateBinCard(binNumber) {
+  return `
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card" id="binCard${binNumber}">
+        <div class="card-header p-3 pt-2">
+          <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
+            id="b${binNumber}_FLCard">
+            <!-- Icon for Bin ${binNumber} -->
+            <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;" id="icon${binNumber}">delete</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-md mb-0 text-capitalize">Bin ${binNumber} Fill Level</p>
+            <!-- Fill level Percentage Bin ${binNumber}-->
+            <h4 class="mb-0" id="bin${binNumber}FillLevel">...</h4>
           </div>
         </div>
-        <!-- Format Card for Bin 2 -->
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-          <div class="card" id="binCard2">
-            <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
-              id="b2_FLCard">
-                <!-- Icon for Bin 2 -->
-                <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;" id="icon2">delete</i>
-              </div>
-              <div class="text-end pt-1">
-                <p class="text-md mb-0 text-capitalize">Bin 2 Fill Level</p>
-                <!-- Fill level Percentage Bin 2-->
-                <h4 class="mb-0" id="bin2FillLevel">...</h4>
-              </div>
-            </div>
-            <hr class="dark horizontal my-0">
-            <div class="card-footer p-3">
-              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder" id="bin2Weight">...</span>
-                <span style="font-size: 14px; opacity: 0.4;"> (Limit: 50 kg)</span>
-              </p>
-            </div>
-          </div>
-        </div>
-        <!-- Format Card for Bin 3 -->
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-          <div class="card" id="binCard3">
-            <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
-              id="b3_FLCard">
-                <!-- Icon for Bin 3 -->
-                <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;" id="icon3">delete</i>
-              </div>
-              <div class="text-end pt-1">
-                <p class="text-md mb-0 text-capitalize">Bin 3 Fill Level</p>
-                <!-- Fill level Percentage Bin 3-->
-                <h4 class="mb-0" id="bin3FillLevel">...</h4>
-              </div>
-            </div>
-            <hr class="dark horizontal my-0">
-            <div class="card-footer p-3">
-              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder" id="bin3Weight">...</span>
-                <span style="font-size: 14px; opacity: 0.4;"> (Limit: 50 kg)</span>
-              </p>
-            </div>
-          </div>
-        </div>
-        <!-- Format Card for Bin 4 -->
-        <div class="col-xl-3 col-sm-6">
-          <div class="card" id="binCard4">
-            <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
-              id="b4_FLCard">
-                <!-- Icon for Bin 4 -->
-                <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;" id="icon4">delete_outline</i>
-              </div>
-              <div class="text-end pt-1">
-                <p class="text-md mb-0 text-capitalize">Bin 4 Fill Level</p>
-                <!-- Fill level Percentage Bin 4 -->
-                <h4 class="mb-0" id="bin4FillLevel">...</h4>
-              </div>
-            </div>
-            <hr class="dark horizontal my-0">
-            <div class="card-footer p-3">
-              <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder" id="bin4Weight">...</span>
-                <span style="font-size: 14px; opacity: 0.4;"> (Limit: 50 kg)</span>
-              </p>
-            </div>
-          </div>
+        <hr class="dark horizontal my-0">
+        <div class="card-footer p-3">
+          <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder" id="bin${binNumber}Weight">...</span>
+            <span style="font-size: 14px; opacity: 0.4;"> (Limit: 50 kg)</span>
+          </p>
         </div>
       </div>
+    </div>
+  `;
+}
+
+// Function to add existing active bins dynamically
+function addExistingBins(activeBins) {
+  const binsRow = document.getElementById('binsRow');
+
+  // Generate HTML for each active bin and append it to the row
+  activeBins.forEach(binNumber => {
+    const binCard = generateBinCard(binNumber);
+    binsRow.innerHTML += binCard;
+  });
+}
+
+// Example: List of active bin nodes
+const activeBins = [1, 2, 3, 4];
+
+// Add existing active bins when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  addExistingBins(activeBins);
+});
+</script>
       <!--#endregion -->
 
       <!--#region Start of div for Line Graphs and Charts-->

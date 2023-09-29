@@ -26,6 +26,7 @@ Node3 = {"Node_ID": 3, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ
 Node4 = {"Node_ID": 4, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
 
 nodes = {}
+active_nodes = defaultdict(dict)
 
 running = True
 previous_time = None
@@ -59,8 +60,8 @@ def index(request):
     # Initialize an empty list to store the context data for each active node
     all_node_contexts = []
 
-    # Loop through the active nodes and call processing() for each node
-    active_node_ids = [1, 2, 3, 4]  # Replace with the actual list of active node IDs
+    # Retrieve active node IDs from the active_nodes dictionary
+    active_node_ids = list(active_nodes.keys())
     for node_id in active_node_ids:
         node = get_node_data(node_id)  # You should implement a function to get the node data
         if node:
@@ -100,67 +101,118 @@ def navigator(request):
 
 # endregion
 
-# This API endpoint gets the whole array of attributes for each bin ID
-@api_view(['GET']) 
+# # This API endpoint gets the whole array of attributes for each bin ID
+# @api_view(['GET']) 
+# def getWeightData(request):
+#     bin_data = {
+#         'Bin1': (ProcessedData.objects.filter(node_ID=1).values_list('weight', flat=True)),
+#         'Bin2': (ProcessedData.objects.filter(node_ID=2).values_list('weight', flat=True)),
+#         'Bin3': (ProcessedData.objects.filter(node_ID=3).values_list('weight', flat=True)),
+#         'Bin4': (ProcessedData.objects.filter(node_ID=4).values_list('weight', flat=True)),
+#     }
+#     return Response(bin_data)
+
+# from django.db.models import Q
+
+# @api_view(['GET']) 
+# def getWeightTimeData(request):
+#     # Get the startDate and endDate from query parameters (assuming you pass them as query parameters)
+#     start_date_str = request.GET.get('startDate')
+#     end_date_str = request.GET.get('endDate')
+
+#     # Convert the date strings to datetime objects
+#     start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d')
+#     end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d')
+#     # Add one day to the end date to make it inclusive
+#     end_date = end_date + timedelta(days=1)
+#     bin_data = {
+#         'Bin1': {
+#             'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+#                 node_ID=1, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+#             'weights': list(ProcessedData.objects.filter(
+#                 Q(node_ID=1) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+#         },
+#         'Bin2': {
+#             'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+#                 node_ID=2, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+#             'weights': list(ProcessedData.objects.filter(
+#                 Q(node_ID=2) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+#         },
+#         'Bin3': {
+#             'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+#                 node_ID=3, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+#             'weights': list(ProcessedData.objects.filter(
+#                 Q(node_ID=3) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+#         },
+#         'Bin4': {
+#             'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+#                 node_ID=4, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+#             'weights': list(ProcessedData.objects.filter(
+#                 Q(node_ID=4) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+#         },
+#     }
+#     return Response(bin_data)
+
+
+# # This API endpoint gets only 10 elements from the whole array of attributes for each bin ID
+# @api_view(['GET'])
+# def getLatestData(request):
+#     bin_data = {
+#         'Bin1': ProcessedData.objects.filter(node_ID=1).order_by('-timestamp')[:10].values(),
+#         'Bin2': ProcessedData.objects.filter(node_ID=2).order_by('-timestamp')[:10].values(),
+#         'Bin3': ProcessedData.objects.filter(node_ID=3).order_by('-timestamp')[:10].values(),
+#         'Bin4': ProcessedData.objects.filter(node_ID=4).order_by('-timestamp')[:10].values(),
+#     }
+#     return Response(bin_data)
+
+def get_active_node_ids():
+    # Extract active node IDs from the keys of the active_nodes dictionary
+    return list(active_nodes.keys())
+
+def create_bin_data(node_id, start_date=None, end_date=None, limit=None):
+    filter_params = {'node_ID': node_id}
+    
+    if start_date and end_date:
+        filter_params['timestamp__range'] = (start_date, end_date + timedelta(days=1))
+    
+    query_set = ProcessedData.objects.filter(**filter_params)
+    
+    if limit:
+        query_set = query_set.order_by('-timestamp')[:limit]
+
+    timestamps = [timestamp.strftime('%Y-%m-%d') for timestamp in query_set.values_list('timestamp', flat=True)]
+    weights = list(query_set.values_list('weight', flat=True))
+    
+    return {'timestamps': timestamps, 'weights': weights}
+
+@api_view(['GET'])
 def getWeightData(request):
+    active_node_ids = get_active_node_ids()
     bin_data = {
-        'Bin1': (ProcessedData.objects.filter(node_ID=1).values_list('weight', flat=True)),
-        'Bin2': (ProcessedData.objects.filter(node_ID=2).values_list('weight', flat=True)),
-        'Bin3': (ProcessedData.objects.filter(node_ID=3).values_list('weight', flat=True)),
-        'Bin4': (ProcessedData.objects.filter(node_ID=4).values_list('weight', flat=True)),
+        f'Bin{node_id}': create_bin_data(node_id) for node_id in active_node_ids
     }
     return Response(bin_data)
 
-from django.db.models import Q
-
-@api_view(['GET']) 
+@api_view(['GET'])
 def getWeightTimeData(request):
-    # Get the startDate and endDate from query parameters (assuming you pass them as query parameters)
     start_date_str = request.GET.get('startDate')
     end_date_str = request.GET.get('endDate')
 
-    # Convert the date strings to datetime objects
-    start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d')
-    end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d')
-    # Add one day to the end date to make it inclusive
-    end_date = end_date + timedelta(days=1)
+    start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d') if start_date_str else None
+    end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d') if end_date_str else None
+
+    active_node_ids = get_active_node_ids()
     bin_data = {
-        'Bin1': {
-            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
-                node_ID=1, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
-            'weights': list(ProcessedData.objects.filter(
-                Q(node_ID=1) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
-        },
-        'Bin2': {
-            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
-                node_ID=2, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
-            'weights': list(ProcessedData.objects.filter(
-                Q(node_ID=2) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
-        },
-        'Bin3': {
-            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
-                node_ID=3, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
-            'weights': list(ProcessedData.objects.filter(
-                Q(node_ID=3) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
-        },
-        'Bin4': {
-            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
-                node_ID=4, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
-            'weights': list(ProcessedData.objects.filter(
-                Q(node_ID=4) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
-        },
+        f'Bin{node_id}': create_bin_data(node_id, start_date, end_date) for node_id in active_node_ids
     }
     return Response(bin_data)
 
-
-# This API endpoint gets only 10 elements from the whole array of attributes for each bin ID
 @api_view(['GET'])
 def getLatestData(request):
+    active_node_ids = get_active_node_ids()
     bin_data = {
-        'Bin1': ProcessedData.objects.filter(node_ID=1).order_by('-timestamp')[:10].values(),
-        'Bin2': ProcessedData.objects.filter(node_ID=2).order_by('-timestamp')[:10].values(),
-        'Bin3': ProcessedData.objects.filter(node_ID=3).order_by('-timestamp')[:10].values(),
-        'Bin4': ProcessedData.objects.filter(node_ID=4).order_by('-timestamp')[:10].values(),
+        f'Bin{node_id}': ProcessedData.objects.filter(node_ID=node_id).order_by('-timestamp')[:10].values()
+        for node_id in active_node_ids
     }
     return Response(bin_data)    
 
@@ -202,7 +254,7 @@ def getLatestData(request):
 #     # return an error response if the request method is not POST
 #     return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-active_nodes = defaultdict(dict)
+
 
 @api_view(['POST'])
 def receive_sensor_data(request):
