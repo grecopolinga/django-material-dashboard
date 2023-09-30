@@ -14,8 +14,11 @@
     </nav>
     <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
       <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-        <h6 class="font-weight-bolder mb-0">Welcome, {{ user.username }}!</h6>
+        {% if request.user.is_authenticated %}
+        <h6 class="font-weight-bolder mb-0">Welcome, {{ request.user.username }}!</h6>
+        {% endif %}
       </div>
+      
       <ul class="navbar-nav  justify-content-end">
 
         {% if request.user.is_authenticated %}
