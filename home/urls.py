@@ -17,6 +17,7 @@ urlpatterns = [
     path('api/getWeightData', views.getWeightData, name='getWeightData'),
     path('api/getWeightTimeData', views.getWeightTimeData, name='getWeightTimeData'),
     path('api/getFillLevelData', views.getFillLevelData, name='getFillLevelData'),
+    path('api/getRateOfChange', views.getRateOfChange, name='getRateOfChange'),
     path('api/getLatestData', views.getLatestData, name='getLatestData'),
     path('api/sensor-data', views.receive_sensor_data, name='receive_sensor_data'),
 
