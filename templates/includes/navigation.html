@@ -14,18 +14,18 @@
     </nav>
     <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
       <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-        <div class="input-group input-group-outline">
-          <label class="form-label">Type here...</label>
-          <input type="text" class="form-control">
-        </div>
+        {% if request.user.is_authenticated %}
+        <h6 class="font-weight-bolder mb-0">Welcome, {{ request.user.username }}!</h6>
+        {% endif %}
       </div>
+      
       <ul class="navbar-nav  justify-content-end">
 
         {% if request.user.is_authenticated %}
 
           <li class="nav-item d-flex align-items-center">
             {% if request.user.is_superuser %}
-            <a href="{% url 'admin:logout' %}" class="nav-link text-body font-weight-bold px-0">
+            <a href="{% url 'logout' %}" class="nav-link text-body font-weight-bold px-0">
             {% else %}
             <a href="{% url 'logout' %}" class="nav-link text-body font-weight-bold px-0">
             {% endif %}
@@ -35,7 +35,7 @@
           </li>
           <li class="nav-item d-flex align-items-center">
             {% if request.user.is_superuser %}
-            <a href="{% url 'admin:password_change' %}" class="nav-link text-body font-weight-bold px-0">
+            <a href="{% url 'password_change' %}" class="nav-link text-body font-weight-bold px-0">
             {% else %}
             <a href="{% url 'password_change' %}" class="nav-link text-body font-weight-bold px-0">
             {% endif %}
