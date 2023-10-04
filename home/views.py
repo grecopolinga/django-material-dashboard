@@ -173,6 +173,64 @@ def getFillLevelData(request):
         ],
     }
     return Response(fill_level_data)
+@api_view(['GET'])
+def getRateOfChange(request):
+    # Get the current datetime
+    current_datetime = timezone.now()
+    
+    # Calculate the start timestamp (30 minutes ago from the current time)
+    start_datetime = current_datetime - timedelta(minutes=30)
+
+    # Define the desired timezone (Asia/Manila)
+    ph_tz = pytz.timezone('Asia/Manila')
+    
+    bin_data = {
+        'Bin1': [
+            {
+                'timestamp_time': timestamp.astimezone(ph_tz).strftime('%H:%M'),
+                'mq2_change': mq2_change,
+                'mq3_change': mq3_change,
+                'mq6_change': mq6_change,
+            }
+            for timestamp, mq2_change, mq3_change, mq6_change in ProcessedData.objects.filter(
+                node_ID=1, timestamp__range=(start_datetime, current_datetime)
+            ).order_by('-timestamp').values_list('timestamp', 'mq2_change', 'mq3_change', 'mq6_change')
+        ],
+        'Bin2': [
+            {
+                'timestamp_time': timestamp.astimezone(ph_tz).strftime('%H:%M'),
+                'mq2_change': mq2_change,
+                'mq3_change': mq3_change,
+                'mq6_change': mq6_change,
+            }
+            for timestamp, mq2_change, mq3_change, mq6_change in ProcessedData.objects.filter(
+                node_ID=2, timestamp__range=(start_datetime, current_datetime)
+            ).order_by('-timestamp').values_list('timestamp', 'mq2_change', 'mq3_change', 'mq6_change')
+        ],
+        'Bin3': [
+            {
+                'timestamp_time': timestamp.astimezone(ph_tz).strftime('%H:%M'),
+                'mq2_change': mq2_change,
+                'mq3_change': mq3_change,
+                'mq6_change': mq6_change,
+            }
+            for timestamp, mq2_change, mq3_change, mq6_change in ProcessedData.objects.filter(
+                node_ID=3, timestamp__range=(start_datetime, current_datetime)
+            ).order_by('-timestamp').values_list('timestamp', 'mq2_change', 'mq3_change', 'mq6_change')
+        ],
+        'Bin4': [
+            {
+                'timestamp_time': timestamp.astimezone(ph_tz).strftime('%H:%M'),
+                'mq2_change': mq2_change,
+                'mq3_change': mq3_change,
+                'mq6_change': mq6_change,
+            }
+            for timestamp, mq2_change, mq3_change, mq6_change in ProcessedData.objects.filter(
+                node_ID=4, timestamp__range=(start_datetime, current_datetime)
+            ).order_by('-timestamp').values_list('timestamp', 'mq2_change', 'mq3_change', 'mq6_change')
+        ],
+    }
+    return Response(bin_data)
 
 # This API endpoint gets only 10 elements from the whole array of attributes for each bin ID
 @api_view(['GET'])
