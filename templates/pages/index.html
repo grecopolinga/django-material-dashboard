@@ -4,13 +4,104 @@
 {% block title %} Home {% endblock title %}
 
 {% block content %}
+<style>
+  /* Styling for the badge icon */
+.badge-icon {
+  position: absolute;
+  top: -20px; /* Adjust the top position to control how much it pops out */
+  right: -14px;
+  background-color: rgb(243, 209, 16); /* Change the background color as needed */
+  color: white;
+  border-radius: 100%;
+  padding: 5px;
+  cursor: pointer;
+  transform: translateY(0); /* Initial position */
+  transition: transform 0.3s ease-in-out; /* Add a smooth transition */
+  z-index: 999; /* Adjust the z-index as needed */
+}
 
+/* Add hover effect for the pop-out animation */
+.badge-icon:hover {
+  transform: translateY(-4px); /* Adjust the vertical translation for the pop-out effect */
+}
+
+/* Styling for the modal */
+.gas-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10%;
+  background-color: rgb(248, 211, 0); /* Semi-transparent background */
+  z-index: 999; /* Adjust the z-index as needed */
+  display: none;
+  animation: zoom-in 0.5s ease-in-out forwards; /* Animation to zoom in */
+  transform-origin: center center; /* Set the transform origin to center */
+  opacity: 100%;
+}
+
+  /* Add styles for the modal text */
+  .gas-modal h4 {
+    font-size: 20px; /* Adjust the font size as needed */
+    color: rgb(255, 255, 255);
+    margin-left: 14px;
+    margin-top: 10px;
+    padding: 5px 0;
+  }
+
+  .gas-modal p {
+    font-size: 16px; /* Adjust the font size as needed */
+    font-weight: 400;
+    color: rgb(255, 255, 255);
+    margin-left: 14px;
+    margin-top: 10px;
+    padding: 5px 0;
+  }
+
+  .gas-modal i {
+  font-size: 24px; /* Adjust the font size as needed */
+  color: white;
+  vertical-align: middle; /* Align the icon vertically in the middle of the text */
+  margin-left: 4px; /* Adjust margin as needed to separate icon from text */
+}
+
+
+/* Animation keyframes for zoom in */
+@keyframes zoom-in {
+  0% {
+    transform: scale(0); /* Start with zero scale (hidden) */
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1); /* End with full scale (visible) */
+    opacity: 1;
+  }
+}
+
+/* Animation keyframes for zoom out */
+@keyframes zoom-out {
+  0% {
+    transform: scale(1); /* Start with full scale (visible) */
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0); /* End with zero scale (hidden) */
+    opacity: 0;
+  }
+}
+
+
+</style>
     <div class="container-fluid py-4">
       <!--#region Start of div for Bin Cards -->
       <div class="row">
         <!-- Format Card for Bin 1 -->
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card" id="binCard1">
+            <div class="badge-icon" id="hazardBadge1" style="display: none;">
+              <i class="material-icons">warning</i>
+            </div>
             <div class="card-header p-3 pt-2">
               <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
               id="b1_FLCard">
@@ -34,6 +125,9 @@
         <!-- Format Card for Bin 2 -->
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card" id="binCard2">
+            <div class="badge-icon" id="hazardBadge2" style="display: none;">
+              <i class="material-icons">warning</i>
+            </div>
             <div class="card-header p-3 pt-2">
               <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
               id="b2_FLCard">
@@ -57,6 +151,9 @@
         <!-- Format Card for Bin 3 -->
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card" id="binCard3">
+            <div class="badge-icon" id="hazardBadge3" style="display: none;">
+              <i class="material-icons">warning</i>
+            </div>
             <div class="card-header p-3 pt-2">
               <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
               id="b3_FLCard">
@@ -80,6 +177,9 @@
         <!-- Format Card for Bin 4 -->
         <div class="col-xl-3 col-sm-6">
           <div class="card" id="binCard4">
+            <div class="badge-icon" id="hazardBadge4" style="display: none;">
+              <i class="material-icons">warning</i>
+            </div>
             <div class="card-header p-3 pt-2">
               <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
               id="b4_FLCard">
@@ -250,6 +350,7 @@
   {% endblock content %}
 
   {% block scripts %}
+  <!-- Script for Charts -->
   <script>
       // ==================================== GRAPH 1 =========================================
       var fill_levels = "{{ fill_levels }}";
@@ -1041,9 +1142,10 @@
     console.log(percentageIncreaseWeight);
     // ==================================== END GRAPH 3 =========================================
   </script>
-<!-- Include jQuery (you can download it or use a CDN) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
+  <!-- Include jQuery (you can download it or use a CDN) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Script for Card Updates -->
+  <script>
   function updateBinCardColor(binId, cardId, fillLevel, iconNum) {
   const b_FLCard = document.getElementById(cardId);
   const icon = document.getElementById(iconNum);
@@ -1205,6 +1307,84 @@
   setInterval(fetchData, 5000);
   // Initial data fetch when the page loads
   fetchData();
-</script>
+  </script>
+  <!-- Script for Gas Hazard -->
+  <script>
+    // Function to show the hazard badge and attach the hover modal
+    function showHazardBadge(binName, hazardTitle, hazardDetails) {
+      const hazardBadge = document.getElementById(`hazardBadge${binName}`);
+      const binCard = document.getElementById(`binCard${binName}`);
+      let zoomInModal = null; // Variable to store the modal element
+  
+      // Check for detected gas (You can replace this condition with your actual logic)
+      const gasDetected = true; // Example: Gas detected GASALERT
+  
+      if (gasDetected) {
+        hazardBadge.style.display = 'block'; // Show the hazard badge
+  
+        // Add event listener to the hazard badge for showing the modal
+        hazardBadge.addEventListener('mouseover', function () {
+          if (!zoomInModal) {
+            zoomInModal = showZoomInModal(hazardTitle, hazardDetails, binCard);
+          }
+        });
+  
+        // Add event listener to the hazard badge for hiding the modal
+        hazardBadge.addEventListener('mouseout', function () {
+          if (zoomInModal) {
+            hideZoomInModal(zoomInModal);
+            zoomInModal = null; // Reset the modal variable
+          }
+        });
+      }
+    }
+  
+    // Function to show the zoom-in modal with zoom in animation
+    function showZoomInModal(hazardTitle, hazardDetails, binCard) {
+      const zoomInModal = document.createElement('div');
+      zoomInModal.className = 'gas-modal';
+      zoomInModal.innerHTML = `
+        <h4 class="modal-title">
+          ${hazardTitle}
+          <i class="material-icons icon opacity-10 mb-1" style="font-size: 24px;">warning</i>
+        </h4>
+        <hr class="horizontal dark m-0">
+        <p>${hazardDetails}</p>
+      `;
+  
+      // Append the zoom-in modal to the card
+      binCard.appendChild(zoomInModal);
+  
+      // Show the zoom-in modal
+      zoomInModal.style.display = 'block';
+  
+      // Add event listener to hide the modal when the mouse leaves the modal
+      zoomInModal.addEventListener('mouseleave', function () {
+        hideZoomInModal(zoomInModal);
+      });
+  
+      return zoomInModal; // Return the modal element
+    }
+  
+    // Function to hide the zoom-in modal
+    function hideZoomInModal(zoomInModal) {
+      if (zoomInModal) {
+        zoomInModal.style.animation = 'zoom-out 0.5s ease-in-out forwards'; // Start zoom-out animation
+        setTimeout(function () {
+          zoomInModal.style.display = 'none'; // Hide the modal after animation
+          zoomInModal.remove();
+        }, 500); // Adjust the duration to match the animation duration
+      }
+    }
+  
+    // Call the function to show the hazard badge and attach the zoom-in modal
+    //showHazardBadge('1', 'Gas Hazard Alert', 'Presence of Alcohol detected');
 
+      // Call the function to show the hazard badge and attach the zoom-in modal for each bin
+  const binNames = ['1', '2', '3', '4']; // Update with your bin names
+  binNames.forEach((binName) => {
+    showHazardBadge(binName, 'Gas Hazard Alert', 'Presence of Alcohol detected');
+  });
+  </script>
+  
   {% endblock scripts %}
