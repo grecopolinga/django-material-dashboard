@@ -43,8 +43,23 @@
   <!-- CSS Files -->
   <link id="pagestyle" href="{% static 'css/material-dashboard.css' %}" rel="stylesheet" />
   <link id="pagestyle" href="{% static 'css/styles.css' %}" rel="stylesheet" />
-  {% block extrastyle %}{% endblock extrastyle %}
-
+  {% block extrastyle %}
+  <style>
+    .form-check .form-check-input:checked[type="checkbox"] {
+    background-color: #28a745 !important; /* Success color */
+    border-color: #28a745 !important; /* Border color */
+    /* Add any other styles you want to override here */
+  }
+  .form-check .form-check-input:checked[type="radio"]{
+  border-color: #28a745 !important; /* Border color */
+  color: #28a745 !important;
+  /* Add any other styles you want to override here */
+}
+.form-check:not(.form-switch) .form-check-input[type="radio"]:after {
+  background-image: linear-gradient(195deg, #28a745 0%, #28a745 100%), var(--bs-gradient) !important;
+}
+  </style>
+  {% endblock extrastyle %}
 </head>
 
 <body class="g-sidenav-show  bg-gray-200">
