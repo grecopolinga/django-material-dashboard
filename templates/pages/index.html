@@ -10,54 +10,7 @@
       <div class="row" id="binsRow">
   <!-- Bins will be dynamically added here -->
 </div>
-<script>
-// Function to generate HTML for a bin card
-function generateBinCard(binNumber) {
-  return `
-    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-      <div class="card" id="binCard${binNumber}">
-        <div class="card-header p-3 pt-2">
-          <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
-            id="b${binNumber}_FLCard">
-            <!-- Icon for Bin ${binNumber} -->
-            <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;" id="icon${binNumber}">delete</i>
-          </div>
-          <div class="text-end pt-1">
-            <p class="text-md mb-0 text-capitalize">Bin ${binNumber} Fill Level</p>
-            <!-- Fill level Percentage Bin ${binNumber}-->
-            <h4 class="mb-0" id="bin${binNumber}FillLevel">...</h4>
-          </div>
-        </div>
-        <hr class="dark horizontal my-0">
-        <div class="card-footer p-3">
-          <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder" id="bin${binNumber}Weight">...</span>
-            <span style="font-size: 14px; opacity: 0.4;"> (Limit: 50 kg)</span>
-          </p>
-        </div>
-      </div>
-    </div>
-  `;
-}
 
-// Function to add existing active bins dynamically
-function addExistingBins(activeBins) {
-  const binsRow = document.getElementById('binsRow');
-
-  // Generate HTML for each active bin and append it to the row
-  activeBins.forEach(binNumber => {
-    const binCard = generateBinCard(binNumber);
-    binsRow.innerHTML += binCard;
-  });
-}
-
-// Example: List of active bin nodes
-const activeBins = [1, 2, 3, 4];
-
-// Add existing active bins when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-  addExistingBins(activeBins);
-});
-</script>
       <!--#endregion -->
 
       <!--#region Start of div for Line Graphs and Charts-->
@@ -1137,31 +1090,125 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update other fields as needed
   }
 
-  // Function to fetch and update data periodically
-  function fetchData() {
-    $.ajax({
-      url: 'api/getLatestData',  // API endpoint URL
-      method: 'GET',
-      dataType: 'json',
-      success: function (data) {
-        console.log('Data received:', data);
-        for (let binNumber = 1; binNumber <= 4; binNumber++) {
-          if (data['Bin' + binNumber].length > 0) {
-            const binData = data['Bin' + binNumber][0];
-            updateBinCard(binNumber, binData);
+// Function to add or update active bins dynamically
+function addOrUpdateBin(binNumber, binData) {
+  const binsRow = document.getElementById('binsRow');
+
+  // Check if the bin is not already added
+  if (!addedBins.has(binNumber)) {
+    const binCard = generateBinCard(binNumber);
+    binsRow.innerHTML += binCard;
+
+    // Add the bin to the Set
+    addedBins.add(binNumber);
+  } else {
+    // Update the bin card with new data
+    updateBinCard(binNumber, binData);
+  }
+}
+
+// Function to fetch and update data periodically
+function fetchData() {
+  $.ajax({
+    url: 'api/getLatestData',  // API endpoint URL
+    method: 'GET',
+    dataType: 'json',
+    success: function (data) {
+      console.log('Data received:', data);
+
+      // Extract active bin numbers from the received data
+      const activeBins = Object.keys(data).map(binKey => parseInt(binKey.replace('Bin', ''), 10));
+
+      // Add or update the UI for active bins
+      activeBins.forEach(binNumber => {
+        if (data['Bin' + binNumber].length > 0) {
+          const binData = data['Bin' + binNumber][0];
+          addOrUpdateBin(binNumber, binData);
+        }
+      });      
+      // Update or remove bin cards based on the received data
+      addedBins.forEach(addedBin => {
+        if (!activeBins.includes(addedBin)) {
+          // Bin is in UI but not in the received data, remove it
+          const binCard = document.getElementById('binCard' + addedBin);
+          if (binCard) {
+            binCard.remove();
+            addedBins.delete(addedBin);
           }
         }
-      },
-      error: function (xhr, status, error) {
-        console.error('Error:', error);
-      }
-    });
-  }
+      });
 
-  // Fetch and update data every 5 seconds (adjust as needed)
-  setInterval(fetchData, 5000);
-  // Initial data fetch when the page loads
-  fetchData();
+
+    },
+    error: function (xhr, status, error) {
+      console.error('Error:', error);
+    }
+  });
+}
+
+// Fetch and update data every 5 seconds (adjust as needed)
+setInterval(fetchData, 5000);
+
+// Initial data fetch when the page loads
+fetchData();
 </script>
+
+<script>
+  // Function to generate HTML for a bin card
+  function generateBinCard(binNumber) {
+    return `
+      <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="card" id="binCard${binNumber}">
+          <div class="card-header p-3 pt-2">
+            <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" 
+              id="b${binNumber}_FLCard">
+              <!-- Icon for Bin ${binNumber} -->
+              <i class="material-icons opacity-10 mt-n2" style="font-size: 42px;" id="icon${binNumber}">delete</i>
+            </div>
+            <div class="text-end pt-1">
+              <p class="text-md mb-0 text-capitalize">Bin ${binNumber} Fill Level</p>
+              <!-- Fill level Percentage Bin ${binNumber}-->
+              <h4 class="mb-0" id="bin${binNumber}FillLevel">...</h4>
+            </div>
+          </div>
+          <hr class="dark horizontal my-0">
+          <div class="card-footer p-3">
+            <p class="mb-0" style="font-size: 15px;">Weight: <span class="text-success text-sm font-weight-bolder" id="bin${binNumber}Weight">...</span>
+              <span style="font-size: 14px; opacity: 0.4;"> (Limit: 50 kg)</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Global variable to keep track of added bins
+const addedBins = new Set();
+
+// Function to add existing active bins dynamically
+function addExistingBins(activeBins) {
+  const binsRow = document.getElementById('binsRow');
+
+  // Iterate through the active bins
+  activeBins.forEach(binNumber => {
+    // Check if the bin is not already added
+    if (!addedBins.has(binNumber)) {
+      const binCard = generateBinCard(binNumber);
+      binsRow.innerHTML += binCard;
+
+      // Add the bin to the Set
+      addedBins.add(binNumber);
+    }
+  });
+}
+  
+  // // Example: List of active bin nodes
+  // const activeBins = [1, 2, 3, 4];
+  
+  // // Add existing active bins when the page loads
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   addExistingBins(activeBins);
+  // });
+  </script>
 
   {% endblock scripts %}

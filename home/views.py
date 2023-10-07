@@ -210,11 +210,18 @@ def getWeightTimeData(request):
 @api_view(['GET'])
 def getLatestData(request):
     active_node_ids = get_active_node_ids()
-    bin_data = {
-        f'Bin{node_id}': ProcessedData.objects.filter(node_ID=node_id).order_by('-timestamp')[:10].values()
-        for node_id in active_node_ids
-    }
-    return Response(bin_data)    
+    
+    # Define the time threshold (1 minute ago)
+    time_threshold = timezone.now() - timezone.timedelta(minutes=1)
+
+    bin_data = {}
+    for node_id in active_node_ids:
+        # Only include data within the last minute
+        latest_data = ProcessedData.objects.filter(node_ID=node_id, timestamp__gte=time_threshold).order_by('-timestamp')[:10].values()
+        bin_data[f'Bin{node_id}'] = latest_data
+
+    print(bin_data)
+    return Response(bin_data)  
 
 # @api_view(['POST'])
 # def receive_sensor_data(request):
