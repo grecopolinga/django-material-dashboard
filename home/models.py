@@ -19,7 +19,7 @@ class ProcessedData(models.Model):
     mq6_change = models.DecimalField(max_digits=6, decimal_places=2)
     flame = models.IntegerField()
     timestamp = models.DateTimeField(default=timezone.now)
-
+    zone = models.IntegerField(default=0)
     def save(self, *args, **kwargs):
         # convert timestamp to your timezone
         utc_timestamp = self.timestamp.replace(tzinfo=pytz.UTC)
