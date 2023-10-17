@@ -287,9 +287,9 @@ def receive_sensor_data(request):
             
             node["Node_ID"] = sensor_data.get('Node_ID')
             node["Ultrasonic_CM"] = sensor_data.get('Ultrasonic_CM')
-            node["MQ2_Data"] = sensor_data.get('MQ2_ppm')
-            node["MQ3_Data"] = sensor_data.get('MQ3_ppm')
-            node["MQ6_Data"] = sensor_data.get('MQ6_ppm')
+            node["MQ2_Data"] = sensor_data.get('MQ2_Data')
+            node["MQ3_Data"] = sensor_data.get('MQ3_Data')
+            node["MQ6_Data"] = sensor_data.get('MQ6_Data')
             node["Flame_Data"] = sensor_data.get('Flame_Data')
             node["Weight_lbs"] = sensor_data.get('Weight_lbs')
             
@@ -298,6 +298,36 @@ def receive_sensor_data(request):
             return Response(serializer.data)
     
     # return an error response if the request method is not POST
+    return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+# @api_view(['POST']) #Working POST dynamic
+# def receive_sensor_data(request):
+#     if request.method == 'POST':
+#         serializer = RawDataSerializer(data=request.data)
+#         if serializer.is_valid():
+#             sensor_data = request.data
+#             node_id = sensor_data.get('Node_ID')
+            
+#             # Check if the bin_data dictionary exists, and if not, create it
+#             if 'bin_data' not in globals():
+#                 globals()['bin_data'] = {}
+            
+#             # Update or add the bin's data in the bin_data dictionary
+#             bin_data[node_id] = {
+#                 "Node_ID": node_id,
+#                 "Ultrasonic_CM": sensor_data.get('Ultrasonic_CM'),
+#                 "MQ2_Data": sensor_data.get('MQ2_analog'),
+#                 "MQ3_Data": sensor_data.get('MQ3_analog'),
+#                 "MQ6_Data": sensor_data.get('MQ6_analog'),
+#                 "Flame_Data": sensor_data.get('Flame_Data'),
+#                 "Weight_lbs": sensor_data.get('Weight_lbs')
+#             }
+            
+#             # Call the processing function to process the data
+#             processing()
+#             print(bin_data)
+#             return Response(serializer.data)
+    
     return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
 def get_rate_of_change(value):
@@ -322,12 +352,15 @@ def Overall_Fill_Level(Fill_Level,Load):
     Overall = ((US_weight * (Fill_Level/100)) + (L_weight * Load/28))#28kg
     return Overall
 
-def Fill_Level(distance):
-    accumulated = 50 - distance
-    Fill_Level = (accumulated/50) * 100
-    if Fill_Level < 0:
-        Fill_Level = 0
-    return Fill_Level
+def Fill_Level(distance): 
+    if distance != 0:   
+        accumulated = 62 - distance
+        Fill_Level = (accumulated/50) * 100
+        if Fill_Level < 0:
+            Fill_Level = 0
+        return Fill_Level
+    else:
+        return -1    
 
 def lbs_to_kg(lbs):
     kg = lbs / 1000
@@ -447,9 +480,9 @@ def processing():
         'Bin1_Fill_Level': int(Bin1_Fill_Level),
         'Bin1_Weight': "{:.2f}".format(float(Bin1_Weight)),
         'Bin1_MTTC': Bin1_MTTC,
-        'Bin1_MQ2_PPM': "{:.2f}".format(float(Node1["MQ2_Data"])),
-        'Bin1_MQ3_PPM': "{:.2f}".format(float(Node1["MQ3_Data"])),
-        'Bin1_MQ6_PPM': "{:.2f}".format(float(Node1["MQ6_Data"])),
+        'Bin1_MQ2_Analog': "{:.2f}".format(float(Node1["MQ2_Data"])),
+        'Bin1_MQ3_Analog': "{:.2f}".format(float(Node1["MQ3_Data"])),
+        'Bin1_MQ6_Analog': "{:.2f}".format(float(Node1["MQ6_Data"])),
         'Bin1_MQ2_Change': "{:.2f}".format(float(Bin1_MQ2_Change)),
         'Bin1_MQ3_Change': "{:.2f}".format(float(Bin1_MQ3_Change)),
         'Bin1_MQ6_Change': "{:.2f}".format(float(Bin1_MQ6_Change)),
@@ -471,9 +504,9 @@ def processing():
         'Bin2_Fill_Level': int(Bin2_Fill_Level),
         'Bin2_Weight': "{:.2f}".format(float(Bin2_Weight)),
         'Bin2_MTTC': Bin2_MTTC,
-        'Bin2_MQ2_PPM': "{:.2f}".format(float(Node2["MQ2_Data"])),
-        'Bin2_MQ3_PPM': "{:.2f}".format(float(Node2["MQ3_Data"])),
-        'Bin2_MQ6_PPM': "{:.2f}".format(float(Node2["MQ6_Data"])),
+        'Bin2_MQ2_Analog': "{:.2f}".format(float(Node2["MQ2_Data"])),
+        'Bin2_MQ3_Analog': "{:.2f}".format(float(Node2["MQ3_Data"])),
+        'Bin2_MQ6_Analog': "{:.2f}".format(float(Node2["MQ6_Data"])),
         'Bin2_MQ2_Change': "{:.2f}".format(float(Bin2_MQ2_Change)),
         'Bin2_MQ3_Change': "{:.2f}".format(float(Bin2_MQ3_Change)),
         'Bin2_MQ6_Change': "{:.2f}".format(float(Bin2_MQ6_Change)),
@@ -483,9 +516,9 @@ def processing():
         'Bin3_Fill_Level': int(Bin3_Fill_Level),
         'Bin3_Weight': "{:.2f}".format(float(Bin3_Weight)),
         'Bin3_MTTC': Bin3_MTTC,
-        'Bin3_MQ2_PPM': "{:.2f}".format(float(Node3["MQ2_Data"])),
-        'Bin3_MQ3_PPM': "{:.2f}".format(float(Node3["MQ3_Data"])),
-        'Bin3_MQ6_PPM': "{:.2f}".format(float(Node3["MQ6_Data"])),
+        'Bin3_MQ2_Analog': "{:.2f}".format(float(Node3["MQ2_Data"])),
+        'Bin3_MQ3_Analog': "{:.2f}".format(float(Node3["MQ3_Data"])),
+        'Bin3_MQ6_Analog': "{:.2f}".format(float(Node3["MQ6_Data"])),
         'Bin3_MQ2_Change': "{:.2f}".format(float(Bin3_MQ2_Change)),
         'Bin3_MQ3_Change': "{:.2f}".format(float(Bin3_MQ3_Change)),
         'Bin3_MQ6_Change': "{:.2f}".format(float(Bin3_MQ6_Change)),
@@ -495,9 +528,9 @@ def processing():
         'Bin4_Fill_Level': int(Bin4_Fill_Level),
         'Bin4_Weight': "{:.2f}".format(float(Bin4_Weight)),
         'Bin4_MTTC': Bin4_MTTC,
-        'Bin4_MQ2_PPM': "{:.2f}".format(float(Node4["MQ2_Data"])),
-        'Bin4_MQ3_PPM': "{:.2f}".format(float(Node4["MQ3_Data"])),
-        'Bin4_MQ6_PPM': "{:.2f}".format(float(Node4["MQ6_Data"])),
+        'Bin4_MQ2_Analog': "{:.2f}".format(float(Node4["MQ2_Data"])),
+        'Bin4_MQ3_Analog': "{:.2f}".format(float(Node4["MQ3_Data"])),
+        'Bin4_MQ6_Analog': "{:.2f}".format(float(Node4["MQ6_Data"])),
         'Bin4_MQ2_Change': "{:.2f}".format(float(Bin4_MQ2_Change)),
         'Bin4_MQ3_Change': "{:.2f}".format(float(Bin4_MQ3_Change)),
         'Bin4_MQ6_Change': "{:.2f}".format(float(Bin4_MQ6_Change)),
@@ -510,9 +543,9 @@ def processing():
     fill_level= int(Bin1_Fill_Level),
     weight = Bin1_Weight,
     mttc = Bin1_MTTC,
-    mq2_ppm = Node1["MQ2_Data"],
-    mq3_ppm = Node1["MQ3_Data"],
-    mq6_ppm = Node1["MQ6_Data"],
+    mq2_analog = Node1["MQ2_Data"],
+    mq3_analog = Node1["MQ3_Data"],
+    mq6_analog = Node1["MQ6_Data"],
     mq2_change = Bin1_MQ2_Change,
     mq3_change = Bin1_MQ3_Change,
     mq6_change = Bin1_MQ6_Change,
@@ -525,9 +558,9 @@ def processing():
     fill_level=int(Bin2_Fill_Level),
     weight = Bin2_Weight,
     mttc=Bin2_MTTC,
-    mq2_ppm=Node2["MQ2_Data"],
-    mq3_ppm=Node2["MQ3_Data"],
-    mq6_ppm=Node2["MQ6_Data"],
+    mq2_analog=Node2["MQ2_Data"],
+    mq3_analog=Node2["MQ3_Data"],
+    mq6_analog=Node2["MQ6_Data"],
     mq2_change=Bin2_MQ2_Change,
     mq3_change=Bin2_MQ3_Change,
     mq6_change=Bin2_MQ6_Change,
@@ -540,9 +573,9 @@ def processing():
     fill_level=int(Bin3_Fill_Level),
     weight = Bin3_Weight,
     mttc=Bin3_MTTC,
-    mq2_ppm=Node3["MQ2_Data"],
-    mq3_ppm=Node3["MQ3_Data"],
-    mq6_ppm=Node3["MQ6_Data"],
+    mq2_analog=Node3["MQ2_Data"],
+    mq3_analog=Node3["MQ3_Data"],
+    mq6_analog=Node3["MQ6_Data"],
     mq2_change=Bin3_MQ2_Change,
     mq3_change=Bin3_MQ3_Change,
     mq6_change=Bin3_MQ6_Change,
@@ -555,9 +588,9 @@ def processing():
     fill_level=int(Bin4_Fill_Level),
     weight = Bin4_Weight,
     mttc=Bin4_MTTC,
-    mq2_ppm=Node4["MQ2_Data"],
-    mq3_ppm=Node4["MQ3_Data"],
-    mq6_ppm=Node4["MQ6_Data"],
+    mq2_analog=Node4["MQ2_Data"],
+    mq3_analog=Node4["MQ3_Data"],
+    mq6_analog=Node4["MQ6_Data"],
     mq2_change=Bin4_MQ2_Change,
     mq3_change=Bin4_MQ3_Change,
     mq6_change=Bin4_MQ6_Change,
