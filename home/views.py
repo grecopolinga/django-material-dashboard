@@ -323,8 +323,8 @@ def Overall_Fill_Level(Fill_Level,Load):
     return Overall
 
 def Fill_Level(distance):
-    accumulated = 55 - distance
-    Fill_Level = (accumulated/55) * 100
+    accumulated = 50 - distance
+    Fill_Level = (accumulated/50) * 100
     if Fill_Level < 0:
         Fill_Level = 0
     return Fill_Level
