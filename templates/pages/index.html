@@ -1509,124 +1509,128 @@
   <!-- Script for Card Updates -->
   <script>
   function updateBinCardColor(binId, cardId, fillLevel, iconNum) {
-  const b_FLCard = document.getElementById(cardId);
-  const icon = document.getElementById(iconNum);
+    const b_FLCard = document.getElementById(cardId);
+    const icon = document.getElementById(iconNum);
 
-  // Find existing notification for this bin (if any)
-  const existingToast = document.querySelector(`[data-bin="${binId}"]`);
+    // Find existing notification for this bin (if any)
+    const existingToast = document.querySelector(`[data-bin="${binId}"]`);
 
-  if (fillLevel >= 90) {
-    b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute';
-    icon.innerText = 'delete';
+    if (fillLevel >= 90) {
+      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute';
+      icon.innerText = 'delete';
 
-    if (!existingToast) {
-      // Create a new toast for this bin
-      const toastElement = document.createElement('div');
-      toastElement.className = 'toast fade p-2 bg-gradient-danger my-2';
-      toastElement.setAttribute('role', 'alert');
-      toastElement.setAttribute('aria-live', 'assertive');
-      toastElement.setAttribute('aria-atomic', 'true');
-      toastElement.setAttribute('data-bs-autohide', 'false');
-      toastElement.setAttribute('data-bin', binId);
+      if (!existingToast) {
+        // Create a new toast for this bin
+        const toastElement = document.createElement('div');
+        toastElement.className = 'toast fade p-2 bg-gradient-danger my-2';
+        toastElement.setAttribute('role', 'alert');
+        toastElement.setAttribute('aria-live', 'assertive');
+        toastElement.setAttribute('aria-atomic', 'true');
+        toastElement.setAttribute('data-bs-autohide', 'false');
+        toastElement.setAttribute('data-bin', binId);
 
-      const toastHeader = document.createElement('div');
-      toastHeader.className = 'toast-header border-0 bg-transparent';
+        const toastHeader = document.createElement('div');
+        toastHeader.className = 'toast-header border-0 bg-transparent';
 
-      const toastIcon = document.createElement('i');
-      toastIcon.className = 'material-icons text-white me-2';
-      toastIcon.innerText = 'campaign';
+        const toastIcon = document.createElement('i');
+        toastIcon.className = 'material-icons text-white me-2';
+        toastIcon.innerText = 'campaign';
 
-      const toastTitle = document.createElement('span');
-      toastTitle.className = 'me-auto font-weight-bold text-white';
-      toastTitle.textContent = 'Bin ' + binId + ' is already full!';
+        const toastTitle = document.createElement('span');
+        toastTitle.className = 'me-auto font-weight-bold text-white';
+        toastTitle.textContent = 'Bin ' + binId + ' is already full!';
 
-      const toastCloseIcon = document.createElement('i');
-      toastCloseIcon.className = 'fas fa-times text-md ms-3 text-white cursor-pointer';
-      toastCloseIcon.setAttribute('data-bs-dismiss', 'toast');
-      toastCloseIcon.setAttribute('aria-label', 'Close');
+        const toastCloseIcon = document.createElement('i');
+        toastCloseIcon.className = 'fas fa-times text-md ms-3 text-white cursor-pointer';
+        toastCloseIcon.setAttribute('data-bs-dismiss', 'toast');
+        toastCloseIcon.setAttribute('aria-label', 'Close');
 
-      toastHeader.appendChild(toastIcon);
-      toastHeader.appendChild(toastTitle);
-      toastHeader.appendChild(toastCloseIcon);
+        toastHeader.appendChild(toastIcon);
+        toastHeader.appendChild(toastTitle);
+        toastHeader.appendChild(toastCloseIcon);
 
-      const toastHr = document.createElement('hr');
-      toastHr.className = 'horizontal dark m-0';
+        const toastHr = document.createElement('hr');
+        toastHr.className = 'horizontal dark m-0';
 
-      const toastBody = document.createElement('div');
-      toastBody.className = 'toast-body text-white';
-      toastBody.textContent = 'Please collect immediately';
+        const toastBody = document.createElement('div');
+        toastBody.className = 'toast-body text-white';
+        toastBody.textContent = 'Please collect immediately';
 
-      toastElement.appendChild(toastHeader);
-      toastElement.appendChild(toastHr);
-      toastElement.appendChild(toastBody);
+        toastElement.appendChild(toastHeader);
+        toastElement.appendChild(toastHr);
+        toastElement.appendChild(toastBody);
 
-      // Append the toast element to the .position-fixed div
-      document.querySelector('.position-fixed').appendChild(toastElement);
+        // Append the toast element to the .position-fixed div
+        document.querySelector('.position-fixed').appendChild(toastElement);
 
-      // Create a new Bootstrap Toast instance and show it
-      const toast = new bootstrap.Toast(toastElement);
-      toast.show();
+        // Create a new Bootstrap Toast instance and show it
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+      }
+    } else if (fillLevel >= 75) {
+      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-warning shadow-warning text-center border-radius-xl mt-n4 position-absolute';
+      icon.innerText = 'delete_outline';
+
+      if (!existingToast) {
+        // Create a new toast for this bin
+        const toastElement = document.createElement('div');
+        toastElement.className = 'toast fade p-2 bg-gradient-warning my-2';
+        toastElement.setAttribute('role', 'alert');
+        toastElement.setAttribute('aria-live', 'assertive');
+        toastElement.setAttribute('aria-atomic', 'true');
+        toastElement.setAttribute('data-bs-autohide', 'false');
+        toastElement.setAttribute('data-bin', binId);
+
+        const toastHeader = document.createElement('div');
+        toastHeader.className = 'toast-header border-0 bg-transparent';
+
+        const toastIcon = document.createElement('i');
+        toastIcon.className = 'material-icons text-white me-2';
+        toastIcon.innerText = 'campaign';
+
+        const toastTitle = document.createElement('span');
+        toastTitle.className = 'me-auto font-weight-bold text-white';
+        toastTitle.textContent = 'Bin ' + binId + ' is almost full';
+
+        const toastCloseIcon = document.createElement('i');
+        toastCloseIcon.className = 'fas fa-times text-md ms-3 text-white cursor-pointer';
+        toastCloseIcon.setAttribute('data-bs-dismiss', 'toast');
+        toastCloseIcon.setAttribute('aria-label', 'Close');
+
+        toastHeader.appendChild(toastIcon);
+        toastHeader.appendChild(toastTitle);
+        toastHeader.appendChild(toastCloseIcon);
+
+        const toastHr = document.createElement('hr');
+        toastHr.className = 'horizontal dark m-0';
+
+        const toastBody = document.createElement('div');
+        toastBody.className = 'toast-body text-white';
+        toastBody.textContent = 'Please collect soon to avoid overflowing of trash';
+
+        toastElement.appendChild(toastHeader);
+        toastElement.appendChild(toastHr);
+        toastElement.appendChild(toastBody);
+
+        // Append the toast element to the .position-fixed div
+        document.querySelector('.position-fixed').appendChild(toastElement);
+
+        // Create a new Bootstrap Toast instance and show it
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+      }
+    } else if (fillLevel == -1) {
+      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-secondary shadow-secondary text-center border-radius-xl mt-n4 position-absolute';
+      icon.innerText = 'sensors_off';
+
+    } else {
+      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute';
+      icon.innerText = 'delete_outline';
+        // Remove the existing notification
+      if (existingToast) {
+        existingToast.remove();
+      }
     }
-  } else if (fillLevel >= 75) {
-    b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-warning shadow-warning text-center border-radius-xl mt-n4 position-absolute';
-    icon.innerText = 'delete_outline';
-
-    if (!existingToast) {
-      // Create a new toast for this bin
-      const toastElement = document.createElement('div');
-      toastElement.className = 'toast fade p-2 bg-gradient-warning my-2';
-      toastElement.setAttribute('role', 'alert');
-      toastElement.setAttribute('aria-live', 'assertive');
-      toastElement.setAttribute('aria-atomic', 'true');
-      toastElement.setAttribute('data-bs-autohide', 'false');
-      toastElement.setAttribute('data-bin', binId);
-
-      const toastHeader = document.createElement('div');
-      toastHeader.className = 'toast-header border-0 bg-transparent';
-
-      const toastIcon = document.createElement('i');
-      toastIcon.className = 'material-icons text-white me-2';
-      toastIcon.innerText = 'campaign';
-
-      const toastTitle = document.createElement('span');
-      toastTitle.className = 'me-auto font-weight-bold text-white';
-      toastTitle.textContent = 'Bin ' + binId + ' is almost full';
-
-      const toastCloseIcon = document.createElement('i');
-      toastCloseIcon.className = 'fas fa-times text-md ms-3 text-white cursor-pointer';
-      toastCloseIcon.setAttribute('data-bs-dismiss', 'toast');
-      toastCloseIcon.setAttribute('aria-label', 'Close');
-
-      toastHeader.appendChild(toastIcon);
-      toastHeader.appendChild(toastTitle);
-      toastHeader.appendChild(toastCloseIcon);
-
-      const toastHr = document.createElement('hr');
-      toastHr.className = 'horizontal dark m-0';
-
-      const toastBody = document.createElement('div');
-      toastBody.className = 'toast-body text-white';
-      toastBody.textContent = 'Please collect soon to avoid overflowing of trash';
-
-      toastElement.appendChild(toastHeader);
-      toastElement.appendChild(toastHr);
-      toastElement.appendChild(toastBody);
-
-      // Append the toast element to the .position-fixed div
-      document.querySelector('.position-fixed').appendChild(toastElement);
-
-      // Create a new Bootstrap Toast instance and show it
-      const toast = new bootstrap.Toast(toastElement);
-      toast.show();
-    }
-  } else {
-    b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute';
-    icon.innerText = 'delete_outline';
-      // Remove the existing notification
-    if (existingToast) {
-      existingToast.remove();
-    }
-  }
 
 
 }
@@ -1634,12 +1638,24 @@
 
   // Function to update the bin card with new data
   function updateBinCard(binNumber, data) {
-    $('#bin' + binNumber + 'FillLevel').text(data.fill_level + '%');
-    $('#bin' + binNumber + 'Weight').text(data.weight + ' kg');
-    
-    cardID = "b"+ binNumber + "_FLCard";
-    iconID = "icon" + binNumber;
-    updateBinCardColor(binNumber, cardID, data.fill_level, iconID);
+    if (data.fill_level == -1)
+    {
+      $('#bin' + binNumber + 'FillLevel').text('...');
+      $('#bin' + binNumber + 'Weight').text('...');
+
+      cardID = "b"+ binNumber + "_FLCard";
+      iconID = "icon" + binNumber;
+      updateBinCardColor(binNumber, cardID, data.fill_level, iconID);
+    }
+    else{
+      $('#bin' + binNumber + 'FillLevel').text(data.fill_level + '%');
+      $('#bin' + binNumber + 'Weight').text(data.weight + ' kg');
+      
+      cardID = "b"+ binNumber + "_FLCard";
+      iconID = "icon" + binNumber;
+      updateBinCardColor(binNumber, cardID, data.fill_level, iconID);
+    }
+
     
     // Update other fields as needed
   }
