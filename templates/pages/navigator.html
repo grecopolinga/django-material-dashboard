@@ -59,118 +59,19 @@
                 <table class="table align-items-center mb-0">
                   <thead>
                     <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bin</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Location</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Zone</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Bin</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Status</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Location</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Zone</th>
                       <th class="text-secondary opacity-7"></th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="{% static 'img/team-2.jpg' %}" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Smart Bin 1 </h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">Gokongwei Hall</p>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="badge badge-sm bg-gradient-success">Online</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">Zone 3</span>
-                      </td>
-                      <td class="align-middle">
-                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                          Edit
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="{% static 'img/team-3.jpg' %}" class="avatar avatar-sm me-3 border-radius-lg" alt="user2">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Smart Bin 2</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">Henry Sy Sr. Hall</p>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="badge badge-sm bg-gradient-secondary">Offline</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">Zone 1</span>
-                      </td>
-                      <td class="align-middle">
-                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                          Edit
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="{% static 'img/team-4.jpg' %}" class="avatar avatar-sm me-3 border-radius-lg" alt="user3">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Smart Bin 3</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">St. Joseph Hall</p>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="badge badge-sm bg-gradient-success">Online</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">Zone 2</span>
-                      </td>
-                      <td class="align-middle">
-                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                          Edit
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="{% static 'img/team-3.jpg' %}" class="avatar avatar-sm me-3 border-radius-lg" alt="user4">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Smart Bin 4</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">Velasco Hall</p>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="badge badge-sm bg-gradient-success">Online</span>
-                      </td>
-                      <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">Zone 2</span>
-                      </td>
-                      <td class="align-middle">
-                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                          Edit
-                        </a>
-                      </td>
-                    </tr>
+                  <a href="#" class="text-secondary font-weight-bold text-s edit-button" style="padding-left: 20px;" data-bs-toggle="modal" data-bs-target="#editModal" data-bin-id="${bin.bin_id}" data-bin-zone="${bin.zone}">
+                    Edit Zones
+                  </a>
+                  
+                  <tbody id="binTableBody">
+                    <!-- Table rows will be dynamically generated here -->
                   </tbody>
                 </table>
               </div>
@@ -179,32 +80,60 @@
         </div>
       </div>
       <!-- --#endregion -->
+      <!-- Define a modal with a unique ID -->
+      <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true" data-bs-backdrop="false">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editModalLabel">Edit Bin</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="form-group">
+                  <label for="binId">Select Bin ID:</label>
+                  <select class="form-control" id="binId" style="width: 100px; border: 1px solid #1a1a1a; text-align: center;">
+                    <!-- Populate this select with available bin IDs -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="zoneSelect">Select New Zone:</label>
+                  <select class="form-control" id="zoneSelect" style="width: 100px; border: 1px solid #1a1a1a; text-align: center;">
+                    <option value="1">Zone 1</option>
+                    <option value="2">Zone 2</option>
+                    <option value="3">Zone 3</option>
+                  </select>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-success" id="saveChangesButton" data-bs-dismiss="modal">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
       {% include 'includes/footer.html' %}
     </div>
   </main>
-
+  <!-- Your HTML code for the modal -->
 {% endblock content %}
 {% block scripts %}
+
 <script>
 
-document.addEventListener('DOMContentLoaded', function () {
-  // Initial code to run on page load
-  fetchPrioritizationData();
-});
+  document.addEventListener('DOMContentLoaded', function () {
+    // Initial code to run on page load
+    fetchPrioritizationData();
+  });
 
   function fetchPrioritizationData() {
     fetch('/api/getPrioritizationData')
       .then(response => response.json())
       .then(data => {
         // Group the bins by zone
-        const bin1Data = data['Bin1'];
-        const bin2Data = data['Bin2'];
-        const bin3Data = data['Bin3'];
-        const bin4Data = data['Bin4'];
-
-        // Group bins by zone
-        const binsByZone = groupBinsByZone([bin1Data, bin2Data, bin3Data, bin4Data]);
-
+        const binsByZone = groupBinsByZone(Object.values(data));
+        
         // You can now access prioritized bins in each zone
         const Zone1Bins = binsByZone['Zone1'];
         const Zone2Bins = binsByZone['Zone2'];
@@ -212,15 +141,131 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(Zone1Bins);
         console.log(Zone2Bins);
         console.log(Zone3Bins);
-
+        
         // Prioritize the bins in each zone
         prioritizeBins(binsByZone);
-
+        
+        // Update the table summary with the data
+        updateTableSummary(Object.values(data));
+        populateBinIdDropdown(Object.values(data))
       })
       .catch(error => {
         console.error('Error fetching data:', error);
       });
   }
+  function createTableRow(bin) {
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+      <td class="col">
+        <div class="d-flex px-2 py-1">
+          <div class="d-flex flex-column justify-content-center">
+            <h6 class="mb-0 text-sm">Bin ${bin.bin_id}</h6>
+          </div>
+        </div>
+      </td>
+      <td class="col text-center text-sm">
+        <span class="badge badge-sm bg-gradient-success">Online</span>
+      </td>
+      <td class="col">
+        <p class="text-xs font-weight-bold mb-0">${bin.location}</p>
+      </td>
+      <td class="col text-center">
+        <span class="text-secondary text-xs font-weight-bold">Zone ${bin.zone}</span>
+      </td>
+    `;
+    return newRow;
+  }
+
+  function updateTableSummary(data) {
+    const binTableBody = document.getElementById('binTableBody');
+    
+    // Clear existing table rows
+    binTableBody.innerHTML = '';
+    
+    // Loop through the data and create new table rows
+    data.forEach(bin => {
+      const newRow = createTableRow(bin);
+      binTableBody.appendChild(newRow);
+    });
+    
+  }
+  // Function to populate the bin ID dropdown in the modal
+  function populateBinIdDropdown(data) {
+    const binIdDropdown = document.getElementById('binId');
+    binIdDropdown.innerHTML = ''; // Clear previous options
+
+    // Create an option for each bin
+    data.forEach(bin => {
+      const option = document.createElement('option');
+      option.value = bin.bin_id;
+      option.textContent = `Bin ${bin.bin_id} (Zone ${bin.zone})`;
+      binIdDropdown.appendChild(option);
+      console.log(bin.bin_id)
+    });
+  }
+
+  // Your fetchPrioritizationData function remains the same
+
+  // Event listener for the "Edit" button
+  document.querySelectorAll('.edit-button').forEach(editButton => {
+    editButton.addEventListener('click', () => {
+      // Show the modal
+      const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+      editModal.show();
+    });
+  });
+
+  // Event listener for the "Save Changes" button
+  document.getElementById('saveChangesButton').addEventListener('click', () => {
+    // Get the selected bin ID and edited zone
+    const selectedBinId = document.getElementById('binId').value;
+    const editedZone = document.getElementById('zoneSelect').value;
+
+    // Update the bin zone in the database using the selected bin ID
+    updateBinZoneInDatabase(selectedBinId, editedZone);
+
+    // Close the modal
+    const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+    editModal.hide();
+  });
+
+  function updateBinZoneInDatabase(binId, newZone) {
+    fetch(`/api/update_zone/${binId}/${newZone}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'), // You need to include the CSRF token
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error(data.error);
+        } else {
+            console.log(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error updating bin zone:', error);
+    });
+}
+
+// Helper function to get the CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + '=') {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
 
   function groupBinsByZone(data) {
     const binsByZone = {
@@ -245,30 +290,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
     return binsByZone;
   }
+
   function prioritizeBins(binsByZone) {
-  for (const zoneKey in binsByZone) {
-    const zone = binsByZone[zoneKey];
+    for (const zoneKey in binsByZone) {
+      const zone = binsByZone[zoneKey];
 
-    // Remove "Zone " from zoneKey
-    const zoneNumber = zoneKey.replace('Zone ', '');
-    console.log(zoneNumber);
-    // Now, apply the colors based on the zone's content
-    const zoneColor = getZoneColor(zone);
-    console.log(zoneColor)
-    // Get the corresponding zone elements by their IDs
-    const zoneElements = document.querySelectorAll(`[id^="${zoneNumber}"]`);
-    console.log(zoneElements)
-    if (zoneElements.length === 0) {
-      console.error(`Zone elements not found for ${zoneKey}`);
-      continue;
+      const zoneNumber = zoneKey.replace('Zone ', '');
+      console.log(zoneNumber);
+      // Now, apply the colors based on the zone's content
+      const zoneColor = getZoneColor(zone);
+      console.log(zoneColor)
+      // Get the corresponding zone elements by their IDs
+      const zoneElements = document.querySelectorAll(`[id^="${zoneNumber}"]`);
+      console.log(zoneElements)
+      if (zoneElements.length === 0) {
+        console.error(`Zone elements not found for ${zoneKey}`);
+        continue;
+      }
+
+      // Apply the calculated background color to all zone elements
+      zoneElements.forEach(element => {
+        element.style.backgroundColor = zoneColor;
+      });
     }
-
-    // Apply the calculated background color to all zone elements
-    zoneElements.forEach(element => {
-      element.style.backgroundColor = zoneColor;
-    });
   }
-}
 
 
   function getZoneColor(zone) {
