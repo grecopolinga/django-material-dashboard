@@ -4,9 +4,11 @@ from admin_material.forms import RegistrationForm, LoginForm, UserPasswordResetF
 from django.contrib.auth import logout
 
 # region - Our libraries and dependencies
-
+from django.views.decorators.http import require_POST
 from .models import ProcessedData, RawData
 from django.http import HttpResponse
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
 from django.utils import timezone
 from .serializers import ProcessedDataSerializer, RawDataSerializer
@@ -71,6 +73,22 @@ def navigator(request):
 
 # endregion
 
+@require_POST
+def update_bin_zone(request, bin_id, new_zone):
+    try:
+        # Get all bins with the specified bin_id
+        bins = ProcessedData.objects.filter(node_ID=bin_id)
+
+        # Update the zone for all matching bins
+        for bin in bins:
+            bin.zone = new_zone
+            bin.save()
+
+        return JsonResponse({'message': f'Updated zone for all bins with bin_id {bin_id} to zone {new_zone}', 'new_zone': new_zone})
+    except ProcessedData.DoesNotExist:
+        return JsonResponse({'error': 'No matching bins found'}, status=404)
+
+        
 @api_view(['GET'])
 def getPrioritizationData(request):
     bin_data = {
@@ -503,6 +521,20 @@ def processing():
         'Bin4_MQ6_Change': "{:.2f}".format(float(Bin4_MQ6_Change)),
         'Bin4_Flame': int(Node4["Flame_Data"]),
     }
+    # Query the previous 4 entries in the database
+    prev_entries = ProcessedData.objects.order_by('-timestamp')[:4]
+
+    bin_zones = {}  # Create a dictionary to store bin IDs and their corresponding zones
+
+    # Extract bin IDs and zones from the previous entries
+    for entry in prev_entries:
+        bin_zones[entry.node_ID] = entry.zone
+
+    # Assign the zones to your new entries
+    zone_for_bin1 = bin_zones.get(Node1["Node_ID"], 0)  # Replace default_zone_value with the default zone value
+    zone_for_bin2 = bin_zones.get(Node2["Node_ID"], 0)
+    zone_for_bin3 = bin_zones.get(Node3["Node_ID"], 0)
+    zone_for_bin4 = bin_zones.get(Node4["Node_ID"], 0)
 
     #For Bin1
     reading = ProcessedData(
@@ -516,7 +548,8 @@ def processing():
     mq2_change = Bin1_MQ2_Change,
     mq3_change = Bin1_MQ3_Change,
     mq6_change = Bin1_MQ6_Change,
-    flame = int(Node1["Flame_Data"]))
+    flame = int(Node1["Flame_Data"]),
+    zone=zone_for_bin1)
     reading.save()
 
     # For Bin2
@@ -531,7 +564,8 @@ def processing():
     mq2_change=Bin2_MQ2_Change,
     mq3_change=Bin2_MQ3_Change,
     mq6_change=Bin2_MQ6_Change,
-    flame = int(Node2["Flame_Data"]))
+    flame = int(Node2["Flame_Data"]),
+    zone=zone_for_bin2)
     reading2.save()
     
     # For Bin3
@@ -546,7 +580,8 @@ def processing():
     mq2_change=Bin3_MQ2_Change,
     mq3_change=Bin3_MQ3_Change,
     mq6_change=Bin3_MQ6_Change,
-    flame = int(Node3["Flame_Data"]))
+    flame = int(Node3["Flame_Data"]),
+    zone=zone_for_bin3)
     reading3.save()
     
     # For Bin4
@@ -561,7 +596,8 @@ def processing():
     mq2_change=Bin4_MQ2_Change,
     mq3_change=Bin4_MQ3_Change,
     mq6_change=Bin4_MQ6_Change,
-    flame = int(Node4["Flame_Data"]))
+    flame = int(Node4["Flame_Data"]),
+    zone=zone_for_bin4)
     reading4.save()
 
     return context
