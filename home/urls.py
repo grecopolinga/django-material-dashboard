@@ -13,7 +13,8 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     
     # Our modified URLS
-    path('navigator/', views.navigator, name='navigator'), 
+    path('navigator/', views.navigator, name='navigator'),
+    path('api/getPrioritizationData', views.getPrioritizationData, name='getPrioritizationData'), 
     path('api/getWeightData', views.getWeightData, name='getWeightData'),
     path('api/getWeightTimeData', views.getWeightTimeData, name='getWeightTimeData'),
     path('api/getFillLevelData', views.getFillLevelData, name='getFillLevelData'),

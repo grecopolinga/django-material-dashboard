@@ -19,7 +19,7 @@ import time
 import serial
 import threading
 import pytz
-
+from django.db.models import F
 Node1 = {"Node_ID": 1, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
 Node2 = {"Node_ID": 2, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
 Node3 = {"Node_ID": 3, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
@@ -70,6 +70,24 @@ def navigator(request):
   return render(request, 'pages/navigator.html', { 'segment': 'navigator' }) 
 
 # endregion
+
+@api_view(['GET'])
+def getPrioritizationData(request):
+    bin_data = {
+        'Bin1': ProcessedData.objects.filter(node_ID=1).latest('timestamp'),
+        'Bin2': ProcessedData.objects.filter(node_ID=2).latest('timestamp'),
+        'Bin3': ProcessedData.objects.filter(node_ID=3).latest('timestamp'),
+        'Bin4': ProcessedData.objects.filter(node_ID=4).latest('timestamp'),
+    }
+    serialized_data = {
+        bin_id: {
+            'bin_id': bin_data[bin_id].node_ID,
+            'fill_level': bin_data[bin_id].fill_level,
+            'zone': bin_data[bin_id].zone,
+            'flame': bin_data[bin_id].flame,
+        } for bin_id in bin_data
+    }
+    return Response(serialized_data)
 
 # This API endpoint gets the whole array of attributes for each bin ID
 @api_view(['GET']) 

@@ -43,8 +43,54 @@
   <!-- CSS Files -->
   <link id="pagestyle" href="{% static 'css/material-dashboard.css' %}" rel="stylesheet" />
   <link id="pagestyle" href="{% static 'css/styles.css' %}" rel="stylesheet" />
-  {% block extrastyle %}{% endblock extrastyle %}
+  {% block extrastyle %}
+  <style>
+    .form-check .form-check-input:checked[type="checkbox"] {
+    background-color: #28a745 !important; /* Success color */
+    border-color: #28a745 !important; /* Border color */
+    
+    }
+    .form-check .form-check-input:checked[type="radio"]{
+    border-color: #28a745 !important; /* Border color */
+    color: #28a745 !important;
+    
+    }
+    .form-check:not(.form-switch) .form-check-input[type="radio"]:after {
+      background-image: linear-gradient(195deg, #28a745 0%, #28a745 100%), var(--bs-gradient) !important;
+    }
 
+    .daterangepicker .applyBtn {
+        background-color: #28a745;
+        color: white;
+    }
+
+    /* Customize the selected date color */
+    .daterangepicker td.available.active,
+    .daterangepicker td.available:hover,
+    .daterangepicker td.available.active:hover {
+        background-color: #28a745;
+        color: white; 
+    }
+
+    /* Customize the range color */
+    .daterangepicker td.in-range {
+        background-color: #4CAF50; 
+        color: white;
+    }
+
+    /* Customize the predefined date ranges */
+  .daterangepicker .ranges li.active {
+      background-color: #28a745 !important; 
+      color: white !important;
+  }
+
+  /* Customize the hover effect for predefined date ranges */
+  .daterangepicker .ranges li:hover {
+      background-color: #4CAF50 !important;
+      color: white !important;
+  }
+  </style>
+  {% endblock extrastyle %}
 </head>
 
 <body class="g-sidenav-show  bg-gray-200">
