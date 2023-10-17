@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from datetime import datetime, timedelta
 from django.utils import timezone
 from .serializers import ProcessedDataSerializer, RawDataSerializer
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import datetime
@@ -311,7 +312,7 @@ def Fill_Level(distance):
     return Fill_Level
 
 def lbs_to_kg(lbs):
-    kg = lbs * 0.45359237
+    kg = lbs / 1000
     if kg < 0:
         return 0
     else:
