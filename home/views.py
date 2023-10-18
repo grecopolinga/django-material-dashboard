@@ -22,10 +22,10 @@ import serial
 import threading
 import pytz
 from django.db.models import F
-Node1 = {"Node_ID": 1, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
-Node2 = {"Node_ID": 2, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
-Node3 = {"Node_ID": 3, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
-Node4 = {"Node_ID": 4, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_lbs":0}
+Node1 = {"Node_ID": 1, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_grams":0}
+Node2 = {"Node_ID": 2, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_grams":0}
+Node3 = {"Node_ID": 3, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_grams":0}
+Node4 = {"Node_ID": 4, "Ultrasonic_CM":0, "Ultrasonic_Inch":0, "MQ2_Data":0, "MQ3_Data":0, "MQ6_Data":0, "Flame_Data":0, "Weight_grams":0}
 
 
 running = True
@@ -309,43 +309,13 @@ def receive_sensor_data(request):
             node["MQ3_Data"] = sensor_data.get('MQ3_Data')
             node["MQ6_Data"] = sensor_data.get('MQ6_Data')
             node["Flame_Data"] = sensor_data.get('Flame_Data')
-            node["Weight_lbs"] = sensor_data.get('Weight_lbs')
+            node["Weight_grams"] = sensor_data.get('Weight_grams')
             
             processing()
             
             return Response(serializer.data)
     
     # return an error response if the request method is not POST
-    return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-# @api_view(['POST']) #Working POST dynamic
-# def receive_sensor_data(request):
-#     if request.method == 'POST':
-#         serializer = RawDataSerializer(data=request.data)
-#         if serializer.is_valid():
-#             sensor_data = request.data
-#             node_id = sensor_data.get('Node_ID')
-            
-#             # Check if the bin_data dictionary exists, and if not, create it
-#             if 'bin_data' not in globals():
-#                 globals()['bin_data'] = {}
-            
-#             # Update or add the bin's data in the bin_data dictionary
-#             bin_data[node_id] = {
-#                 "Node_ID": node_id,
-#                 "Ultrasonic_CM": sensor_data.get('Ultrasonic_CM'),
-#                 "MQ2_Data": sensor_data.get('MQ2_analog'),
-#                 "MQ3_Data": sensor_data.get('MQ3_analog'),
-#                 "MQ6_Data": sensor_data.get('MQ6_analog'),
-#                 "Flame_Data": sensor_data.get('Flame_Data'),
-#                 "Weight_lbs": sensor_data.get('Weight_lbs')
-#             }
-            
-#             # Call the processing function to process the data
-#             processing()
-#             print(bin_data)
-#             return Response(serializer.data)
-    
     return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
 def get_rate_of_change(value):
@@ -382,8 +352,8 @@ def Fill_Level(distance):
     else:
         return -1    
 
-def lbs_to_kg(lbs):
-    kg = lbs / 1000
+def grams_to_kg(grams):
+    kg = grams / 1000
     if kg < 0:
         return 0
     else:
@@ -418,10 +388,10 @@ def processing():
     Bin4_Fill_Level = Fill_Level(int(Node4["Ultrasonic_CM"]))
 
     #Weight
-    Bin1_Weight = lbs_to_kg(float(Node1["Weight_lbs"]))
-    Bin2_Weight = lbs_to_kg(float(Node2["Weight_lbs"]))
-    Bin3_Weight = lbs_to_kg(float(Node3["Weight_lbs"]))
-    Bin4_Weight = lbs_to_kg(float(Node4["Weight_lbs"]))
+    Bin1_Weight = grams_to_kg(float(Node1["Weight_grams"]))
+    Bin2_Weight = grams_to_kg(float(Node2["Weight_grams"]))
+    Bin3_Weight = grams_to_kg(float(Node3["Weight_grams"]))
+    Bin4_Weight = grams_to_kg(float(Node4["Weight_grams"]))
 
     #Mean-Time-to-Collect
     Bin1_MTTC = MTTC(Bin1_Fill_Level)
