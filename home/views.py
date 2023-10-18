@@ -376,6 +376,8 @@ def Fill_Level(distance):
         Fill_Level = (accumulated/50) * 100
         if Fill_Level < 0:
             Fill_Level = 0
+        if Fill_Level > 100:
+            Fill_Level = 100
         return Fill_Level
     else:
         return -1    
