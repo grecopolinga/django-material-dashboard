@@ -41,4 +41,4 @@ class RawData(models.Model):
     MQ3_Data = models.IntegerField()
     MQ6_Data = models.IntegerField()
     Flame_Data = models.IntegerField()
-    Weight_lbs = models.FloatField()
+    Weight_grams = models.FloatField()
