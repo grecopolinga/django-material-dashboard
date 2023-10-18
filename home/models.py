@@ -37,8 +37,8 @@ class ProcessedData(models.Model):
 class RawData(models.Model):
     Node_ID = models.IntegerField()
     Ultrasonic_CM = models.IntegerField()
-    MQ2_ppm = models.FloatField()
-    MQ3_ppm = models.FloatField()
-    MQ6_ppm = models.FloatField()
+    MQ2_Data = models.IntegerField()
+    MQ3_Data = models.IntegerField()
+    MQ6_Data = models.IntegerField()
     Flame_Data = models.IntegerField()
     Weight_lbs = models.FloatField()
