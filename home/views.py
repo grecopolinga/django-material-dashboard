@@ -695,9 +695,6 @@ def processing():
             zone=zone_for_bin,
         )
         reading.save()
-
-    detect_gas_and_notify(bins)    
-
     return context
 
 def get_recent_sensor_data():
