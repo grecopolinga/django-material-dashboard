@@ -84,7 +84,7 @@ def update_bin_zone(request, bin_id, new_zone):
             bin.zone = new_zone
             bin.save()
 
-        return JsonResponse({'message': f'Updated zone for all bins with bin_id {bin_id} to zone {new_zone}', 'new_zone': new_zone})
+        return JsonResponse({'message': f'Updated Bin {bin_id} to Zone {new_zone}', 'new_zone': new_zone})
     except ProcessedData.DoesNotExist:
         return JsonResponse({'error': 'No matching bins found'}, status=404)
 
