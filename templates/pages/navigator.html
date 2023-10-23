@@ -16,30 +16,19 @@
             </div>
             <!-- Insert Map Inside this Div-->
             <div class="card-body px-4 pb-2">
-              <!-- Plot the areas on the img -->
-              <!-- <map name="map_zones">
-                <area
-                    href="https://facebook.com"
-                    alt="Zone 1 area"
-                    target="_blank"
-                    shape="poly"
-                    coords="2.1%,42%, 48%,42%, 48%,87.1%, 2.1%,87.1%"
-                >
-              </map> -->
               <img 
                   src="{% static '/img/map.png' %}"
-                  alt="Zone 1"
+                  alt="DLSU Campus"
                   width="100%"
                   height="450"
                   usemap="#map_zones"
               >
-              <a href="#" id="Zone1" style="position: absolute; left: 5%; top: 50%; width: 43%; height: 37%;"></a>
-              <a href="#" id="Zone2" style="position: absolute; left: 33%; top: 27%; width: 23%; height: 23%;"></a>
-              <a href="#" id="Zone2b" style="position: absolute; left: 48%; top: 50%; width: 7%; height: 37%;"></a>
-              <a href="#" id="Zone2c" style="position: absolute; left: 55%; top: 45%; width: 13%; height: 21%;"></a>
-              <a href="#" id="Zone3" style="position: absolute; left: 66%; top: 67%; width: 25.5%; height: 20%;"></a>
-              <a href="#" id="Zone3b" style="position: absolute; left: 75%; top: 42.5%; width: 23%; height: 22%;"></a>
-
+              <a href="#" id="Zone1" style="position: absolute; left: 5%; top: 50%; width: 43%; height: 37%;" title="Zone 1"></a>
+              <a href="#" id="Zone2" style="position: absolute; left: 33%; top: 27%; width: 23%; height: 23%;" title="Zone 2"></a>
+              <a href="#" id="Zone2b" style="position: absolute; left: 48%; top: 50%; width: 7%; height: 37%;" title="Zone 2"></a>
+              <a href="#" id="Zone2c" style="position: absolute; left: 55%; top: 45%; width: 13%; height: 21%;" title="Zone 2"></a>
+              <a href="#" id="Zone3" style="position: absolute; left: 66%; top: 67%; width: 25.5%; height: 20%;" title="Zone 3"></a>
+              <a href="#" id="Zone3b" style="position: absolute; left: 75%; top: 42.5%; width: 23%; height: 22%;" title="Zone 3"></a>              
             </div>
           </div>
         </div>
@@ -51,26 +40,28 @@
           <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
               <div class="shadow--dark border-radius-lg pt-4 pb-3" style="background-color: rgb(27, 107, 16);">
-                <h6 class="text-white text-capitalize ps-3">Table Summary for Bin Locator</h6>
+                <h6 class="text-white text-capitalize ps-3">
+                  Table Summary for Bin Locator
+                  <a href="#" class="text-secondary font-weight-bold text-s edit-button text-white" style="float: right; color: white;" data-bs-toggle="modal" data-bs-target="#editModal" data-bin-id="${bin.bin_id}" data-bin-zone="${bin.zone}">
+                    {% if user.is_superuser %}
+                      Edit
+                      <i class="material-icons text-white" style="vertical-align: middle; margin-right: 30px;">edit</i>
+                    {% endif %}
+                  </a>
+                </h6>
               </div>
             </div>
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0">
-                <table class="table align-items-center mb-0">
+                <table class="table align-items-center mb-0 text-center">
                   <thead>
                     <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Bin</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Status</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Location</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Zone</th>
-                      <th class="text-secondary opacity-7"></th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 33%;">Bin</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 33%;">Location</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 33%;">Zone</th>
                     </tr>
-                  </thead>
-                  <a href="#" class="text-secondary font-weight-bold text-s edit-button" style="padding-left: 20px;" data-bs-toggle="modal" data-bs-target="#editModal" data-bin-id="${bin.bin_id}" data-bin-zone="${bin.zone}">
-                    Edit Zones
-                  </a>
-                  
-                  <tbody id="binTableBody">
+                  </thead>                  
+                  <tbody id="binTableBody" class="text-center">
                     <!-- Table rows will be dynamically generated here -->
                   </tbody>
                 </table>
@@ -90,22 +81,33 @@
             </div>
             <div class="modal-body">
               <form>
-                <div class="form-group">
-                  <label for="binId">Select Bin ID:</label>
-                  <select class="form-control" id="binId" style="width: 100px; border: 1px solid #1a1a1a; text-align: center;">
-                    <!-- Populate this select with available bin IDs -->
-                  </select>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="binId">Select Bin ID:</label>
+                      <select class="form-control" id="binId" style="border: 1px solid #1a1a1a; text-align: center;">
+                        <!-- Populate this select with available bin IDs -->
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="zoneSelect">Select New Zone:</label>
+                      <select class="form-control" id="zoneSelect" style="border: 1px solid #1a1a1a; text-align: center;">
+                        <option value="1">Zone 1</option>
+                        <option value="2">Zone 2</option>
+                        <option value="3">Zone 3</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
                 <div class="form-group">
-                  <label for="zoneSelect">Select New Zone:</label>
-                  <select class="form-control" id="zoneSelect" style="width: 100px; border: 1px solid #1a1a1a; text-align: center;">
-                    <option value="1">Zone 1</option>
-                    <option value="2">Zone 2</option>
-                    <option value="3">Zone 3</option>
-                  </select>
+                  <label for="location">Location:</label>
+                  <input type="text" class="form-control" id="location" style="border: 1px solid #1a1a1a; text-align: center;" placeholder="Enter location">
                 </div>
               </form>
             </div>
+            
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               <button type="button" class="btn btn-success" id="saveChangesButton" data-bs-dismiss="modal">Save Changes</button>
@@ -157,20 +159,15 @@
     const newRow = document.createElement('tr');
     newRow.innerHTML = `
       <td class="col">
-        <div class="d-flex px-2 py-1">
           <div class="d-flex flex-column justify-content-center">
-            <h6 class="mb-0 text-sm">Bin ${bin.bin_id}</h6>
+            <h6 class="mb-0 text-sm ml-6">Bin ${bin.bin_id}</h6>
           </div>
-        </div>
-      </td>
-      <td class="col text-center text-sm">
-        <span class="badge badge-sm bg-gradient-success">Online</span>
       </td>
       <td class="col">
-        <p class="text-xs font-weight-bold mb-0">${bin.location}</p>
+        <p class="text-xs font-weight-bold mb-0 ml-2">${bin.location}</p>
       </td>
       <td class="col text-center">
-        <span class="text-secondary text-xs font-weight-bold">Zone ${bin.zone}</span>
+        <span class="text-secondary text-xs font-weight-bold ml-4">Zone ${bin.zone}</span>
       </td>
     `;
     return newRow;
@@ -264,8 +261,6 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
-
 
   function groupBinsByZone(data) {
     const binsByZone = {
