@@ -20,6 +20,7 @@ class ProcessedData(models.Model):
     flame = models.IntegerField()
     timestamp = models.DateTimeField(default=timezone.now)
     zone = models.IntegerField(default=0)
+    location = models.CharField(max_length=100, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         # convert timestamp to your timezone
@@ -32,7 +33,7 @@ class ProcessedData(models.Model):
         super(ProcessedData, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.node_ID    
+        return str(self.node_ID) 
 
 class RawData(models.Model):
     Node_ID = models.IntegerField()

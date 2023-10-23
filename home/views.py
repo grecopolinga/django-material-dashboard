@@ -74,7 +74,7 @@ def navigator(request):
 # endregion
 
 @require_POST
-def update_bin_zone(request, bin_id, new_zone):
+def update_bin_zone(request, bin_id, new_zone, new_location):
     try:
         # Get all bins with the specified bin_id
         bins = ProcessedData.objects.filter(node_ID=bin_id)
@@ -82,9 +82,10 @@ def update_bin_zone(request, bin_id, new_zone):
         # Update the zone for all matching bins
         for bin in bins:
             bin.zone = new_zone
+            bin.location = new_location
             bin.save()
 
-        return JsonResponse({'message': f'Updated Bin {bin_id} to Zone {new_zone}', 'new_zone': new_zone})
+        return JsonResponse({'message': f'Updated Bin {bin_id} to Zone {new_zone} and it''s location', 'new_zone': new_zone})
     except ProcessedData.DoesNotExist:
         return JsonResponse({'error': 'No matching bins found'}, status=404)
 
@@ -103,6 +104,7 @@ def getPrioritizationData(request):
             'fill_level': bin_data[bin_id].fill_level,
             'zone': bin_data[bin_id].zone,
             'flame': bin_data[bin_id].flame,
+            'location': bin_data[bin_id].location,
         } for bin_id in bin_data
     }
     return Response(serialized_data)

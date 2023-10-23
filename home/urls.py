@@ -21,7 +21,8 @@ urlpatterns = [
     path('api/getRateOfChange', views.getRateOfChange, name='getRateOfChange'),
     path('api/getLatestData', views.getLatestData, name='getLatestData'),
     path('api/sensor-data', views.receive_sensor_data, name='receive_sensor_data'),
-    path('api/update_zone/<int:bin_id>/<int:new_zone>/', views.update_bin_zone, name='update_bin_zone'),
+    path('api/update_zone/<int:bin_id>/<int:new_zone>/<str:new_location>/', views.update_bin_zone, name='update_bin_zone'),
+    
 
 
     # Authentication
