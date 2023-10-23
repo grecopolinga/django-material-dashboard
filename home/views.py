@@ -357,7 +357,7 @@ def grams_to_kg(grams):
     if kg < 0:
         return 0
     else:
-        return kg 
+        return kg
 
 def MTTC(Fill_Level):
     global start_time, end_time, collected_times
@@ -380,103 +380,286 @@ def MTTC(Fill_Level):
     MTTC_Converted = "{:02d}m {:05.2f}s".format(int(minutes), seconds)
     return MTTC_Converted
 
+# def processing():
+#     #Fill Level
+#     Bin1_Fill_Level = Fill_Level(int(Node1["Ultrasonic_CM"]))
+#     Bin2_Fill_Level = Fill_Level(int(Node2["Ultrasonic_CM"]))
+#     Bin3_Fill_Level = Fill_Level(int(Node3["Ultrasonic_CM"]))
+#     Bin4_Fill_Level = Fill_Level(int(Node4["Ultrasonic_CM"]))
+
+#     #Weight
+#     Bin1_Weight = grams_to_kg(float(Node1["Weight_grams"]))
+#     Bin2_Weight = grams_to_kg(float(Node2["Weight_grams"]))
+#     Bin3_Weight = grams_to_kg(float(Node3["Weight_grams"]))
+#     Bin4_Weight = grams_to_kg(float(Node4["Weight_grams"]))
+
+#     #Mean-Time-to-Collect
+#     Bin1_MTTC = MTTC(Bin1_Fill_Level)
+#     Bin2_MTTC = MTTC(Bin2_Fill_Level)
+#     Bin3_MTTC = MTTC(Bin3_Fill_Level)
+#     Bin4_MTTC = MTTC(Bin4_Fill_Level)
+
+#     #Rate of Change of PPM values
+#     Bin1_MQ2_Change = get_rate_of_change(float(Node1["MQ2_Data"]))
+#     Bin1_MQ3_Change = get_rate_of_change(float(Node1["MQ3_Data"]))
+#     Bin1_MQ6_Change = get_rate_of_change(float(Node1["MQ6_Data"]))
+
+#     Bin2_MQ2_Change = get_rate_of_change(float(Node2["MQ2_Data"]))
+#     Bin2_MQ3_Change = get_rate_of_change(float(Node2["MQ3_Data"]))
+#     Bin2_MQ6_Change = get_rate_of_change(float(Node2["MQ6_Data"]))
+    
+#     Bin3_MQ2_Change = get_rate_of_change(float(Node3["MQ2_Data"]))
+#     Bin3_MQ3_Change = get_rate_of_change(float(Node3["MQ3_Data"]))
+#     Bin3_MQ6_Change = get_rate_of_change(float(Node3["MQ6_Data"]))
+    
+#     Bin4_MQ2_Change = get_rate_of_change(float(Node4["MQ2_Data"]))
+#     Bin4_MQ3_Change = get_rate_of_change(float(Node4["MQ3_Data"]))
+#     Bin4_MQ6_Change = get_rate_of_change(float(Node4["MQ6_Data"]))
+
+#     ph_tz = pytz.timezone('Asia/Manila')
+#     # Get the current date and time
+#     now = timezone.now()
+#     #For the Fill-level graph
+#     # Create a datetime object for the start of the current day
+#     start_of_day = datetime.datetime.combine(datetime.date(2023, 8, 28), datetime.time.min).astimezone()
+#     end_of_day = datetime.datetime.combine(datetime.date(2023, 8, 28), datetime.time.max).astimezone()
+#     # Query the database for ProcessedData objects that occurred within the current day
+#     processed_data = ProcessedData.objects.filter(timestamp__gte=start_of_day, timestamp__lt=end_of_day)
+#     # Extract the fill level and timestamp data for the filtered ProcessedData objects
+#     fill_levels = [data.fill_level for data in processed_data]
+#     bin_ids = [data.node_ID for data in processed_data]
+#     timestamps = [data.timestamp.astimezone(ph_tz).strftime('%H:%M') for data in processed_data]
+#     # Pass fill_levels and timestamps as JSON objects
+#     bin_ids_json = json.dumps(bin_ids)
+#     fill_levels_json = json.dumps(fill_levels)
+#     timestamps_json = json.dumps(timestamps)
+#     #End of code for the Fill-level graph
+
+#     #For the MTTC graph
+#     # Create datetime objects for the start and end of the 7-day period
+#     end_date = timezone.now()  # Use the current date as the end date
+#     start_date = end_date - datetime.timedelta(days=6)  # Calculate the start date
+
+#     # Query the database for ProcessedData objects within the 7-day period
+#     mttc_processed_data = ProcessedData.objects.filter(timestamp__range=(start_date, end_date))
+
+#     # Extract the MTTC, timestamp, and bin ID data for the filtered ProcessedData objects
+#     mttc_data = [data.mttc for data in mttc_processed_data]
+#     mttc_bin_ids = [data.node_ID for data in mttc_processed_data]
+#     mttc_timestamps = [data.timestamp.astimezone(ph_tz).strftime('%m-%d') for data in mttc_processed_data]
+
+#     # Pass bin_ids, mttc_data, and timestamps as JSON objects
+#     mttc_bin_ids_json = json.dumps(mttc_bin_ids)
+#     mttc_data_json = json.dumps(mttc_data)
+#     mttc_timestamps_json = json.dumps(mttc_timestamps)
+
+#     #For the weight graph
+#     # Query the database for ProcessedData objects within the 7-day period
+#     weight_processed_data = ProcessedData.objects.filter(timestamp__range=(start_date, end_date))
+#     # Extract the Weight, timestamp, and bin ID data for the filtered ProcessedData objects
+#     weight_data = [data.weight for data in weight_processed_data]
+#     weight_data_float = [float(value) for value in weight_data]
+#     weight_bin_ids = [data.node_ID for data in weight_processed_data]
+#     weight_timestamps = [data.timestamp.astimezone(ph_tz).strftime('%m-%d') for data in weight_processed_data]
+
+#     weight_data_json = json.dumps(weight_data_float)
+#     weight_bin_ids_json = json.dumps(weight_bin_ids)
+#     weight_timestamps_json = json.dumps(weight_timestamps)
+#     context = {
+#         'Bin1_ID': int(Node1["Node_ID"]),
+#         'Bin1_Fill_Level': int(Bin1_Fill_Level),
+#         'Bin1_Weight': "{:.2f}".format(float(Bin1_Weight)),
+#         'Bin1_MTTC': Bin1_MTTC,
+#         'Bin1_MQ2_Analog': "{:.2f}".format(float(Node1["MQ2_Data"])),
+#         'Bin1_MQ3_Analog': "{:.2f}".format(float(Node1["MQ3_Data"])),
+#         'Bin1_MQ6_Analog': "{:.2f}".format(float(Node1["MQ6_Data"])),
+#         'Bin1_MQ2_Change': "{:.2f}".format(float(Bin1_MQ2_Change)),
+#         'Bin1_MQ3_Change': "{:.2f}".format(float(Bin1_MQ3_Change)),
+#         'Bin1_MQ6_Change': "{:.2f}".format(float(Bin1_MQ6_Change)),
+#         'Bin1_Flame': int(Node1["Flame_Data"]),
+#         'start': start_of_day,
+#         'end': end_of_day, 
+#         'data': processed_data, 
+#         'timestamps': timestamps_json, 
+#         'fill_levels': fill_levels_json,
+#         'bin_ids': bin_ids_json,
+#         'mttc_data': mttc_data_json,
+#         'mttc_bin_ids': mttc_bin_ids_json,
+#         'mttc_timestamps': mttc_timestamps_json,
+#         'weight_data': weight_data_json,
+#         'weight_bin_ids': weight_bin_ids_json,
+#         'weight_timestamps': weight_timestamps_json,
+        
+#         'Bin2_ID': int(Node2["Node_ID"]),
+#         'Bin2_Fill_Level': int(Bin2_Fill_Level),
+#         'Bin2_Weight': "{:.2f}".format(float(Bin2_Weight)),
+#         'Bin2_MTTC': Bin2_MTTC,
+#         'Bin2_MQ2_Analog': "{:.2f}".format(float(Node2["MQ2_Data"])),
+#         'Bin2_MQ3_Analog': "{:.2f}".format(float(Node2["MQ3_Data"])),
+#         'Bin2_MQ6_Analog': "{:.2f}".format(float(Node2["MQ6_Data"])),
+#         'Bin2_MQ2_Change': "{:.2f}".format(float(Bin2_MQ2_Change)),
+#         'Bin2_MQ3_Change': "{:.2f}".format(float(Bin2_MQ3_Change)),
+#         'Bin2_MQ6_Change': "{:.2f}".format(float(Bin2_MQ6_Change)),
+#         'Bin2_Flame': int(Node2["Flame_Data"]),
+        
+#         'Bin3_ID': int(Node3["Node_ID"]),
+#         'Bin3_Fill_Level': int(Bin3_Fill_Level),
+#         'Bin3_Weight': "{:.2f}".format(float(Bin3_Weight)),
+#         'Bin3_MTTC': Bin3_MTTC,
+#         'Bin3_MQ2_Analog': "{:.2f}".format(float(Node3["MQ2_Data"])),
+#         'Bin3_MQ3_Analog': "{:.2f}".format(float(Node3["MQ3_Data"])),
+#         'Bin3_MQ6_Analog': "{:.2f}".format(float(Node3["MQ6_Data"])),
+#         'Bin3_MQ2_Change': "{:.2f}".format(float(Bin3_MQ2_Change)),
+#         'Bin3_MQ3_Change': "{:.2f}".format(float(Bin3_MQ3_Change)),
+#         'Bin3_MQ6_Change': "{:.2f}".format(float(Bin3_MQ6_Change)),
+#         'Bin3_Flame': int(Node3["Flame_Data"]),
+        
+#         'Bin4_ID': int(Node4["Node_ID"]),
+#         'Bin4_Fill_Level': int(Bin4_Fill_Level),
+#         'Bin4_Weight': "{:.2f}".format(float(Bin4_Weight)),
+#         'Bin4_MTTC': Bin4_MTTC,
+#         'Bin4_MQ2_Analog': "{:.2f}".format(float(Node4["MQ2_Data"])),
+#         'Bin4_MQ3_Analog': "{:.2f}".format(float(Node4["MQ3_Data"])),
+#         'Bin4_MQ6_Analog': "{:.2f}".format(float(Node4["MQ6_Data"])),
+#         'Bin4_MQ2_Change': "{:.2f}".format(float(Bin4_MQ2_Change)),
+#         'Bin4_MQ3_Change': "{:.2f}".format(float(Bin4_MQ3_Change)),
+#         'Bin4_MQ6_Change': "{:.2f}".format(float(Bin4_MQ6_Change)),
+#         'Bin4_Flame': int(Node4["Flame_Data"]),
+#     }
+#     # Query the previous 4 entries in the database
+#     prev_entries = ProcessedData.objects.order_by('-timestamp')[:4]
+
+#     bin_zones = {}  # Create a dictionary to store bin IDs and their corresponding zones
+
+#     # Extract bin IDs and zones from the previous entries
+#     for entry in prev_entries:
+#         bin_zones[entry.node_ID] = entry.zone
+
+#     # Assign the zones to your new entries
+#     zone_for_bin1 = bin_zones.get(Node1["Node_ID"], 0)  # Replace default_zone_value with the default zone value
+#     zone_for_bin2 = bin_zones.get(Node2["Node_ID"], 0)
+#     zone_for_bin3 = bin_zones.get(Node3["Node_ID"], 0)
+#     zone_for_bin4 = bin_zones.get(Node4["Node_ID"], 0)
+
+#     #For Bin1
+#     reading = ProcessedData(
+#     node_ID = Node1["Node_ID"],
+#     fill_level= int(Bin1_Fill_Level),
+#     weight = Bin1_Weight,
+#     mttc = Bin1_MTTC,
+#     mq2_analog = Node1["MQ2_Data"],
+#     mq3_analog = Node1["MQ3_Data"],
+#     mq6_analog = Node1["MQ6_Data"],
+#     mq2_change = Bin1_MQ2_Change,
+#     mq3_change = Bin1_MQ3_Change,
+#     mq6_change = Bin1_MQ6_Change,
+#     flame = int(Node1["Flame_Data"]),
+#     zone=zone_for_bin1)
+#     reading.save()
+
+#     # For Bin2
+#     reading2 = ProcessedData(
+#     node_ID = Node2["Node_ID"],
+#     fill_level=int(Bin2_Fill_Level),
+#     weight = Bin2_Weight,
+#     mttc=Bin2_MTTC,
+#     mq2_analog=Node2["MQ2_Data"],
+#     mq3_analog=Node2["MQ3_Data"],
+#     mq6_analog=Node2["MQ6_Data"],
+#     mq2_change=Bin2_MQ2_Change,
+#     mq3_change=Bin2_MQ3_Change,
+#     mq6_change=Bin2_MQ6_Change,
+#     flame = int(Node2["Flame_Data"]),
+#     zone=zone_for_bin2)
+#     reading2.save()
+    
+#     # For Bin3
+#     reading3 = ProcessedData(
+#     node_ID = Node3["Node_ID"],
+#     fill_level=int(Bin3_Fill_Level),
+#     weight = Bin3_Weight,
+#     mttc=Bin3_MTTC,
+#     mq2_analog=Node3["MQ2_Data"],
+#     mq3_analog=Node3["MQ3_Data"],
+#     mq6_analog=Node3["MQ6_Data"],
+#     mq2_change=Bin3_MQ2_Change,
+#     mq3_change=Bin3_MQ3_Change,
+#     mq6_change=Bin3_MQ6_Change,
+#     flame = int(Node3["Flame_Data"]),
+#     zone=zone_for_bin3)
+#     reading3.save()
+    
+#     # For Bin4
+#     reading4 = ProcessedData(
+#     node_ID = Node4["Node_ID"],
+#     fill_level=int(Bin4_Fill_Level),
+#     weight = Bin4_Weight,
+#     mttc=Bin4_MTTC,
+#     mq2_analog=Node4["MQ2_Data"],
+#     mq3_analog=Node4["MQ3_Data"],
+#     mq6_analog=Node4["MQ6_Data"],
+#     mq2_change=Bin4_MQ2_Change,
+#     mq3_change=Bin4_MQ3_Change,
+#     mq6_change=Bin4_MQ6_Change,
+#     flame = int(Node4["Flame_Data"]),
+#     zone=zone_for_bin4)
+#     reading4.save()
+
+#     return context
+
 def processing():
-    #Fill Level
-    Bin1_Fill_Level = Fill_Level(int(Node1["Ultrasonic_CM"]))
-    Bin2_Fill_Level = Fill_Level(int(Node2["Ultrasonic_CM"]))
-    Bin3_Fill_Level = Fill_Level(int(Node3["Ultrasonic_CM"]))
-    Bin4_Fill_Level = Fill_Level(int(Node4["Ultrasonic_CM"]))
-
-    #Weight
-    Bin1_Weight = grams_to_kg(float(Node1["Weight_grams"]))
-    Bin2_Weight = grams_to_kg(float(Node2["Weight_grams"]))
-    Bin3_Weight = grams_to_kg(float(Node3["Weight_grams"]))
-    Bin4_Weight = grams_to_kg(float(Node4["Weight_grams"]))
-
-    #Mean-Time-to-Collect
-    Bin1_MTTC = MTTC(Bin1_Fill_Level)
-    Bin2_MTTC = MTTC(Bin2_Fill_Level)
-    Bin3_MTTC = MTTC(Bin3_Fill_Level)
-    Bin4_MTTC = MTTC(Bin4_Fill_Level)
-
-    #Rate of Change of PPM values
-    Bin1_MQ2_Change = get_rate_of_change(float(Node1["MQ2_Data"]))
-    Bin1_MQ3_Change = get_rate_of_change(float(Node1["MQ3_Data"]))
-    Bin1_MQ6_Change = get_rate_of_change(float(Node1["MQ6_Data"]))
-
-    Bin2_MQ2_Change = get_rate_of_change(float(Node2["MQ2_Data"]))
-    Bin2_MQ3_Change = get_rate_of_change(float(Node2["MQ3_Data"]))
-    Bin2_MQ6_Change = get_rate_of_change(float(Node2["MQ6_Data"]))
-    
-    Bin3_MQ2_Change = get_rate_of_change(float(Node3["MQ2_Data"]))
-    Bin3_MQ3_Change = get_rate_of_change(float(Node3["MQ3_Data"]))
-    Bin3_MQ6_Change = get_rate_of_change(float(Node3["MQ6_Data"]))
-    
-    Bin4_MQ2_Change = get_rate_of_change(float(Node4["MQ2_Data"]))
-    Bin4_MQ3_Change = get_rate_of_change(float(Node4["MQ3_Data"]))
-    Bin4_MQ6_Change = get_rate_of_change(float(Node4["MQ6_Data"]))
+    bins = [Node1, Node2, Node3, Node4]
+    Bin_Fill_Levels = [Fill_Level(int(bin_data["Ultrasonic_CM"])) for bin_data in bins]
+    Bin_Weights = [grams_to_kg(float(bin_data["Weight_grams"])) for bin_data in bins]
+    Bin_MTTC = [MTTC(level) for level in Bin_Fill_Levels]
+    Bin_MQ_Changes = [get_rate_of_change(float(bin_data[f"MQ{idx}_Data"])) for bin_data in bins for idx in [2, 3, 6]]
 
     ph_tz = pytz.timezone('Asia/Manila')
-    # Get the current date and time
     now = timezone.now()
-    #For the Fill-level graph
-    # Create a datetime object for the start of the current day
+    
     start_of_day = datetime.datetime.combine(datetime.date(2023, 8, 28), datetime.time.min).astimezone()
     end_of_day = datetime.datetime.combine(datetime.date(2023, 8, 28), datetime.time.max).astimezone()
-    # Query the database for ProcessedData objects that occurred within the current day
     processed_data = ProcessedData.objects.filter(timestamp__gte=start_of_day, timestamp__lt=end_of_day)
-    # Extract the fill level and timestamp data for the filtered ProcessedData objects
+    
     fill_levels = [data.fill_level for data in processed_data]
     bin_ids = [data.node_ID for data in processed_data]
     timestamps = [data.timestamp.astimezone(ph_tz).strftime('%H:%M') for data in processed_data]
-    # Pass fill_levels and timestamps as JSON objects
+    
     bin_ids_json = json.dumps(bin_ids)
     fill_levels_json = json.dumps(fill_levels)
     timestamps_json = json.dumps(timestamps)
-    #End of code for the Fill-level graph
 
-    #For the MTTC graph
-    # Create datetime objects for the start and end of the 7-day period
-    end_date = timezone.now()  # Use the current date as the end date
-    start_date = end_date - datetime.timedelta(days=6)  # Calculate the start date
-
-    # Query the database for ProcessedData objects within the 7-day period
+    end_date = timezone.now()
+    start_date = end_date - datetime.timedelta(days=6)
     mttc_processed_data = ProcessedData.objects.filter(timestamp__range=(start_date, end_date))
-
-    # Extract the MTTC, timestamp, and bin ID data for the filtered ProcessedData objects
     mttc_data = [data.mttc for data in mttc_processed_data]
     mttc_bin_ids = [data.node_ID for data in mttc_processed_data]
     mttc_timestamps = [data.timestamp.astimezone(ph_tz).strftime('%m-%d') for data in mttc_processed_data]
-
-    # Pass bin_ids, mttc_data, and timestamps as JSON objects
+    
     mttc_bin_ids_json = json.dumps(mttc_bin_ids)
     mttc_data_json = json.dumps(mttc_data)
     mttc_timestamps_json = json.dumps(mttc_timestamps)
 
-    #For the weight graph
-    # Query the database for ProcessedData objects within the 7-day period
     weight_processed_data = ProcessedData.objects.filter(timestamp__range=(start_date, end_date))
-    # Extract the Weight, timestamp, and bin ID data for the filtered ProcessedData objects
-    weight_data = [data.weight for data in weight_processed_data]
-    weight_data_float = [float(value) for value in weight_data]
+    weight_data = [float(data.weight) for data in weight_processed_data]
     weight_bin_ids = [data.node_ID for data in weight_processed_data]
     weight_timestamps = [data.timestamp.astimezone(ph_tz).strftime('%m-%d') for data in weight_processed_data]
-
-    weight_data_json = json.dumps(weight_data_float)
+    
+    weight_data_json = json.dumps(weight_data)
     weight_bin_ids_json = json.dumps(weight_bin_ids)
     weight_timestamps_json = json.dumps(weight_timestamps)
-    context = {
-        'Bin1_ID': int(Node1["Node_ID"]),
-        'Bin1_Fill_Level': int(Bin1_Fill_Level),
-        'Bin1_Weight': "{:.2f}".format(float(Bin1_Weight)),
-        'Bin1_MTTC': Bin1_MTTC,
-        'Bin1_MQ2_Analog': "{:.2f}".format(float(Node1["MQ2_Data"])),
-        'Bin1_MQ3_Analog': "{:.2f}".format(float(Node1["MQ3_Data"])),
-        'Bin1_MQ6_Analog': "{:.2f}".format(float(Node1["MQ6_Data"])),
-        'Bin1_MQ2_Change': "{:.2f}".format(float(Bin1_MQ2_Change)),
-        'Bin1_MQ3_Change': "{:.2f}".format(float(Bin1_MQ3_Change)),
-        'Bin1_MQ6_Change': "{:.2f}".format(float(Bin1_MQ6_Change)),
-        'Bin1_Flame': int(Node1["Flame_Data"]),
+
+    context = {}
+    
+    for i, bin_data in enumerate(bins):
+        bin_num = i + 1
+        context[f'Bin{bin_num}_ID'] = int(bin_data["Node_ID"])
+        context[f'Bin{bin_num}_Fill_Level'] = int(Bin_Fill_Levels[i])
+        context[f'Bin{bin_num}_Weight'] = "{:.2f}".format(float(Bin_Weights[i]))
+        context[f'Bin{bin_num}_MTTC'] = Bin_MTTC[i]
+        context[f'Bin{bin_num}_Flame'] = int(bin_data["Flame_Data"])
+    
+    context.update({
         'start': start_of_day,
         'end': end_of_day, 
         'data': processed_data, 
@@ -489,121 +672,31 @@ def processing():
         'weight_data': weight_data_json,
         'weight_bin_ids': weight_bin_ids_json,
         'weight_timestamps': weight_timestamps_json,
-        
-        'Bin2_ID': int(Node2["Node_ID"]),
-        'Bin2_Fill_Level': int(Bin2_Fill_Level),
-        'Bin2_Weight': "{:.2f}".format(float(Bin2_Weight)),
-        'Bin2_MTTC': Bin2_MTTC,
-        'Bin2_MQ2_Analog': "{:.2f}".format(float(Node2["MQ2_Data"])),
-        'Bin2_MQ3_Analog': "{:.2f}".format(float(Node2["MQ3_Data"])),
-        'Bin2_MQ6_Analog': "{:.2f}".format(float(Node2["MQ6_Data"])),
-        'Bin2_MQ2_Change': "{:.2f}".format(float(Bin2_MQ2_Change)),
-        'Bin2_MQ3_Change': "{:.2f}".format(float(Bin2_MQ3_Change)),
-        'Bin2_MQ6_Change': "{:.2f}".format(float(Bin2_MQ6_Change)),
-        'Bin2_Flame': int(Node2["Flame_Data"]),
-        
-        'Bin3_ID': int(Node3["Node_ID"]),
-        'Bin3_Fill_Level': int(Bin3_Fill_Level),
-        'Bin3_Weight': "{:.2f}".format(float(Bin3_Weight)),
-        'Bin3_MTTC': Bin3_MTTC,
-        'Bin3_MQ2_Analog': "{:.2f}".format(float(Node3["MQ2_Data"])),
-        'Bin3_MQ3_Analog': "{:.2f}".format(float(Node3["MQ3_Data"])),
-        'Bin3_MQ6_Analog': "{:.2f}".format(float(Node3["MQ6_Data"])),
-        'Bin3_MQ2_Change': "{:.2f}".format(float(Bin3_MQ2_Change)),
-        'Bin3_MQ3_Change': "{:.2f}".format(float(Bin3_MQ3_Change)),
-        'Bin3_MQ6_Change': "{:.2f}".format(float(Bin3_MQ6_Change)),
-        'Bin3_Flame': int(Node3["Flame_Data"]),
-        
-        'Bin4_ID': int(Node4["Node_ID"]),
-        'Bin4_Fill_Level': int(Bin4_Fill_Level),
-        'Bin4_Weight': "{:.2f}".format(float(Bin4_Weight)),
-        'Bin4_MTTC': Bin4_MTTC,
-        'Bin4_MQ2_Analog': "{:.2f}".format(float(Node4["MQ2_Data"])),
-        'Bin4_MQ3_Analog': "{:.2f}".format(float(Node4["MQ3_Data"])),
-        'Bin4_MQ6_Analog': "{:.2f}".format(float(Node4["MQ6_Data"])),
-        'Bin4_MQ2_Change': "{:.2f}".format(float(Bin4_MQ2_Change)),
-        'Bin4_MQ3_Change': "{:.2f}".format(float(Bin4_MQ3_Change)),
-        'Bin4_MQ6_Change': "{:.2f}".format(float(Bin4_MQ6_Change)),
-        'Bin4_Flame': int(Node4["Flame_Data"]),
-    }
-    # Query the previous 4 entries in the database
+    })
+
     prev_entries = ProcessedData.objects.order_by('-timestamp')[:4]
-
-    bin_zones = {}  # Create a dictionary to store bin IDs and their corresponding zones
-
-    # Extract bin IDs and zones from the previous entries
-    for entry in prev_entries:
-        bin_zones[entry.node_ID] = entry.zone
-
-    # Assign the zones to your new entries
-    zone_for_bin1 = bin_zones.get(Node1["Node_ID"], 0)  # Replace default_zone_value with the default zone value
-    zone_for_bin2 = bin_zones.get(Node2["Node_ID"], 0)
-    zone_for_bin3 = bin_zones.get(Node3["Node_ID"], 0)
-    zone_for_bin4 = bin_zones.get(Node4["Node_ID"], 0)
-
-    #For Bin1
-    reading = ProcessedData(
-    node_ID = Node1["Node_ID"],
-    fill_level= int(Bin1_Fill_Level),
-    weight = Bin1_Weight,
-    mttc = Bin1_MTTC,
-    mq2_analog = Node1["MQ2_Data"],
-    mq3_analog = Node1["MQ3_Data"],
-    mq6_analog = Node1["MQ6_Data"],
-    mq2_change = Bin1_MQ2_Change,
-    mq3_change = Bin1_MQ3_Change,
-    mq6_change = Bin1_MQ6_Change,
-    flame = int(Node1["Flame_Data"]),
-    zone=zone_for_bin1)
-    reading.save()
-
-    # For Bin2
-    reading2 = ProcessedData(
-    node_ID = Node2["Node_ID"],
-    fill_level=int(Bin2_Fill_Level),
-    weight = Bin2_Weight,
-    mttc=Bin2_MTTC,
-    mq2_analog=Node2["MQ2_Data"],
-    mq3_analog=Node2["MQ3_Data"],
-    mq6_analog=Node2["MQ6_Data"],
-    mq2_change=Bin2_MQ2_Change,
-    mq3_change=Bin2_MQ3_Change,
-    mq6_change=Bin2_MQ6_Change,
-    flame = int(Node2["Flame_Data"]),
-    zone=zone_for_bin2)
-    reading2.save()
+    bin_zones = {entry.node_ID: entry.zone for entry in prev_entries}
     
-    # For Bin3
-    reading3 = ProcessedData(
-    node_ID = Node3["Node_ID"],
-    fill_level=int(Bin3_Fill_Level),
-    weight = Bin3_Weight,
-    mttc=Bin3_MTTC,
-    mq2_analog=Node3["MQ2_Data"],
-    mq3_analog=Node3["MQ3_Data"],
-    mq6_analog=Node3["MQ6_Data"],
-    mq2_change=Bin3_MQ2_Change,
-    mq3_change=Bin3_MQ3_Change,
-    mq6_change=Bin3_MQ6_Change,
-    flame = int(Node3["Flame_Data"]),
-    zone=zone_for_bin3)
-    reading3.save()
-    
-    # For Bin4
-    reading4 = ProcessedData(
-    node_ID = Node4["Node_ID"],
-    fill_level=int(Bin4_Fill_Level),
-    weight = Bin4_Weight,
-    mttc=Bin4_MTTC,
-    mq2_analog=Node4["MQ2_Data"],
-    mq3_analog=Node4["MQ3_Data"],
-    mq6_analog=Node4["MQ6_Data"],
-    mq2_change=Bin4_MQ2_Change,
-    mq3_change=Bin4_MQ3_Change,
-    mq6_change=Bin4_MQ6_Change,
-    flame = int(Node4["Flame_Data"]),
-    zone=zone_for_bin4)
-    reading4.save()
+    for i, bin_data in enumerate(bins):
+        bin_num = i + 1
+        zone_for_bin = bin_zones.get(bin_data["Node_ID"], 0)
+        reading = ProcessedData(
+            node_ID=bin_data["Node_ID"],
+            fill_level=int(Bin_Fill_Levels[i]),
+            weight=Bin_Weights[i],
+            mttc=Bin_MTTC[i],
+            mq2_analog=bin_data["MQ2_Data"],
+            mq3_analog=bin_data["MQ3_Data"],
+            mq6_analog=bin_data["MQ6_Data"],
+            mq2_change=Bin_MQ_Changes[i * 3],
+            mq3_change=Bin_MQ_Changes[i * 3 + 1],
+            mq6_change=Bin_MQ_Changes[i * 3 + 2],
+            flame=int(bin_data["Flame_Data"]),
+            zone=zone_for_bin,
+        )
+        reading.save()
+
+    detect_gas_and_notify(bins)    
 
     return context
 
