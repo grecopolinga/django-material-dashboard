@@ -67,6 +67,46 @@
   margin-left: 4px; /* Adjust margin as needed to separate icon from text */
 }
 
+.fire-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 3%;
+  background-color: rgb(216, 32, 0); /* Semi-transparent background */
+  z-index: 999; /* Adjust the z-index as needed */
+  display: none;
+  animation: zoom-in 0.5s ease-in-out forwards; /* Animation to zoom in */
+  transform-origin: center center; /* Set the transform origin to center */
+  opacity: 100%;
+}
+
+  /* Add styles for the modal text */
+  .fire-modal h4 {
+    font-size: 20px; /* Adjust the font size as needed */
+    color: rgb(255, 255, 255);
+    margin-left: 14px;
+    margin-top: 10px;
+    padding: 5px 0;
+  }
+
+  .fire-modal p {
+    font-size: 16px; /* Adjust the font size as needed */
+    font-weight: 400;
+    color: rgb(255, 255, 255);
+    margin-left: 14px;
+    margin-top: 10px;
+    padding: 5px 0;
+  }
+
+  .fire-modal i {
+  font-size: 24px; /* Adjust the font size as needed */
+  color: white;
+  vertical-align: middle; /* Align the icon vertically in the middle of the text */
+  margin-left: 4px; /* Adjust margin as needed to separate icon from text */
+}
+
 
 /* Animation keyframes for zoom in */
 @keyframes zoom-in {
@@ -1667,6 +1707,7 @@
           if (data['Bin' + binNumber].length > 0) {
             const binData = data['Bin' + binNumber][0];
             updateBinCard(binNumber, binData);
+            showHazardBadge(binNumber, 'Hazard Alert', 'Hazard detected', binData);
           }
         }
       },
@@ -1677,21 +1718,20 @@
   }
 
   // Function to show the hazard badge and attach the hover modal
-  function showHazardBadge(binName, hazardTitle, hazardDetails) {
+  function showHazardBadge(binName, hazardTitle, hazardDetails, binData) {
     const hazardBadge = document.getElementById(`hazardBadge${binName}`);
     const binCard = document.getElementById(`binCard${binName}`);
     let zoomInModal = null; // Variable to store the modal element
 
-    // Check for detected gas (You can replace this condition with your actual logic)
-    const gasDetected = true; // Example: Gas detected GASALERT
+    const { hazardHeader, hazardType, hazardText } = getHazardType(binData);
 
-    if (gasDetected) {
+    if (hazardType === 'fire' || hazardType === 'gas') {
       hazardBadge.style.display = 'block'; // Show the hazard badge
 
       // Add event listener to the hazard badge for showing the modal
       hazardBadge.addEventListener('mouseover', function () {
         if (!zoomInModal) {
-          zoomInModal = showZoomInModal(hazardTitle, hazardDetails, binCard);
+          zoomInModal = showZoomInModal(hazardHeader, hazardText, binCard, hazardType);
         }
       });
 
@@ -1704,11 +1744,11 @@
       });
     }
   }
-  
-  // Function to show the zoom-in modal with zoom in animation
-  function showZoomInModal(hazardTitle, hazardDetails, binCard) {
+
+  // Function to show the zoom-in modal with zoom-in animation
+  function showZoomInModal(hazardTitle, hazardDetails, binCard, hazardType) {
     const zoomInModal = document.createElement('div');
-    zoomInModal.className = 'gas-modal';
+    zoomInModal.className = hazardType === 'fire' ? 'fire-modal' : 'gas-modal'; // Use 'fire-modal' or 'gas-modal' class
     zoomInModal.innerHTML = `
       <h4 class="modal-title">
         ${hazardTitle}
@@ -1731,7 +1771,7 @@
 
     return zoomInModal; // Return the modal element
   }
-  
+
   // Function to hide the zoom-in modal
   function hideZoomInModal(zoomInModal) {
     if (zoomInModal) {
@@ -1743,6 +1783,38 @@
     }
   }
 
+// Extract hazard type and specific detection from data
+function getHazardType(binData) {
+  // Check if the analog values exceed the thresholds for alcohol, smoke, or butane
+  const mq2Analog = binData?.mq2_analog || 0; // Default to 0 if not present
+  const mq3Analog = binData?.mq3_analog || 0; // Default to 0 if not present
+  const mq6Analog = binData?.mq6_analog || 0; // Default to 0 if not present
+
+  let hazardType = 'none';
+  let hazardDetails = 'No hazard detected';
+  let hazardTitle = 'No hazard detected'
+
+  if (mq2Analog > 500 || mq3Analog > 500) {
+    // If either mq2 or mq3 exceeds 500, it's a gas hazard
+    hazardTitle = 'Gas Hazard Alert';
+    hazardType = 'gas';
+    hazardDetails = 'Alcohol or Smoke detected';
+  } else if (mq6Analog > 1700) {
+    // If mq6 exceeds 1700, it's a butane hazard
+    hazardTitle = 'Gas Hazard Alert';
+    hazardType = 'gas';
+    hazardDetails = 'Butane or LPG detected';
+  } else if (binData?.flame) {
+    // If the 'flame' field is present, it's a fire hazard
+    hazardTitle = 'Fire Hazard Alert';
+    hazardType = 'fire';
+    hazardDetails = 'Flame detected';
+  }
+
+  return { hazardTitle, hazardType, hazardDetails };
+}
+
+
   // Fetch and update data every 5 seconds (adjust as needed)
   setInterval(fetchData, 5000);
   // Initial data fetch when the page loads
@@ -1753,7 +1825,7 @@
   // Call the function to show the hazard badge and attach the zoom-in modal for each bin
   const binNames = ['1', '2', '3', '4']; // Update with your bin names
   binNames.forEach((binName) => {
-    showHazardBadge(binName, 'Gas Hazard Alert', 'Presence of Alcohol detected');
+    showHazardBadge(binName, 'Hazard Alert', 'Hazard detected');
   });
 </script>
   
