@@ -21,14 +21,10 @@ class ProcessedData(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
     zone = models.IntegerField(default=0)
     def save(self, *args, **kwargs):
-        # convert timestamp to your timezone
-        utc_timestamp = self.timestamp.replace(tzinfo=pytz.UTC)
-        local_timestamp = utc_timestamp.astimezone(timezone.get_current_timezone())
-
-        # set timestamp in your model
-        self.timestamp = local_timestamp
-
-        super(ProcessedData, self).save(*args, **kwargs)
+        if not self.timestamp.tzinfo:
+            # Convert to "Asia/Manila" timezone
+            manila_timezone = timezone.pytz.timezone("Asia/Manila")
+            self.timestamp = manila_timezone.localize(self.timestamp)
 
 class RawData(models.Model):
     Node_ID = models.IntegerField()
