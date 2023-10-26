@@ -1695,28 +1695,6 @@
     // Update other fields as needed
   }
 
-  // Function to fetch and update data periodically
-  function fetchData() {
-    $.ajax({
-      url: 'api/getLatestData',  // API endpoint URL
-      method: 'GET',
-      dataType: 'json',
-      success: function (data) {
-        console.log('Data received:', data);
-        for (let binNumber = 1; binNumber <= 4; binNumber++) {
-          if (data['Bin' + binNumber].length > 0) {
-            const binData = data['Bin' + binNumber][0];
-            updateBinCard(binNumber, binData);
-            showHazardBadge(binNumber, 'Hazard Alert', 'Hazard detected', binData);
-          }
-        }
-      },
-      error: function (xhr, status, error) {
-        console.error('Error:', error);
-      }
-    });
-  }
-
   // Function to show the hazard badge and attach the hover modal
   function showHazardBadge(binName, hazardTitle, hazardDetails, binData) {
     const hazardBadge = document.getElementById(`hazardBadge${binName}`);
@@ -1786,34 +1764,61 @@
 // Extract hazard type and specific detection from data
 function getHazardType(binData) {
   // Check if the analog values exceed the thresholds for alcohol, smoke, or butane
-  const mq2Analog = binData?.mq2_analog || 0; // Default to 0 if not present
-  const mq3Analog = binData?.mq3_analog || 0; // Default to 0 if not present
-  const mq6Analog = binData?.mq6_analog || 0; // Default to 0 if not present
+  const mq2Analog = binData?.mq2_analog || 0;
+  const mq3Analog = binData?.mq3_analog || 0;
+  const mq6Analog = binData?.mq6_analog || 0;
+  const flame = binData?.flame || 1;
 
   let hazardType = 'none';
-  let hazardDetails = 'No hazard detected';
-  let hazardTitle = 'No hazard detected'
+  let hazardText = 'No hazard detected';
+  let hazardHeader = 'No hazard detected';
 
-  if (mq2Analog > 500 || mq3Analog > 500) {
-    // If either mq2 or mq3 exceeds 500, it's a gas hazard
-    hazardTitle = 'Gas Hazard Alert';
-    hazardType = 'gas';
-    hazardDetails = 'Alcohol or Smoke detected';
-  } else if (mq6Analog > 1700) {
-    // If mq6 exceeds 1700, it's a butane hazard
-    hazardTitle = 'Gas Hazard Alert';
-    hazardType = 'gas';
-    hazardDetails = 'Butane or LPG detected';
-  } else if (binData?.flame) {
-    // If the 'flame' field is present, it's a fire hazard
-    hazardTitle = 'Fire Hazard Alert';
+  if (flame == 0) {
+    // If flame is detected, it's a fire hazard
+    hazardHeader = 'Fire Hazard Alert';
     hazardType = 'fire';
-    hazardDetails = 'Flame detected';
+    hazardText = 'Flame detected';
+  } else if (mq2Analog > 500 && mq3Analog > 500 && mq6Analog > 1700) {
+    // If any of mq2, mq3, or mq6 exceeds their respective thresholds, it's a multiple gas hazard
+    hazardHeader = 'Gas Hazard Alert';
+    hazardType = 'gas';
+    hazardText = 'Multiple gas types detected';    
+  } else if (mq2Analog > 500 && mq3Analog > 500 && mq6Analog < 1700) {
+    // If both mq2 and mq3 exceed 500, it's a gas hazard
+    hazardHeader = 'Gas Hazard Alert';
+    hazardType = 'gas';
+    hazardText = 'Alcohol and Smoke detected';
+  } else if (mq6Analog > 1700) {
+    // If mq6 exceeds 1700, it's a gas hazard
+    hazardHeader = 'Gas Hazard Alert';
+    hazardType = 'gas';
+    hazardText = 'Butane or LPG detected';
   }
 
-  return { hazardTitle, hazardType, hazardDetails };
+  return { hazardHeader, hazardType, hazardText };
 }
 
+  // Function to fetch and update data periodically
+  function fetchData() {
+    $.ajax({
+      url: 'api/getLatestData',  // API endpoint URL
+      method: 'GET',
+      dataType: 'json',
+      success: function (data) {
+        console.log('Data received:', data);
+        for (let binNumber = 1; binNumber <= 4; binNumber++) {
+          if (data['Bin' + binNumber].length > 0) {
+            const binData = data['Bin' + binNumber][0];
+            updateBinCard(binNumber, binData);
+            showHazardBadge(binNumber, 'Hazard Alert', 'Hazard detected', binData);
+          }
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error('Error:', error);
+      }
+    });
+  }
 
   // Fetch and update data every 5 seconds (adjust as needed)
   setInterval(fetchData, 5000);
