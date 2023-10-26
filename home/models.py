@@ -22,16 +22,6 @@ class ProcessedData(models.Model):
     zone = models.IntegerField(default=0)
     location = models.CharField(max_length=100, null=True, blank=True)
 
-    def save(self, *args, **kwargs):
-        # convert timestamp to your timezone
-        utc_timestamp = self.timestamp.replace(tzinfo=pytz.UTC)
-        local_timestamp = utc_timestamp.astimezone(timezone.get_current_timezone())
-
-        # set timestamp in your model
-        self.timestamp = local_timestamp
-
-        super(ProcessedData, self).save(*args, **kwargs)
-
     def __str__(self):
         return str(self.node_ID) 
 
