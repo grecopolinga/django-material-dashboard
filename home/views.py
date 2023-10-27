@@ -89,6 +89,20 @@ def update_bin_zone(request, bin_id, new_zone, new_location):
     except ProcessedData.DoesNotExist:
         return JsonResponse({'error': 'No matching bins found'}, status=404)
 
+@require_POST
+def update_bin_zone_no_location(request, bin_id, new_zone):
+    try:
+        # Get all bins with the specified bin_id
+        bins = ProcessedData.objects.filter(node_ID=bin_id)
+
+        # Update the zone for all matching bins
+        for bin in bins:
+            bin.zone = new_zone
+            bin.save()
+
+        return JsonResponse({'message': f'Updated Bin {bin_id} to Zone {new_zone}', 'new_zone': new_zone})
+    except ProcessedData.DoesNotExist:
+        return JsonResponse({'error': 'No matching bins found'}, status=404)
         
 @api_view(['GET'])
 def getPrioritizationData(request):
@@ -678,10 +692,12 @@ def processing():
 
     prev_entries = ProcessedData.objects.order_by('-timestamp')[:4]
     bin_zones = {entry.node_ID: entry.zone for entry in prev_entries}
+    bin_locations = {entry.node_ID: entry.location for entry in prev_entries}
     
     for i, bin_data in enumerate(bins):
         bin_num = i + 1
         zone_for_bin = bin_zones.get(bin_data["Node_ID"], 0)
+        location_for_bin = bin_locations.get(bin_data["Node_ID"], None)
         reading = ProcessedData(
             node_ID=bin_data["Node_ID"],
             fill_level=int(Bin_Fill_Levels[i]),
@@ -695,6 +711,7 @@ def processing():
             mq6_change=Bin_MQ_Changes[i * 3 + 2],
             flame=int(bin_data["Flame_Data"]),
             zone=zone_for_bin,
+            location=location_for_bin,
         )
         reading.save()
     return context

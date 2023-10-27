@@ -267,7 +267,9 @@ function updateBinZoneInDatabase(binId, newZone, location) {
   });
 
   return new Promise((resolve, reject) => {
-    fetch(`/api/update_zone/${binId}/${newZone}/${location}/`, {
+    const url = `/api/update_zone/${binId}/${newZone}${location ? `/${location}` : ''}/`;
+
+    fetch(url, {
       method: 'POST',
       headers: {
         'X-CSRFToken': getCookie('csrftoken'), // You need to include the CSRF token
