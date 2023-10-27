@@ -162,6 +162,45 @@ def getWeightTimeData(request):
     return Response(bin_data)
 
 @api_view(['GET']) 
+def getWeightTimeDataDashboard(request):
+    # Get the startDate and endDate from query parameters (assuming you pass them as query parameters)
+    start_date_str = request.GET.get('startDate')
+    end_date_str = request.GET.get('endDate')
+
+    # Convert the date strings to datetime objects
+    start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d')
+    # Add one day to the end date to make it inclusive
+    end_date = end_date + timedelta(days=1)
+    bin_data = {
+        'Bin1': {
+            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+                node_ID=1, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+            'weights': list(ProcessedData.objects.filter(
+                Q(node_ID=1) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+        },
+        'Bin2': {
+            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+                node_ID=2, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+            'weights': list(ProcessedData.objects.filter(
+                Q(node_ID=2) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+        },
+        'Bin3': {
+            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+                node_ID=3, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+            'weights': list(ProcessedData.objects.filter(
+                Q(node_ID=3) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+        },
+        'Bin4': {
+            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
+                node_ID=4, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
+            'weights': list(ProcessedData.objects.filter(
+                Q(node_ID=4) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
+        },
+    }
+    return Response(bin_data)
+
+@api_view(['GET']) 
 def getFillLevelData(request):
     # Get the date from query parameters (assuming you pass it as a query parameter)
     date_str = request.GET.get('Date')
@@ -227,44 +266,44 @@ def getRateOfChange(request):
         'Bin1': [
             {
                 'timestamp_time': timestamp.astimezone(ph_tz).strftime('%H:%M'),
-                'mq2_change': mq2_change,
-                'mq3_change': mq3_change,
-                'mq6_change': mq6_change,
+                'mq2_change': mq2_analog,
+                'mq3_change': mq3_analog,
+                'mq6_change': mq6_analog,
             }
-            for timestamp, mq2_change, mq3_change, mq6_change in ProcessedData.objects.filter(
+            for timestamp, mq2_analog, mq3_analog, mq6_analog in ProcessedData.objects.filter(
                 node_ID=1, timestamp__range=(start_datetime, current_datetime)
-            ).order_by('-timestamp').values_list('timestamp', 'mq2_change', 'mq3_change', 'mq6_change')
+            ).order_by('-timestamp').values_list('timestamp', 'mq2_analog', 'mq3_analog', 'mq6_analog')
         ],
         'Bin2': [
             {
                 'timestamp_time': timestamp.astimezone(ph_tz).strftime('%H:%M'),
-                'mq2_change': mq2_change,
-                'mq3_change': mq3_change,
-                'mq6_change': mq6_change,
+                'mq2_change': mq2_analog,
+                'mq3_change': mq3_analog,
+                'mq6_change': mq6_analog,
             }
-            for timestamp, mq2_change, mq3_change, mq6_change in ProcessedData.objects.filter(
+            for timestamp, mq2_analog, mq3_analog, mq6_analog in ProcessedData.objects.filter(
                 node_ID=2, timestamp__range=(start_datetime, current_datetime)
             ).order_by('-timestamp').values_list('timestamp', 'mq2_change', 'mq3_change', 'mq6_change')
         ],
         'Bin3': [
             {
                 'timestamp_time': timestamp.astimezone(ph_tz).strftime('%H:%M'),
-                'mq2_change': mq2_change,
-                'mq3_change': mq3_change,
-                'mq6_change': mq6_change,
+                'mq2_change': mq2_analog,
+                'mq3_change': mq3_analog,
+                'mq6_change': mq6_analog,
             }
-            for timestamp, mq2_change, mq3_change, mq6_change in ProcessedData.objects.filter(
+            for timestamp, mq2_analog, mq3_analog, mq6_analog in ProcessedData.objects.filter(
                 node_ID=3, timestamp__range=(start_datetime, current_datetime)
             ).order_by('-timestamp').values_list('timestamp', 'mq2_change', 'mq3_change', 'mq6_change')
         ],
         'Bin4': [
             {
                 'timestamp_time': timestamp.astimezone(ph_tz).strftime('%H:%M'),
-                'mq2_change': mq2_change,
-                'mq3_change': mq3_change,
-                'mq6_change': mq6_change,
+                'mq2_change': mq2_analog,
+                'mq3_change': mq3_analog,
+                'mq6_change': mq6_analog,
             }
-            for timestamp, mq2_change, mq3_change, mq6_change in ProcessedData.objects.filter(
+            for timestamp, mq2_analog, mq3_analog, mq6_analog in ProcessedData.objects.filter(
                 node_ID=4, timestamp__range=(start_datetime, current_datetime)
             ).order_by('-timestamp').values_list('timestamp', 'mq2_change', 'mq3_change', 'mq6_change')
         ],

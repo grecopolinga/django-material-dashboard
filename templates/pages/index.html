@@ -440,6 +440,8 @@
   {% endblock content %}
 
   {% block scripts %}
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- Script for Charts -->
   <script>
       // ==================================== GRAPH 1 =========================================
@@ -1021,222 +1023,240 @@
       var bin4percentincrease = document.getElementById('percentage-bin4');
 
       // Set the content of the HTML element to the percentageIncreaseBin1 variable
-      bin1percentincrease.textContent = '+' + percentageIncreaseBin1 + '%';
-      bin2percentincrease.textContent = '+' + percentageIncreaseBin2 + '%';
-      bin3percentincrease.textContent = '+' + percentageIncreaseBin3 + '%';
-      bin4percentincrease.textContent = '+' + percentageIncreaseBin4 + '%';
+      bin1percentincrease.textContent = percentageIncreaseBin1 + '%';
+      bin2percentincrease.textContent = percentageIncreaseBin2 + '%';
+      bin3percentincrease.textContent = percentageIncreaseBin3 + '%';
+      bin4percentincrease.textContent = percentageIncreaseBin4 + '%';
 
     // ==================================== END GRAPH 2 ========================================= 
     // ======================================== GRAPH 3 =========================================
-    var weight_timestamps = "{{ weight_timestamps }}";
-    var weight_bin_ids = "{{ weight_bin_ids }}";
-    var weight_data = "{{ weight_data }}";
+    var WeightChart;
+    $(function() {
+        // Calculate today's date
+        var today = moment();
 
-    weight_timestamps = JSON.parse(weight_timestamps.replace(/&quot;/g, '"'));
-    weight_bin_ids = JSON.parse(weight_bin_ids.replace(/&quot;/g, '"'));
-    weight_data = JSON.parse(weight_data.replace(/&quot;/g, '"'));
+        // Calculate the start date (today - 6 days)
+        var startDate = moment(today).subtract(6, 'days');
 
-    console.log(weight_timestamps);
-    console.log(weight_bin_ids);
-    console.log(weight_data);
-    
-    var weightDataByBin = {}; // Create an object to store data for each bin
+        // Set the end date as today
+        var endDate = today;
 
-    // Loop through the weight data and separate it by bin ID
-    for (var i = 0; i < weight_bin_ids.length; i++) {
-        var binId = weight_bin_ids[i]; // Get the bin ID for the current data point
+        // Calculate the number of days in the range
+        var numDays = endDate.diff(startDate, 'days') + 1;
 
-        // If the bin ID doesn't exist in the weightDataByBin object, create an empty array for it
-        if (!weightDataByBin.hasOwnProperty(binId)) {
-            weightDataByBin[binId] = {
-                timestamps: [],
-                data: []
-            };
-        }
+        // Fetch data for the past week
+        fetchWeightTimeData(startDate, endDate, numDays);
+      });
+    function fetchWeightTimeData(startDate, endDate, numDays) {
 
-        // Push the data and timestamp for the current data point into the corresponding bin's arrays
-        weightDataByBin[binId].timestamps.push(weight_timestamps[i]);
-        weightDataByBin[binId].data.push(weight_data[i]);
-    }
+          const url = `/api/getWeightTimeData?startDate=${startDate.format('YYYY-MM-DD')}&endDate=${endDate.format('YYYY-MM-DD')}`;
 
-    console.log(weightDataByBin);
+          fetch(url)
+            .then(response => response.json())
+            .then(data => {
+              // Initialize a dictionary to store daily total weights
+              const end = endDate;
+              const start = startDate;
+              const length = numDays;
+              console.log("End:",end);
+              console.log("Start:",start);
+              console.log(data);
+              
 
-    // Initialize arrays to store the daily weights for all bins (7 days, initialized with 0)
-    var binDailyWeights = {
-        1: [0, 0, 0, 0, 0, 0, 0], // Bin 1
-        2: [0, 0, 0, 0, 0, 0, 0], // Bin 2
-        3: [0, 0, 0, 0, 0, 0, 0], // Bin 3
-        4: [0, 0, 0, 0, 0, 0, 0], // Bin 4
-    };
+              const bin1Data = data['Bin1'];
+              const bin2Data = data['Bin2'];
+              const bin3Data = data['Bin3'];
+              const bin4Data = data['Bin4'];
 
-    // Iterate over the last 7 days (including today)
-    for (var day = 0; day < 7; day++) {
-        // Initialize a variable to track the total weight for the current day for each bin
-        var currentDayWeights = {
-            1: 0, // Bin 1
-            2: 0, // Bin 2
-            3: 0, // Bin 3
-            4: 0, // Bin 4
-        };
+              bin1totals = getDailyWeight(bin1Data,start,end);
+              bin2totals = getDailyWeight(bin2Data,start,end);
+              bin3totals = getDailyWeight(bin3Data,start,end);
+              bin4totals = getDailyWeight(bin1Data,start,end);
+              // Create an object to store the total weights per day
+              const totalWeightsPerDay = {};
 
-        // Iterate through the weight data for each bin in reverse order
-        for (var binId = 1; binId <= 4; binId++) {
-            for (var i = weightDataByBin[binId].timestamps.length - 1; i >= 0; i--) {
-                var timestamp = weightDataByBin[binId].timestamps[i];
-                var weight = weightDataByBin[binId].data[i];
-
-                // Check if the timestamp matches the current date (MM-DD format)
-                var currentMonth = ('0' + (currentDate.getMonth() + 1)).slice(-2);
-                var currentDay = ('0' + currentDate.getDate()).slice(-2);
-                var currentDateString = currentMonth + '-' + currentDay;
-
-                if (timestamp === currentDateString) {
-                    if (weight === 0) {
-                        if (i > 0) {
-                            currentDayWeights[binId] += weightDataByBin[binId].data[i - 1];
-                        }
-                    }
+              // Loop through the dates and accumulate total weights across all bins
+              for (const date in bin1totals) {
+                // Initialize the total weight for the date if it doesn't exist
+                if (!totalWeightsPerDay[date]) {
+                  totalWeightsPerDay[date] = 0;
                 }
-            }
-        }
+                
+                // Accumulate the total weight for the date from all bins
+                totalWeightsPerDay[date] += bin1totals[date] + bin2totals[date] + bin3totals[date] + bin4totals[date];
+              }
+              console.log(totalWeightsPerDay);
+              const dates = Object.keys(totalWeightsPerDay).map(date => {
+                  const dateObj = new Date(date);
+                  return `${dateObj.getMonth() + 1}-${dateObj.getDate()}`;
+              });
+              const totalWeights = Object.values(totalWeightsPerDay);
+              // Calculate the percentage increase in weight
+              const lastIndex = totalWeights.length - 1;
+              const previousWeight = totalWeights[lastIndex - 1];
+              const currentWeight = totalWeights[lastIndex];
+              const percentageIncreaseWeight = ((currentWeight - previousWeight) / previousWeight) * 100;
 
-        // Store the current day's total weights for each bin in the respective arrays
-        for (var binId = 1; binId <= 4; binId++) {
-            binDailyWeights[binId][day] = currentDayWeights[binId];
-        }
+              // Display the percentage increase
+              var percentWeight = document.getElementById('percentage-weight');
+              percentWeight.textContent = percentageIncreaseWeight.toFixed(2) + '%';
+              console.log(percentageIncreaseWeight);
+                    
+              var ctx2 = document.getElementById("chart-weight").getContext("2d");
+              if (WeightChart) {
+                WeightChart.destroy(); // Destroy the existing chart if it exists
+              }
+              WeightChart = new Chart(ctx2, {
+                type: "line",
+                data: {
+                  labels: dates,
+                  datasets: [{
+                    label: "Waste Accumulation",
+                    tension: 0,
+                    borderWidth: 0,
+                    pointRadius: 5,
+                    pointBackgroundColor: "rgba(0, 128, 0, 0.7)",
+                    pointBorderColor: "transparent",
+                    borderColor: "rgba(0, 128, 0, 0.7)",
+                    borderWidth: 4,
+                    backgroundColor: "rgba(0, 128, 0, 0.7)",
+                    fill: true,
+                    data: totalWeights,
+                    maxBarThickness: 6
 
-        // Move to the previous day
-        currentDate.setDate(currentDate.getDate() - 1);
-    }
-
-    console.log(binDailyWeights);
-
-    // Calculate the total daily weight for all bins
-    var totalDailyWeight = [0, 0, 0, 0, 0, 0, 0];
-
-    for (var day = 0; day < 7; day++) {
-        // Sum the daily weights for all bins at the same index
-        totalDailyWeight[day] = Object.values(binDailyWeights).reduce(function (total, binWeights) {
-            return total + binWeights[day];
-        }, 0);
-    }
-    totalDailyWeight.reverse();
-    console.log(totalDailyWeight);
-
-    var ctx3 = document.getElementById("chart-weight").getContext("2d");
-
-    new Chart(ctx3, {
-      type: "line",
-      data: {
-        labels: binLabels,
-        datasets: [{
-          label: "Waste Accumulation",
-          tension: 0,
-          borderWidth: 0,
-          pointRadius: 5,
-          pointBackgroundColor: "rgba(0, 128, 0, 0.7)",
-          pointBorderColor: "transparent",
-          borderColor: "rgba(0, 128, 0, 0.7)",
-          borderWidth: 4,
-          backgroundColor: "rgba(0, 128, 0, 0.7)",
-          fill: true,
-          data: totalDailyWeight,
-          maxBarThickness: 6
-
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: 'black'
-            },
-            ticks: {
-              display: true,
-              padding: 10,
-              color: 'black',
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-            },
-            title: {
-                display: true,
-                text: 'Weight (KG)', // Your y-axis label
-                color: 'black',
-                font: {
-                  size: 14,
-                  weight: 300,
-                  family: "Roboto",
-                  style: 'normal',
-                  lineHeight: 2
+                  }],
                 },
-                padding: {
-                  top: 10 // Adjust the top padding to position the label as needed
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      display: false,
+                    }
+                  },
+                  interaction: {
+                    intersect: false,
+                    mode: 'index',
+                  },
+                  scales: {
+                    y: {
+                      grid: {
+                        drawBorder: false,
+                        display: true,
+                        drawOnChartArea: true,
+                        drawTicks: false,
+                        borderDash: [5, 5],
+                        color: 'black'
+                      },
+                      ticks: {
+                        display: true,
+                        padding: 10,
+                        color: 'black',
+                        font: {
+                          size: 14,
+                          weight: 300,
+                          family: "Roboto",
+                          style: 'normal',
+                          lineHeight: 2
+                        },
+                      },
+                      title: {
+                        display: true,
+                        text: 'Weight (KG)', // Your y-axis label
+                        color: 'black',
+                        font: {
+                          size: 14,
+                          weight: 300,
+                          family: "Roboto",
+                          style: 'normal',
+                          lineHeight: 2
+                        },
+                        padding: {
+                          top: 10 // Adjust the top padding to position the label as needed
+                        }
+                      }
+                    },
+                    x: {
+                      grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                      },
+                      ticks: {
+                        display: true,
+                        color: 'black',
+                        padding: 10,
+                        font: {
+                          size: 13,
+                          weight: 300,
+                          family: "Roboto",
+                          style: 'normal',
+                          lineHeight: 2
+                        },
+                        // Rotate the x-axis labels diagonally
+                        angle: -45, // Adjust the angle as needed
+                      },
+                      title: {
+                        display: true,
+                        text: 'Date', // Your x-axis label
+                        color: 'black',
+                        font: {
+                          size: 13,
+                          weight: 300,
+                          family: "Roboto",
+                          style: 'normal',
+                          lineHeight: 2
+                        },
+                      }
+                    },
+                  },
+                },
+              });
+
+              
+            })
+            .catch(error => {
+              console.error('Error fetching data:', error);
+            });
+        }
+
+        function getDailyWeight(binData, startDate, endDate) {
+        // Create an object to store daily weights with dates as keys
+        const dailyWeights = {};
+
+        // Create moment objects for startDate and endDate
+        const start = moment(startDate);
+        const end = moment(endDate);
+
+        // Loop through each day in the date range
+        while (start.isSameOrBefore(end, 'day')) {
+          const currentDate = start.format('YYYY-MM-DD');
+
+          // Initialize the daily weight to 0
+          dailyWeights[currentDate] = 0;
+
+          // Loop through the data entries and accumulate weights for the current date
+          for (let i = 0; i < binData.timestamps.length; i++) {
+            if (binData.timestamps[i] === currentDate) {
+              if(binData.weights[i] == 0)
+              {
+                if(i > 0)
+                {
+                  dailyWeights[currentDate] += binData.weights[i-1];
                 }
               }
-          },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: false,
-              drawOnChartArea: false,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              color: 'black',
-              padding: 10,
-              font: {
-                size: 13,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-            },
-            title: {
-            display: true,
-            text: 'Date', // Your x-axis label
-            color: 'black',
-            font: {
-              size: 13,
-              weight: 300,
-              family: "Roboto",
-              style: 'normal',
-              lineHeight: 2
-            },
-            
+            }
           }
-          },
-        },
-      },
-    });
 
-    percentageIncreaseWeight = calculatePercentageIncreaseForBin(totalDailyWeight);
-    var percentWeight = document.getElementById('percentage-weight');
-    percentWeight.textContent = '+' + percentageIncreaseWeight + '%';
-    console.log(percentageIncreaseWeight);
+          // Move to the next day
+          start.add(1, 'day');
+        }
+
+        return dailyWeights;
+      }
+  
     // ==================================== END GRAPH 3 =========================================
     // ====================================  GRAPH 4 ============================================
     let Bin1_data, Bin2_data, Bin3_data, Bin4_data;
