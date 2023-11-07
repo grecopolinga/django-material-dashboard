@@ -103,10 +103,44 @@
                 </div>
                 <div class="form-group">
                   <label for="location">Location:</label>
-                  <input type="text" class="form-control" id="location" style="border: 1px solid #1a1a1a; text-align: center;" placeholder="Enter location">
+                  <select class="form-control" id="location" style="border: 1px solid #1a1a1a; text-align: center;">
+                    <!-- Options will be dynamically populated based on the selected Zone -->
+                  </select>
                 </div>
               </form>
             </div>
+            
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+              $(document).ready(function () {
+                // Define an object to store locations for each zone
+                var zoneLocations = {
+                  1: ["St. La Salle Hall", "Br. John Hall", "Br. Connon Hall", "Don Enrique Yuchengco Hall", "Henry Sy Sr Hall"],
+                  2: ["Faculty Center", "Br. William Hall", "St. Joseph Hall", "Br. Bloemen Hall", "Velasco Hall", "St. Miguel Hall", "St. Mutien Marie Hall", "Scolar/Eco Car Shelter"],
+                  3: ["Gokongwei Hall", "Science & Technology Research Center", "Inventory MNGT Office", "Enrique Razon Sports Center", "Br. Andrew Gonzales Hall", "Female Athletes' Dorm", "Tuluyan"],
+                };
+            
+                // Function to populate the Location dropdown based on the selected Zone
+                function populateLocations() {
+                  var selectedZone = $("#zoneSelect").val();
+                  var locationDropdown = $("#location");
+                  locationDropdown.empty(); // Clear existing options
+            
+                  // Populate the Location dropdown with options based on the selected Zone
+                  for (var i = 0; i < zoneLocations[selectedZone].length; i++) {
+                    locationDropdown.append(
+                      $("<option>")
+                        .text(zoneLocations[selectedZone][i])
+                        .val(zoneLocations[selectedZone][i])
+                    );
+                  }
+                }
+            
+                // Call populateLocations initially and whenever the Zone dropdown changes
+                populateLocations();
+                $("#zoneSelect").on("change", populateLocations);
+              });
+            </script>
             
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
