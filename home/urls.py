@@ -13,13 +13,18 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     
     # Our modified URLS
-    path('navigator/', views.navigator, name='navigator'), 
+    path('navigator/', views.navigator, name='navigator'),
+    path('api/getPrioritizationData', views.getPrioritizationData, name='getPrioritizationData'), 
     path('api/getWeightData', views.getWeightData, name='getWeightData'),
     path('api/getWeightTimeData', views.getWeightTimeData, name='getWeightTimeData'),
     path('api/getFillLevelData', views.getFillLevelData, name='getFillLevelData'),
     path('api/getRateOfChange', views.getRateOfChange, name='getRateOfChange'),
     path('api/getLatestData', views.getLatestData, name='getLatestData'),
     path('api/sensor-data', views.receive_sensor_data, name='receive_sensor_data'),
+    path('api/update_zone/<int:bin_id>/<int:new_zone>/<str:new_location>/', views.update_bin_zone, name='update_bin_zone'),
+    path('api/update_zone/<int:bin_id>/<int:new_zone>/', views.update_bin_zone_no_location, name='update_bin_zone_no_location'),
+    
+
 
     # Authentication
     path('accounts/login/', views.UserLoginView.as_view(), name='login'),

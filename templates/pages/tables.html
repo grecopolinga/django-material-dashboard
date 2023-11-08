@@ -17,8 +17,9 @@
               </div>
             </div>
             <div class="card-body">
-              <h6 class="mb-0 ">All-time Weight-Based Waste Accumulation</h6>
-              <p class="text-sm ">This graph shows the overall waste accumulation for each bin.</p>
+              <h6 class="mb-0">All-time Weight-Based Waste Accumulation</h6>
+              <hr class="dark horizontal">
+              <p class="text-sm mt-2">This graph shows the overall waste accumulation for each bin.</p>
             </div>
           </div>
         </div>
@@ -32,17 +33,12 @@
               </div>
             </div>
             <div class="card-body">
+              <h6 class="mb-2">Weight-Based Waste Accumulation History</h6>
               <div class="d-flex ">
                 <input type="text" name="daterange" value="01/01/2018 - 01/15/2018"/> 
                 <i class="material-icons opacity-10 me-1" style="font-size: 25px;">date_range</i>
               </div>
-              <p class="text-sm ">Choose a date range to show the graph.</p>
-              <h6 class="mb-0 ">Weight-Based Waste Accumulation History</h6>
-              <hr class="dark horizontal">
-              <div class="d-flex ">
-                <i class="material-icons text-sm my-auto me-1">schedule</i>
-                <p class="mb-0 text-sm">recently retrieved from database</p>
-              </div>
+              <p class="text-sm mt-2">Choose a date range to show the graph.</p>
             </div>
           </div>
         </div>
@@ -50,18 +46,15 @@
           <div class="mt-4 mb-4">
               <div class="card z-index-2">
                   <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent" style="background-color: black;">
-                      <div class="shadow-primary border-radius-lg py-3 pe-1 graph1-bg">
+                      <div class="shadow-dark border-radius-lg py-3 pe-1 graph1-bg">
                           <div class="chart">
                               <canvas id="chart-fill-level-perday" class="chart-canvas" height="300"></canvas>
                           </div>
                       </div>
                   </div>
                   <div class="card-body d-flex flex-column align-items-start">
-                      <div class="d-flex" style="padding-bottom: 10px;">
-                        <input type="text" name="fill-level-date" value="10/24/1984" />
-                        <i class="material-icons opacity-10 me-1" style="font-size: 25px;">event</i>
-                      </div>
-                      <div class="d-flex">
+                    <div class="col">
+                        <div class="d-flex">
                           <button class="btn btn-secondary btn-sm mb-2" id="filterBtn" style="background-color: rgb(216, 216, 216); color: #344767;">
                               <i class="material-icons opacity-10 me-1" style="font-size: 30px;">tune</i>
                           </button>
@@ -85,14 +78,14 @@
                               </div>
                           </div>
                       </div>
-                      
                       <h6 class="mb-0" style="padding-top: 10px;">Bin Capacity and Fill-up Trend History</h6>
                       <p class="text-sm">Tracked data over time</p>
-                    
-                      <div class="d-flex">
-                          <i class="material-icons text-sm my-auto me-1">schedule</i>
-                          <p class="mb-0 text-sm">Recently retrieved from database</p>
+                    </div>
+                      <div class="d-flex" style="padding-bottom: 10px;">
+                        <input type="text" name="fill-level-date" value="10/24/1984" />
+                        <i class="material-icons opacity-10 me-1" style="font-size: 25px;">event</i>
                       </div>
+                      <p class="text-sm mt-0 mb-0">Pick a date to show the graph .</p>
                   </div>
               </div>
             </div>
@@ -116,6 +109,7 @@
           var binFilters = document.getElementById('binFilters');
           binFilters.classList.toggle('d-none');
       });
+      document.getElementById('filterBtn').click();
     // Function to fetch data from the API
     function fetchData() {
       fetch('/api/getWeightData') 
@@ -211,361 +205,119 @@
         }
         var WeightChart;
         $(function() {
-          // Calculate today's date
-          var today = moment();
+        // Calculate today's date
+        var today = moment();
 
-          // Format today's date as "MM/DD/YYYY"
-          var todayFormatted = today.format('MM/DD/YYYY');
+        // Calculate the start date as today minus 6 days
+        var last7DaysStart = today.clone().subtract(6, 'days');
 
-          // Calculate the first day of the current month
-          var firstDayOfCurrentMonth = moment().startOf('month').format('MM/DD/YYYY');
-          
-          // Set the initial date range
-          var initialDateRange = todayFormatted + ' - ' + todayFormatted;
+        // Format the start and end dates as "MM/DD/YYYY"
+        var startDateFormatted = last7DaysStart.format('MM/DD/YYYY');
+        var endDateFormatted = today.format('MM/DD/YYYY');
 
-          // Initialize the date range picker with the initial value and maxDate option
-          $('input[name="daterange"]').daterangepicker({
-            opens: 'left',
-            startDate: today,
-            endDate: today,
-            maxDate: today, // Set maxDate to today
-            ranges: {
-              'This Month': [firstDayOfCurrentMonth, todayFormatted], // Add "This Month" option
-              'Last 7 Days': [moment().subtract(6, 'days').format('MM/DD/YYYY'), todayFormatted],
-              'Last 30 Days': [moment().subtract(29, 'days').format('MM/DD/YYYY'), todayFormatted],
-            }
-          }, function(start, end, label) {
-            console.log("A new date selection was made: " + start.format('MM/DD/YYYY') + ' to ' + end.format('MM/DD/YYYY'));
+        // Set the initial date range
+        var initialDateRange = startDateFormatted + ' - ' + endDateFormatted;
 
-            // Calculate the number of days in the range
-            var numDays = end.diff(start, 'days') + 1; // Add 1 to include both start and end days
-
-            // Display the number of days
-            console.log("Number of days in the range: " + numDays);
-
-            fetchWeightTimeData(start, end, numDays);
-          });
-
-          // Set the input value to the initial date range
-          $('input[name="daterange"]').val(initialDateRange);
-        });
-
-        function fetchWeightTimeData(startDate, endDate, numDays) {
-          const url = `/api/getWeightTimeData?startDate=${startDate.format('YYYY-MM-DD')}&endDate=${endDate.format('YYYY-MM-DD')}`;
-
-          fetch(url)
-            .then(response => response.json())
-            .then(data => {
-              // Initialize a dictionary to store daily total weights
-              const end = endDate;
-              const start = startDate;
-              const length = numDays;
-              console.log(data);
-              console.log(end);
-
-              const bin1Data = data['Bin1'];
-              const bin2Data = data['Bin2'];
-              const bin3Data = data['Bin3'];
-              const bin4Data = data['Bin4'];
-
-              bin1totals = getDailyWeight(bin1Data,start,end);
-              bin2totals = getDailyWeight(bin2Data,start,end);
-              bin3totals = getDailyWeight(bin3Data,start,end);
-              bin4totals = getDailyWeight(bin1Data,start,end);
-              // Create an object to store the total weights per day
-              const totalWeightsPerDay = {};
-
-              // Loop through the dates and accumulate total weights across all bins
-              for (const date in bin1totals) {
-                // Initialize the total weight for the date if it doesn't exist
-                if (!totalWeightsPerDay[date]) {
-                  totalWeightsPerDay[date] = 0;
-                }
-                
-                // Accumulate the total weight for the date from all bins
-                totalWeightsPerDay[date] += bin1totals[date] + bin2totals[date] + bin3totals[date] + bin4totals[date];
-              }
-              console.log(totalWeightsPerDay);
-              const dates = Object.keys(totalWeightsPerDay);
-              const totalWeights = Object.values(totalWeightsPerDay);
-
-          
-              var ctx2 = document.getElementById("chart-weight-range").getContext("2d");
-              if (WeightChart) {
-                WeightChart.destroy(); // Destroy the existing chart if it exists
-              }
-              WeightChart = new Chart(ctx2, {
-                type: "line",
-                data: {
-                  labels: dates,
-                  datasets: [{
-                    label: "Waste Accumulation",
-                    tension: 0,
-                    borderWidth: 0,
-                    pointRadius: 5,
-                    pointBackgroundColor: "rgba(0, 128, 0, 0.7)",
-                    pointBorderColor: "transparent",
-                    borderColor: "rgba(0, 128, 0, 0.7)",
-                    borderWidth: 4,
-                    backgroundColor: "rgba(0, 128, 0, 0.7)",
-                    fill: true,
-                    data: totalWeights,
-                    maxBarThickness: 6
-
-                  }],
-                },
-                options: {
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: {
-                      display: false,
-                    }
-                  },
-                  interaction: {
-                    intersect: false,
-                    mode: 'index',
-                  },
-                  scales: {
-                    y: {
-                      grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                        color: 'black'
-                      },
-                      ticks: {
-                        display: true,
-                        padding: 10,
-                        color: 'black',
-                        font: {
-                          size: 14,
-                          weight: 300,
-                          family: "Roboto",
-                          style: 'normal',
-                          lineHeight: 2
-                        },
-                      },
-                      title: {
-                        display: true,
-                        text: 'Weight (KG)', // Your y-axis label
-                        color: 'black',
-                        font: {
-                          size: 14,
-                          weight: 300,
-                          family: "Roboto",
-                          style: 'normal',
-                          lineHeight: 2
-                        },
-                        padding: {
-                          top: 10 // Adjust the top padding to position the label as needed
-                        }
-                      }
-                    },
-                    x: {
-                      grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [5, 5]
-                      },
-                      ticks: {
-                        display: true,
-                        color: 'black',
-                        padding: 10,
-                        font: {
-                          size: 13,
-                          weight: 300,
-                          family: "Roboto",
-                          style: 'normal',
-                          lineHeight: 2
-                        },
-                        // Rotate the x-axis labels diagonally
-                        angle: -45, // Adjust the angle as needed
-                      },
-                      title: {
-                        display: true,
-                        text: 'Date', // Your x-axis label
-                        color: 'black',
-                        font: {
-                          size: 13,
-                          weight: 300,
-                          family: "Roboto",
-                          style: 'normal',
-                          lineHeight: 2
-                        },
-                      }
-                    },
-                  },
-                },
-              });
-
-              
-            })
-            .catch(error => {
-              console.error('Error fetching data:', error);
-            });
-        }
-
-        function getDailyWeight(binData, startDate, endDate) {
-        // Create an object to store daily weights with dates as keys
-        const dailyWeights = {};
-
-        // Create moment objects for startDate and endDate
-        const start = moment(startDate);
-        const end = moment(endDate);
-
-        // Loop through each day in the date range
-        while (start.isSameOrBefore(end, 'day')) {
-          const currentDate = start.format('YYYY-MM-DD');
-
-          // Initialize the daily weight to 0
-          dailyWeights[currentDate] = 0;
-
-          // Loop through the data entries and accumulate weights for the current date
-          for (let i = 0; i < binData.timestamps.length; i++) {
-            if (binData.timestamps[i] === currentDate) {
-              if(binData.weights[i] == 0)
-              {
-                if(i > 0)
-                {
-                  dailyWeights[currentDate] += binData.weights[i-1];
-                }
-              }
-            }
+        // Initialize the date range picker with the initial value and maxDate option
+        $('input[name="daterange"]').daterangepicker({
+          opens: 'left',
+          startDate: last7DaysStart, // Set the start date to last 7 days
+          endDate: today,
+          maxDate: today, // Set maxDate to today
+          ranges: {
+            'This Month': [moment().startOf('month').format('MM/DD/YYYY'), today.format('MM/DD/YYYY')],
+            'Last 7 Days': [startDateFormatted, endDateFormatted],
+            'Last 30 Days': [moment().subtract(29, 'days').format('MM/DD/YYYY'), endDateFormatted],
           }
-
-          // Move to the next day
-          start.add(1, 'day');
-        }
-
-        return dailyWeights;
-      }
-      var FillLevelChart;
-      // Add event listener to checkboxes
-    var fill_level_checkboxes = document.querySelectorAll('.bin-checkbox');
-      fill_level_checkboxes.forEach(function (checkbox) {
-          checkbox.addEventListener('change', function () {
-              var binId = this.getAttribute('data-bin-id');
-              var datasetIndex = parseInt(binId) - 1; // Datasets are zero-based
-              FillLevelChart.data.datasets[datasetIndex].hidden = !this.checked;
-              FillLevelChart.update();
-          });
-      });
-      // Single Date Picker
-      $(function() {
-        $('input[name="fill-level-date"]').daterangepicker({
-          singleDatePicker: true,
-          showDropdowns: true,
-          minYear: 1901,
-          maxYear: parseInt(moment().format('YYYY'), 10),
-          startDate: moment(), // Set today's date as the default
-          startView: 'months', // Specify the start view as 'months'
-          format: 'MM/DD/YYYY', // Specify the desired date format
-          maxDate: moment(), // Prevent selecting dates later than today
         }, function(start, end, label) {
-            fetchFillLevelData(start);
+          console.log("A new date selection was made: " + start.format('MM/DD/YYYY') + ' to ' + end.format('MM/DD/YYYY'));
+
+          // Calculate the number of days in the range
+          var numDays = end.diff(start, 'days') + 1; // Add 1 to include both start and end days
+
+          // Display the number of days
+          console.log("Number of days in the range: " + numDays);
+
+          fetchWeightTimeData(start, end, numDays);
         });
+
+        // Set the input value to the initial date range
+        $('input[name="daterange"]').val(initialDateRange);
+
+        // Load weight time data with the initial date range
+        fetchWeightTimeData(last7DaysStart, today, 7); // Assuming 7 days in the initial range
       });
-      function fetchFillLevelData(Date) {
-        const url = `/api/getFillLevelData?Date=${Date.format('YYYY-MM-DD')}`;
+
+      function fetchWeightTimeData(startDate, endDate, numDays) {
+        const url = `/api/getWeightTimeData?startDate=${startDate.format('YYYY-MM-DD')}&endDate=${endDate.format('YYYY-MM-DD')}`;
 
         fetch(url)
           .then(response => response.json())
           .then(data => {
-            console.log(data)
+            // Initialize a dictionary to store daily total weights
+            const end = endDate;
+            const start = startDate;
+            const length = numDays;
+            console.log(data);
+            console.log(end);
+
             const bin1Data = data['Bin1'];
             const bin2Data = data['Bin2'];
             const bin3Data = data['Bin3'];
             const bin4Data = data['Bin4'];
-            const parsedTimestamps = [];
-            // Generate all possible timestamps from 00:00 to 23:59
-            for (var hour = 0; hour < 24; hour++) {
-                for (var minute = 0; minute < 60; minute += 30) {
-                    var timestamp = ('0' + hour).slice(-2) + ':' + ('0' + minute).slice(-2);
-                    parsedTimestamps.push(timestamp);
-                }
-            }
-            fillLevelsBin1 = getFillLevelsPerBin(bin1Data, parsedTimestamps);
-            fillLevelsBin2 = getFillLevelsPerBin(bin2Data, parsedTimestamps);
-            fillLevelsBin3 = getFillLevelsPerBin(bin3Data, parsedTimestamps);
-            fillLevelsBin4 = getFillLevelsPerBin(bin4Data, parsedTimestamps);
-            var ctx3 = document.getElementById("chart-fill-level-perday").getContext("2d");
-            if (FillLevelChart) {
-                FillLevelChart.destroy(); // Destroy the existing chart if it exists
+
+            bin1totals = getDailyWeight(bin1Data,start,end);
+            bin2totals = getDailyWeight(bin2Data,start,end);
+            bin3totals = getDailyWeight(bin3Data,start,end);
+            bin4totals = getDailyWeight(bin1Data,start,end);
+            // Create an object to store the total weights per day
+            const totalWeightsPerDay = {};
+
+            // Loop through the dates and accumulate total weights across all bins
+            for (const date in bin1totals) {
+              // Initialize the total weight for the date if it doesn't exist
+              if (!totalWeightsPerDay[date]) {
+                totalWeightsPerDay[date] = 0;
               }
-            FillLevelChart = new Chart(ctx3, {
+              
+              // Accumulate the total weight for the date from all bins
+              totalWeightsPerDay[date] += bin1totals[date] + bin2totals[date] + bin3totals[date] + bin4totals[date];
+            }
+            console.log(totalWeightsPerDay);
+            const dates = Object.keys(totalWeightsPerDay);
+            const totalWeights = Object.values(totalWeightsPerDay);
+
+        
+            var ctx2 = document.getElementById("chart-weight-range").getContext("2d");
+            if (WeightChart) {
+              WeightChart.destroy(); // Destroy the existing chart if it exists
+            }
+            WeightChart = new Chart(ctx2, {
               type: "line",
               data: {
-                labels: parsedTimestamps,
-                datasets: [
-                    {
-                      label: "Bin 1",
-                      tension: 0,
-                      borderWidth: 0,
-                      pointRadius: 5,
-                      pointBackgroundColor: "#2d425c",
-                      pointBorderColor: "transparent",
-                      borderColor: "#2d425c",
-                      borderWidth: 4,
-                      backgroundColor: "transparent",
-                      fill: true,
-                      data: fillLevelsBin1,
-                      maxBarThickness: 6
-                    },
-                    {
-                      label: "Bin 2",
-                      tension: 0,
-                      borderWidth: 0,
-                      pointRadius: 5,
-                      pointBackgroundColor: "#7c5389",
-                      pointBorderColor: "transparent",
-                      borderColor: "#7c5389",
-                      borderWidth: 4,
-                      backgroundColor: "transparent",
-                      fill: true,
-                      data: fillLevelsBin2,
-                      maxBarThickness: 6
-                    },
-                    {
-                      label: "Bin 3",
-                      tension: 0,
-                      borderWidth: 0,
-                      pointRadius: 5,
-                      pointBackgroundColor: "#da5c7a",
-                      pointBorderColor: "transparent",
-                      borderColor: "#da5c7a",
-                      borderWidth: 4,
-                      backgroundColor: "transparent",
-                      fill: true,
-                      data: fillLevelsBin3,
-                      maxBarThickness: 6
-                    },
-                    {
-                      label: "Bin 4",
-                      tension: 0,
-                      borderWidth: 0,
-                      pointRadius: 5,
-                      pointBackgroundColor: "#ff8f3c",
-                      pointBorderColor: "transparent",
-                      borderColor: "#ff8f3c",
-                      borderWidth: 4,
-                      backgroundColor: "transparent",
-                      fill: true,
-                      data: fillLevelsBin4,
-                      maxBarThickness: 6
-                    },
-                ],
+                labels: dates,
+                datasets: [{
+                  label: "Waste Accumulation",
+                  tension: 0,
+                  borderWidth: 0,
+                  pointRadius: 5,
+                  pointBackgroundColor: "rgba(0, 128, 0, 0.7)",
+                  pointBorderColor: "transparent",
+                  borderColor: "rgba(0, 128, 0, 0.7)",
+                  borderWidth: 4,
+                  backgroundColor: "rgba(0, 128, 0, 0.7)",
+                  fill: true,
+                  data: totalWeights,
+                  maxBarThickness: 6
+
+                }],
               },
               options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                   legend: {
-                    display: true,
+                    display: false,
                   }
                 },
                 interaction: {
@@ -574,8 +326,6 @@
                 },
                 scales: {
                   y: {
-                    suggestedMin: 0,
-                    suggestedMax: 100,
                     grid: {
                       drawBorder: false,
                       display: true,
@@ -586,8 +336,8 @@
                     },
                     ticks: {
                       display: true,
-                      color: 'black',
                       padding: 10,
+                      color: 'black',
                       font: {
                         size: 14,
                         weight: 300,
@@ -598,7 +348,7 @@
                     },
                     title: {
                       display: true,
-                      text: 'Fill-level (%)', // Your y-axis label
+                      text: 'Weight (KG)', // Your y-axis label
                       color: 'black',
                       font: {
                         size: 14,
@@ -612,13 +362,232 @@
                       }
                     }
                   },
-                x: {
+                  x: {
+                    grid: {
+                      drawBorder: false,
+                      display: false,
+                      drawOnChartArea: false,
+                      drawTicks: false,
+                      borderDash: [5, 5]
+                    },
+                    ticks: {
+                      display: true,
+                      color: 'black',
+                      padding: 10,
+                      font: {
+                        size: 13,
+                        weight: 300,
+                        family: "Roboto",
+                        style: 'normal',
+                        lineHeight: 2
+                      },
+                      // Rotate the x-axis labels diagonally
+                      angle: -45, // Adjust the angle as needed
+                    },
+                    title: {
+                      display: true,
+                      text: 'Date', // Your x-axis label
+                      color: 'black',
+                      font: {
+                        size: 13,
+                        weight: 300,
+                        family: "Roboto",
+                        style: 'normal',
+                        lineHeight: 2
+                      },
+                    }
+                  },
+                },
+              },
+            });
+
+            
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+          });
+      }
+
+      function getDailyWeight(binData, startDate, endDate) {
+      // Create an object to store daily weights with dates as keys
+      const dailyWeights = {};
+
+      // Create moment objects for startDate and endDate
+      const start = moment(startDate);
+      const end = moment(endDate);
+
+      // Loop through each day in the date range
+      while (start.isSameOrBefore(end, 'day')) {
+        const currentDate = start.format('YYYY-MM-DD');
+
+        // Initialize the daily weight to 0
+        dailyWeights[currentDate] = 0;
+
+        // Loop through the data entries and accumulate weights for the current date
+        for (let i = 0; i < binData.timestamps.length; i++) {
+          if (binData.timestamps[i] === currentDate) {
+            if(binData.weights[i] == 0)
+            {
+              if(i > 0)
+              {
+                dailyWeights[currentDate] += binData.weights[i-1];
+              }
+            }
+          }
+        }
+
+        // Move to the next day
+        start.add(1, 'day');
+      }
+
+      return dailyWeights;
+    }
+
+    var FillLevelChart;
+      // Add event listener to checkboxes
+    var fill_level_checkboxes = document.querySelectorAll('.bin-checkbox');
+      fill_level_checkboxes.forEach(function (checkbox) {
+          checkbox.addEventListener('change', function () {
+              var binId = this.getAttribute('data-bin-id');
+              var datasetIndex = parseInt(binId) - 1; // Datasets are zero-based
+              FillLevelChart.data.datasets[datasetIndex].hidden = !this.checked;
+              FillLevelChart.update();
+            });
+          });
+
+    // Single Date Picker
+    $(function() {
+      // Initialize the single date picker
+      $('input[name="fill-level-date"]').daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        minYear: 1901,
+        maxYear: parseInt(moment().format('YYYY'), 10),
+        startDate: moment(), // Set today's date as the default
+        startView: 'months', // Specify the start view as 'months'
+        format: 'MM/DD/YYYY', // Specify the desired date format
+        maxDate: moment(), // Prevent selecting dates later than today
+      }, function(start, end, label) {
+        fetchFillLevelData(start);
+      });
+
+      // Load fill level chart with the initial date (current day)
+      fetchFillLevelData(moment());
+    });
+
+    function fetchFillLevelData(Date) {
+      const url = `/api/getFillLevelData?Date=${Date.format('YYYY-MM-DD')}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          const bin1Data = data['Bin1'];
+          const bin2Data = data['Bin2'];
+          const bin3Data = data['Bin3'];
+          const bin4Data = data['Bin4'];
+          const parsedTimestamps = [];
+          // Generate all possible timestamps from 00:00 to 23:59
+          for (var hour = 0; hour < 24; hour++) {
+              for (var minute = 0; minute < 60; minute += 30) {
+                  var timestamp = ('0' + hour).slice(-2) + ':' + ('0' + minute).slice(-2);
+                  parsedTimestamps.push(timestamp);
+              }
+          }
+          fillLevelsBin1 = getFillLevelsPerBin(bin1Data, parsedTimestamps);
+          fillLevelsBin2 = getFillLevelsPerBin(bin2Data, parsedTimestamps);
+          fillLevelsBin3 = getFillLevelsPerBin(bin3Data, parsedTimestamps);
+          fillLevelsBin4 = getFillLevelsPerBin(bin4Data, parsedTimestamps);
+          var ctx3 = document.getElementById("chart-fill-level-perday").getContext("2d");
+          if (FillLevelChart) {
+              FillLevelChart.destroy(); // Destroy the existing chart if it exists
+            }
+          FillLevelChart = new Chart(ctx3, {
+            type: "line",
+            data: {
+              labels: parsedTimestamps,
+              datasets: [
+                  {
+                    label: "Bin 1",
+                    tension: 0,
+                    borderWidth: 0,
+                    pointRadius: 5,
+                    pointBackgroundColor: "#2d425c",
+                    pointBorderColor: "transparent",
+                    borderColor: "#2d425c",
+                    borderWidth: 4,
+                    backgroundColor: "transparent",
+                    fill: true,
+                    data: fillLevelsBin1,
+                    maxBarThickness: 6
+                  },
+                  {
+                    label: "Bin 2",
+                    tension: 0,
+                    borderWidth: 0,
+                    pointRadius: 5,
+                    pointBackgroundColor: "#7c5389",
+                    pointBorderColor: "transparent",
+                    borderColor: "#7c5389",
+                    borderWidth: 4,
+                    backgroundColor: "transparent",
+                    fill: true,
+                    data: fillLevelsBin2,
+                    maxBarThickness: 6
+                  },
+                  {
+                    label: "Bin 3",
+                    tension: 0,
+                    borderWidth: 0,
+                    pointRadius: 5,
+                    pointBackgroundColor: "#da5c7a",
+                    pointBorderColor: "transparent",
+                    borderColor: "#da5c7a",
+                    borderWidth: 4,
+                    backgroundColor: "transparent",
+                    fill: true,
+                    data: fillLevelsBin3,
+                    maxBarThickness: 6
+                  },
+                  {
+                    label: "Bin 4",
+                    tension: 0,
+                    borderWidth: 0,
+                    pointRadius: 5,
+                    pointBackgroundColor: "#ff8f3c",
+                    pointBorderColor: "transparent",
+                    borderColor: "#ff8f3c",
+                    borderWidth: 4,
+                    backgroundColor: "transparent",
+                    fill: true,
+                    data: fillLevelsBin4,
+                    maxBarThickness: 6
+                  },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  display: true,
+                }
+              },
+              interaction: {
+                intersect: false,
+                mode: 'index',
+              },
+              scales: {
+                y: {
+                  suggestedMin: 0,
+                  suggestedMax: 100,
                   grid: {
                     drawBorder: false,
-                    display: false,
-                    drawOnChartArea: false,
+                    display: true,
+                    drawOnChartArea: true,
                     drawTicks: false,
-                    borderDash: [5, 5]
+                    borderDash: [5, 5],
+                    color: 'black'
                   },
                   ticks: {
                     display: true,
@@ -634,7 +603,7 @@
                   },
                   title: {
                     display: true,
-                    text: 'Time', // Your x-axis label
+                    text: 'Fill-level (%)', // Your y-axis label
                     color: 'black',
                     font: {
                       size: 14,
@@ -644,68 +613,104 @@
                       lineHeight: 2
                     },
                     padding: {
-                      top:1 // Adjust the top padding to position the label as needed
+                      top: 10 // Adjust the top padding to position the label as needed
                     }
                   }
                 },
+              x: {
+                grid: {
+                  drawBorder: false,
+                  display: false,
+                  drawOnChartArea: false,
+                  drawTicks: false,
+                  borderDash: [5, 5]
                 },
-                animation: {
-                  duration: 1000, // Animation duration in milliseconds
-                  easing: 'easeInOutQuad', // Easing function (linear, easeInQuad, easeOutQuad, easeInOutQuad, etc.)
+                ticks: {
+                  display: true,
+                  color: 'black',
+                  padding: 10,
+                  font: {
+                    size: 14,
+                    weight: 300,
+                    family: "Roboto",
+                    style: 'normal',
+                    lineHeight: 2
                   },
+                },
+                title: {
+                  display: true,
+                  text: 'Time', // Your x-axis label
+                  color: 'black',
+                  font: {
+                    size: 14,
+                    weight: 300,
+                    family: "Roboto",
+                    style: 'normal',
+                    lineHeight: 2
+                  },
+                  padding: {
+                    top:1 // Adjust the top padding to position the label as needed
+                  }
+                }
               },
-            });
-          })
-          .catch(error => {
-            console.error('Error fetching data:', error);
+              },
+              animation: {
+                duration: 1000, // Animation duration in milliseconds
+                easing: 'easeInOutQuad', // Easing function (linear, easeInQuad, easeOutQuad, easeInOutQuad, etc.)
+                },
+            },
           });
-      }
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    }
 
-      function getFillLevelsPerBin(binData, parsedTimestamps) {
+    function getFillLevelsPerBin(binData, parsedTimestamps) {
 
-          // Initialize fillLevelMaps
-          var fillLevelMaps = {};
+        // Initialize fillLevelMaps
+        var fillLevelMaps = {};
 
-          const timestamps = binData.map(item => item.timestamp_time);
-          const fillLevels = binData.map(item => item.fill_level);
+        const timestamps = binData.map(item => item.timestamp_time);
+        const fillLevels = binData.map(item => item.fill_level);
 
-          // Populate fill levels based on existing data for each bin
-          for (var i = 0; i < timestamps.length; i++) {
-              fillLevelMaps[timestamps[i]] = fillLevels[i];
-          }
-          console.log(fillLevelMaps);
-          console.log(timestamps);
-          console.log(fillLevels);
-          var finalFillLevels = [];
-          for (var i = 0; i < parsedTimestamps.length; i++) {
-                var currentTimestamp = parsedTimestamps[i];
-                var closestTimestamp = getClosestDataPoint(currentTimestamp, fillLevelMaps);
-                finalFillLevels.push(fillLevelMaps[closestTimestamp] || 0);
-          }
-          console.log(finalFillLevels);
-          return finalFillLevels;
-      }
+        // Populate fill levels based on existing data for each bin
+        for (var i = 0; i < timestamps.length; i++) {
+            fillLevelMaps[timestamps[i]] = fillLevels[i];
+        }
+        console.log(fillLevelMaps);
+        console.log(timestamps);
+        console.log(fillLevels);
+        var finalFillLevels = [];
+        for (var i = 0; i < parsedTimestamps.length; i++) {
+              var currentTimestamp = parsedTimestamps[i];
+              var closestTimestamp = getClosestDataPoint(currentTimestamp, fillLevelMaps);
+              finalFillLevels.push(fillLevelMaps[closestTimestamp] || 0);
+        }
+        console.log(finalFillLevels);
+        return finalFillLevels;
+    }
 
-      // Function to get the closest data point within a 15-minute range for a specific bin
-      function getClosestDataPoint(targetTimestamp, binFillLevelMap) {
-          var targetTime = new Date('2000-01-01T' + targetTimestamp + ':00');
-          var closestTimestamp = null;
-          var minTimeDiff = Number.MAX_VALUE;
+    // Function to get the closest data point within a 15-minute range for a specific bin
+    function getClosestDataPoint(targetTimestamp, binFillLevelMap) {
+        var targetTime = new Date('2000-01-01T' + targetTimestamp + ':00');
+        var closestTimestamp = null;
+        var minTimeDiff = Number.MAX_VALUE;
 
-          for (var timestamp in binFillLevelMap) {
-              var currTime = new Date('2000-01-01T' + timestamp + ':00');
-              var timeDiff = Math.abs(currTime - targetTime) / 60000;
+        for (var timestamp in binFillLevelMap) {
+            var currTime = new Date('2000-01-01T' + timestamp + ':00');
+            var timeDiff = Math.abs(currTime - targetTime) / 60000;
 
-              if (timeDiff <= 15 && timeDiff < minTimeDiff) {
-                  minTimeDiff = timeDiff;
-                  closestTimestamp = timestamp;
-              }
-          }
+            if (timeDiff <= 15 && timeDiff < minTimeDiff) {
+                minTimeDiff = timeDiff;
+                closestTimestamp = timestamp;
+            }
+        }
 
-          return closestTimestamp;
-      }
+        return closestTimestamp;
+    }
       
-      fetchData();
+    fetchData();
 
        
   </script>

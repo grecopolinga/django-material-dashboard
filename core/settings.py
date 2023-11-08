@@ -108,6 +108,9 @@ if DB_ENGINE and DB_NAME and DB_USERNAME:
         'PASSWORD': DB_PASS,
         'HOST'    : DB_HOST,
         'PORT'    : DB_PORT,
+        'OPTIONS': {
+                'options': '-c timezone=Asia/Manila',
+            },
         }, 
     }
 else:
@@ -142,7 +145,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Manila"
 
 USE_I18N = True
 

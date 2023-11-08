@@ -33,7 +33,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  border-radius: 10%;
+  border-radius: 3%;
   background-color: rgb(248, 211, 0); /* Semi-transparent background */
   z-index: 999; /* Adjust the z-index as needed */
   display: none;
@@ -61,6 +61,46 @@
   }
 
   .gas-modal i {
+  font-size: 24px; /* Adjust the font size as needed */
+  color: white;
+  vertical-align: middle; /* Align the icon vertically in the middle of the text */
+  margin-left: 4px; /* Adjust margin as needed to separate icon from text */
+}
+
+.fire-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 3%;
+  background-color: #F44335; /* Semi-transparent background */
+  z-index: 999; /* Adjust the z-index as needed */
+  display: none;
+  animation: zoom-in 0.5s ease-in-out forwards; /* Animation to zoom in */
+  transform-origin: center center; /* Set the transform origin to center */
+  opacity: 100%;
+}
+
+  /* Add styles for the modal text */
+  .fire-modal h4 {
+    font-size: 20px; /* Adjust the font size as needed */
+    color: rgb(255, 255, 255);
+    margin-left: 14px;
+    margin-top: 10px;
+    padding: 5px 0;
+  }
+
+  .fire-modal p {
+    font-size: 16px; /* Adjust the font size as needed */
+    font-weight: 400;
+    color: rgb(255, 255, 255);
+    margin-left: 14px;
+    margin-top: 10px;
+    padding: 5px 0;
+  }
+
+  .fire-modal i {
   font-size: 24px; /* Adjust the font size as needed */
   color: white;
   vertical-align: middle; /* Align the icon vertically in the middle of the text */
@@ -210,7 +250,7 @@
           <div class="mt-4 mb-4">
               <div class="card z-index-2">
                   <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent" style="background-color: black;">
-                      <div class="shadow-primary border-radius-lg py-3 pe-1 graph1-bg">
+                      <div class="shadow-dark border-radius-lg py-3 pe-1 graph1-bg">
                           <div class="chart">
                               <canvas id="chart-fill-level" class="chart-canvas" height="300"></canvas>
                           </div>
@@ -222,22 +262,22 @@
                               <i class="material-icons opacity-10 me-1" style="font-size: 30px;">tune</i>
                           </button>
                           <div id="binFilters" class="d-none ms-3" style="background-color: rgb(240, 238, 238); padding-top: 11px; padding-right: 11px; border-radius: 30px;">
-                              <div class="form-check form-check-inline">
-                                  <input class="form-check-input bin-checkbox" type="checkbox" id="bin1" name="bin1" checked data-bin-id="1">
-                                  <label class="form-check-label" for="bin1">Bin 1</label>
-                              </div>
-                              <div class="form-check form-check-inline">
-                                  <input class="form-check-input bin-checkbox" type="checkbox" id="bin2" name="bin2" checked data-bin-id="2">
-                                  <label class="form-check-label" for="bin2">Bin 2</label>
-                              </div>
-                              <div class="form-check form-check-inline">
-                                  <input class="form-check-input bin-checkbox" type="checkbox" id="bin3" name="bin3" checked data-bin-id="3">
-                                  <label class="form-check-label" for="bin3">Bin 3</label>
-                              </div>
-                              <div class="form-check form-check-inline">
-                                  <input class="form-check-input bin-checkbox" type="checkbox" id="bin4" name="bin4" checked data-bin-id="4">
-                                  <label class="form-check-label" for="bin4">Bin 4</label>
-                              </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input bin-checkbox" type="checkbox" id="bin1" name="bin1" checked data-bin-id="1">
+                              <label class="form-check-label" for="bin1">Bin 1</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input bin-checkbox" type="checkbox" id="bin2" name="bin2" checked data-bin-id="2">
+                              <label class="form-check-label" for="bin2">Bin 2</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input bin-checkbox" type="checkbox" id="bin3" name="bin3" checked data-bin-id="3">
+                              <label class="form-check-label" for="bin3">Bin 3</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input bin-checkbox" type="checkbox" id="bin4" name="bin4" checked data-bin-id="4">
+                              <label class="form-check-label" for="bin4">Bin 4</label>
+                            </div>
                           </div>
                       </div>
                       <h6 class="mb-0" style="padding-top: 10px;">Bin Capacity and Fill-up Trend</h6>
@@ -257,7 +297,7 @@
         <div class="mt-4 mb-4">
             <div class="card z-index-2">
                 <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent" style="background-color: black;">
-                    <div class="shadow-primary border-radius-lg py-3 pe-1 graph1-bg">
+                    <div class="shadow-dark border-radius-lg py-3 pe-1 graph1-bg">
                         <div class="chart">
                             <canvas id="chart-rate-of-change" class="chart-canvas" height="300"></canvas>
                         </div>
@@ -306,7 +346,7 @@
         <div class="col-lg-6 mt-4 mb-4">
           <div class="card z-index-2  ">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-              <div class="shadow-success border-radius-lg py-3 pe-1 graph1-bg">
+              <div class="shadow-dark border-radius-lg py-3 pe-1 graph1-bg">
                 <div class="chart">
                   <canvas id="chart-mttc" class="chart-canvas" height="200"></canvas>
                 </div>
@@ -671,6 +711,7 @@
           var binFilters = document.getElementById('binFilters');
           binFilters.classList.toggle('d-none');
       });
+      document.getElementById('filterBtn').click();
       // Toggle binFilters visibility
       document.getElementById('MTTCfilterBtn').addEventListener('click', function() {
           var binFilters = document.getElementById('MTTCbinFilters');
@@ -1509,140 +1550,259 @@
   <!-- Script for Card Updates -->
   <script>
   function updateBinCardColor(binId, cardId, fillLevel, iconNum) {
-  const b_FLCard = document.getElementById(cardId);
-  const icon = document.getElementById(iconNum);
+    const b_FLCard = document.getElementById(cardId);
+    const icon = document.getElementById(iconNum);
 
-  // Find existing notification for this bin (if any)
-  const existingToast = document.querySelector(`[data-bin="${binId}"]`);
+    // Find existing notification for this bin (if any)
+    const existingToast = document.querySelector(`[data-bin="${binId}"]`);
 
-  if (fillLevel >= 90) {
-    b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute';
-    icon.innerText = 'delete';
+    if (fillLevel >= 90) {
+      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute';
+      icon.innerText = 'delete';
 
-    if (!existingToast) {
-      // Create a new toast for this bin
-      const toastElement = document.createElement('div');
-      toastElement.className = 'toast fade p-2 bg-gradient-danger my-2';
-      toastElement.setAttribute('role', 'alert');
-      toastElement.setAttribute('aria-live', 'assertive');
-      toastElement.setAttribute('aria-atomic', 'true');
-      toastElement.setAttribute('data-bs-autohide', 'false');
-      toastElement.setAttribute('data-bin', binId);
+      if (!existingToast) {
+        // Create a new toast for this bin
+        const toastElement = document.createElement('div');
+        toastElement.className = 'toast fade p-2 bg-gradient-danger my-2';
+        toastElement.setAttribute('role', 'alert');
+        toastElement.setAttribute('aria-live', 'assertive');
+        toastElement.setAttribute('aria-atomic', 'true');
+        toastElement.setAttribute('data-bs-autohide', 'false');
+        toastElement.setAttribute('data-bin', binId);
 
-      const toastHeader = document.createElement('div');
-      toastHeader.className = 'toast-header border-0 bg-transparent';
+        const toastHeader = document.createElement('div');
+        toastHeader.className = 'toast-header border-0 bg-transparent';
 
-      const toastIcon = document.createElement('i');
-      toastIcon.className = 'material-icons text-white me-2';
-      toastIcon.innerText = 'campaign';
+        const toastIcon = document.createElement('i');
+        toastIcon.className = 'material-icons text-white me-2';
+        toastIcon.innerText = 'campaign';
 
-      const toastTitle = document.createElement('span');
-      toastTitle.className = 'me-auto font-weight-bold text-white';
-      toastTitle.textContent = 'Bin ' + binId + ' is already full!';
+        const toastTitle = document.createElement('span');
+        toastTitle.className = 'me-auto font-weight-bold text-white';
+        toastTitle.textContent = 'Bin ' + binId + ' is already full!';
 
-      const toastCloseIcon = document.createElement('i');
-      toastCloseIcon.className = 'fas fa-times text-md ms-3 text-white cursor-pointer';
-      toastCloseIcon.setAttribute('data-bs-dismiss', 'toast');
-      toastCloseIcon.setAttribute('aria-label', 'Close');
+        const toastCloseIcon = document.createElement('i');
+        toastCloseIcon.className = 'fas fa-times text-md ms-3 text-white cursor-pointer';
+        toastCloseIcon.setAttribute('data-bs-dismiss', 'toast');
+        toastCloseIcon.setAttribute('aria-label', 'Close');
 
-      toastHeader.appendChild(toastIcon);
-      toastHeader.appendChild(toastTitle);
-      toastHeader.appendChild(toastCloseIcon);
+        toastHeader.appendChild(toastIcon);
+        toastHeader.appendChild(toastTitle);
+        toastHeader.appendChild(toastCloseIcon);
 
-      const toastHr = document.createElement('hr');
-      toastHr.className = 'horizontal dark m-0';
+        const toastHr = document.createElement('hr');
+        toastHr.className = 'horizontal dark m-0';
 
-      const toastBody = document.createElement('div');
-      toastBody.className = 'toast-body text-white';
-      toastBody.textContent = 'Please collect immediately';
+        const toastBody = document.createElement('div');
+        toastBody.className = 'toast-body text-white';
+        toastBody.textContent = 'Please collect immediately';
 
-      toastElement.appendChild(toastHeader);
-      toastElement.appendChild(toastHr);
-      toastElement.appendChild(toastBody);
+        toastElement.appendChild(toastHeader);
+        toastElement.appendChild(toastHr);
+        toastElement.appendChild(toastBody);
 
-      // Append the toast element to the .position-fixed div
-      document.querySelector('.position-fixed').appendChild(toastElement);
+        // Append the toast element to the .position-fixed div
+        document.querySelector('.position-fixed').appendChild(toastElement);
 
-      // Create a new Bootstrap Toast instance and show it
-      const toast = new bootstrap.Toast(toastElement);
-      toast.show();
-    }
-  } else if (fillLevel >= 75) {
-    b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-warning shadow-warning text-center border-radius-xl mt-n4 position-absolute';
-    icon.innerText = 'delete_outline';
+        // Create a new Bootstrap Toast instance and show it
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+      }
+    } else if (fillLevel >= 75) {
+      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-warning shadow-warning text-center border-radius-xl mt-n4 position-absolute';
+      icon.innerText = 'delete_outline';
 
-    if (!existingToast) {
-      // Create a new toast for this bin
-      const toastElement = document.createElement('div');
-      toastElement.className = 'toast fade p-2 bg-gradient-warning my-2';
-      toastElement.setAttribute('role', 'alert');
-      toastElement.setAttribute('aria-live', 'assertive');
-      toastElement.setAttribute('aria-atomic', 'true');
-      toastElement.setAttribute('data-bs-autohide', 'false');
-      toastElement.setAttribute('data-bin', binId);
+      if (!existingToast) {
+        // Create a new toast for this bin
+        const toastElement = document.createElement('div');
+        toastElement.className = 'toast fade p-2 bg-gradient-warning my-2';
+        toastElement.setAttribute('role', 'alert');
+        toastElement.setAttribute('aria-live', 'assertive');
+        toastElement.setAttribute('aria-atomic', 'true');
+        toastElement.setAttribute('data-bs-autohide', 'false');
+        toastElement.setAttribute('data-bin', binId);
 
-      const toastHeader = document.createElement('div');
-      toastHeader.className = 'toast-header border-0 bg-transparent';
+        const toastHeader = document.createElement('div');
+        toastHeader.className = 'toast-header border-0 bg-transparent';
 
-      const toastIcon = document.createElement('i');
-      toastIcon.className = 'material-icons text-white me-2';
-      toastIcon.innerText = 'campaign';
+        const toastIcon = document.createElement('i');
+        toastIcon.className = 'material-icons text-white me-2';
+        toastIcon.innerText = 'campaign';
 
-      const toastTitle = document.createElement('span');
-      toastTitle.className = 'me-auto font-weight-bold text-white';
-      toastTitle.textContent = 'Bin ' + binId + ' is almost full';
+        const toastTitle = document.createElement('span');
+        toastTitle.className = 'me-auto font-weight-bold text-white';
+        toastTitle.textContent = 'Bin ' + binId + ' is almost full';
 
-      const toastCloseIcon = document.createElement('i');
-      toastCloseIcon.className = 'fas fa-times text-md ms-3 text-white cursor-pointer';
-      toastCloseIcon.setAttribute('data-bs-dismiss', 'toast');
-      toastCloseIcon.setAttribute('aria-label', 'Close');
+        const toastCloseIcon = document.createElement('i');
+        toastCloseIcon.className = 'fas fa-times text-md ms-3 text-white cursor-pointer';
+        toastCloseIcon.setAttribute('data-bs-dismiss', 'toast');
+        toastCloseIcon.setAttribute('aria-label', 'Close');
 
-      toastHeader.appendChild(toastIcon);
-      toastHeader.appendChild(toastTitle);
-      toastHeader.appendChild(toastCloseIcon);
+        toastHeader.appendChild(toastIcon);
+        toastHeader.appendChild(toastTitle);
+        toastHeader.appendChild(toastCloseIcon);
 
-      const toastHr = document.createElement('hr');
-      toastHr.className = 'horizontal dark m-0';
+        const toastHr = document.createElement('hr');
+        toastHr.className = 'horizontal dark m-0';
 
-      const toastBody = document.createElement('div');
-      toastBody.className = 'toast-body text-white';
-      toastBody.textContent = 'Please collect soon to avoid overflowing of trash';
+        const toastBody = document.createElement('div');
+        toastBody.className = 'toast-body text-white';
+        toastBody.textContent = 'Please collect soon to avoid overflowing of trash';
 
-      toastElement.appendChild(toastHeader);
-      toastElement.appendChild(toastHr);
-      toastElement.appendChild(toastBody);
+        toastElement.appendChild(toastHeader);
+        toastElement.appendChild(toastHr);
+        toastElement.appendChild(toastBody);
 
-      // Append the toast element to the .position-fixed div
-      document.querySelector('.position-fixed').appendChild(toastElement);
+        // Append the toast element to the .position-fixed div
+        document.querySelector('.position-fixed').appendChild(toastElement);
 
-      // Create a new Bootstrap Toast instance and show it
-      const toast = new bootstrap.Toast(toastElement);
-      toast.show();
-    }
-  } else {
-    b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute';
-    icon.innerText = 'delete_outline';
-      // Remove the existing notification
-    if (existingToast) {
-      existingToast.remove();
+        // Create a new Bootstrap Toast instance and show it
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+      }
+    } else if (fillLevel == -1) {
+      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-secondary shadow-secondary text-center border-radius-xl mt-n4 position-absolute';
+      icon.innerText = 'sensors_off';
+
+    } else {
+      b_FLCard.className = 'icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute';
+      icon.innerText = 'delete_outline';
+        // Remove the existing notification
+      if (existingToast) {
+        existingToast.remove();
+      }
     }
   }
-
-
-}
-
 
   // Function to update the bin card with new data
   function updateBinCard(binNumber, data) {
-    $('#bin' + binNumber + 'FillLevel').text(data.fill_level + '%');
-    $('#bin' + binNumber + 'Weight').text(data.weight + ' kg');
-    
-    cardID = "b"+ binNumber + "_FLCard";
-    iconID = "icon" + binNumber;
-    updateBinCardColor(binNumber, cardID, data.fill_level, iconID);
-    
+    if (data.fill_level == -1)
+    {
+      $('#bin' + binNumber + 'FillLevel').text('...');
+      $('#bin' + binNumber + 'Weight').text('...');
+
+      cardID = "b"+ binNumber + "_FLCard";
+      iconID = "icon" + binNumber;
+      updateBinCardColor(binNumber, cardID, data.fill_level, iconID);
+    }
+    else{
+      $('#bin' + binNumber + 'FillLevel').text(data.fill_level + '%');
+      $('#bin' + binNumber + 'Weight').text(data.weight + ' kg');
+      
+      cardID = "b"+ binNumber + "_FLCard";
+      iconID = "icon" + binNumber;
+      updateBinCardColor(binNumber, cardID, data.fill_level, iconID);
+    }
     // Update other fields as needed
   }
+
+  // Function to show the hazard badge and attach the hover modal
+  function showHazardBadge(binName, hazardTitle, hazardDetails, binData) {
+    const hazardBadge = document.getElementById(`hazardBadge${binName}`);
+    const binCard = document.getElementById(`binCard${binName}`);
+    let zoomInModal = null; // Variable to store the modal element
+
+    const { hazardHeader, hazardType, hazardText } = getHazardType(binData);
+
+    if (hazardType === 'fire' || hazardType === 'gas') {
+      hazardBadge.style.display = 'block'; // Show the hazard badge
+
+      // Add event listener to the hazard badge for showing the modal
+      hazardBadge.addEventListener('mouseover', function () {
+        if (!zoomInModal) {
+          zoomInModal = showZoomInModal(hazardHeader, hazardText, binCard, hazardType);
+        }
+      });
+
+      // Add event listener to the hazard badge for hiding the modal
+      hazardBadge.addEventListener('mouseout', function () {
+        if (zoomInModal) {
+          hideZoomInModal(zoomInModal);
+          zoomInModal = null; // Reset the modal variable
+        }
+      });
+    }
+  }
+
+  // Function to show the zoom-in modal with zoom-in animation
+  function showZoomInModal(hazardTitle, hazardDetails, binCard, hazardType) {
+    const zoomInModal = document.createElement('div');
+    zoomInModal.className = hazardType === 'fire' ? 'fire-modal' : 'gas-modal'; // Use 'fire-modal' or 'gas-modal' class
+    zoomInModal.innerHTML = `
+      <h4 class="modal-title">
+        ${hazardTitle}
+        <i class="material-icons icon opacity-10 mb-1" style="font-size: 24px;">warning</i>
+      </h4>
+      <hr class="horizontal dark m-0">
+      <p>${hazardDetails}</p>
+    `;
+
+    // Append the zoom-in modal to the card
+    binCard.appendChild(zoomInModal);
+
+    // Show the zoom-in modal
+    zoomInModal.style.display = 'block';
+
+    // Add event listener to hide the modal when the mouse leaves the modal
+    zoomInModal.addEventListener('mouseleave', function () {
+      hideZoomInModal(zoomInModal);
+    });
+
+    return zoomInModal; // Return the modal element
+  }
+
+  // Function to hide the zoom-in modal
+  function hideZoomInModal(zoomInModal) {
+    if (zoomInModal) {
+      zoomInModal.style.animation = 'zoom-out 0.5s ease-in-out forwards'; // Start zoom-out animation
+      setTimeout(function () {
+        zoomInModal.style.display = 'none'; // Hide the modal after animation
+        zoomInModal.remove();
+      }, 500); // Adjust the duration to match the animation duration
+    }
+  }
+
+// Extract hazard type and specific detection from data
+function getHazardType(binData) {
+  // Check if the analog values exceed the thresholds for alcohol, smoke, or butane
+  const mq2Analog = binData?.mq2_analog || 0;
+  const mq3Analog = binData?.mq3_analog || 0;
+  const mq6Analog = binData?.mq6_analog || 0;
+  const binflame = binData?.flame;
+
+  let hazardType = 'none';
+  let hazardText = 'No hazard detected';
+  let hazardHeader = 'No hazard detected';
+
+  if (binflame==0 && binData?.fill_level != -1) {
+    // If flame is detected, it's a fire hazard
+    hazardHeader = 'Fire Hazard Alert';
+    hazardType = 'fire';
+    hazardText = 'Flame detected. Collect immediately and with caution.';
+    return { hazardHeader, hazardType, hazardText };
+  } else if (mq2Analog > 500 && mq3Analog > 500 && mq6Analog > 1700) {
+    // If any of mq2, mq3, or mq6 exceeds their respective thresholds, it's a multiple gas hazard
+    hazardHeader = 'Gas Hazard Alert';
+    hazardType = 'gas';
+    hazardText = 'Multiple gas types detected'; 
+    console.log('Here: ' + binflame)
+    return { hazardHeader, hazardType, hazardText };   
+  } else if (mq2Analog > 500 && mq3Analog > 500 && mq6Analog < 1700) {
+    // If both mq2 and mq3 exceed 500, it's a gas hazard
+    hazardHeader = 'Gas Hazard Alert';
+    hazardType = 'gas';
+    hazardText = 'Alcohol and Smoke detected';
+    return { hazardHeader, hazardType, hazardText };
+  } else if (mq6Analog > 1700) {
+    // If mq6 exceeds 1700, it's a gas hazard
+    hazardHeader = 'Gas Hazard Alert';
+    hazardType = 'gas';
+    hazardText = 'Butane or LPG detected';
+    return { hazardHeader, hazardType, hazardText };
+  }
+
+  return { hazardHeader, hazardType, hazardText };
+}
 
   // Function to fetch and update data periodically
   function fetchData() {
@@ -1656,6 +1816,7 @@
           if (data['Bin' + binNumber].length > 0) {
             const binData = data['Bin' + binNumber][0];
             updateBinCard(binNumber, binData);
+            showHazardBadge(binNumber, 'Hazard Alert', 'Hazard detected', binData);
           }
         }
       },
@@ -1671,88 +1832,13 @@
   fetchData();
 
   fetchRateOfChange();
-</script>
 
-
-
-  <!-- Script for Gas Hazard -->
-  <script>
-    // Function to show the hazard badge and attach the hover modal
-    function showHazardBadge(binName, hazardTitle, hazardDetails) {
-      const hazardBadge = document.getElementById(`hazardBadge${binName}`);
-      const binCard = document.getElementById(`binCard${binName}`);
-      let zoomInModal = null; // Variable to store the modal element
-  
-      // Check for detected gas (You can replace this condition with your actual logic)
-      const gasDetected = true; // Example: Gas detected GASALERT
-  
-      if (gasDetected) {
-        hazardBadge.style.display = 'block'; // Show the hazard badge
-  
-        // Add event listener to the hazard badge for showing the modal
-        hazardBadge.addEventListener('mouseover', function () {
-          if (!zoomInModal) {
-            zoomInModal = showZoomInModal(hazardTitle, hazardDetails, binCard);
-          }
-        });
-  
-        // Add event listener to the hazard badge for hiding the modal
-        hazardBadge.addEventListener('mouseout', function () {
-          if (zoomInModal) {
-            hideZoomInModal(zoomInModal);
-            zoomInModal = null; // Reset the modal variable
-          }
-        });
-      }
-    }
-  
-    // Function to show the zoom-in modal with zoom in animation
-    function showZoomInModal(hazardTitle, hazardDetails, binCard) {
-      const zoomInModal = document.createElement('div');
-      zoomInModal.className = 'gas-modal';
-      zoomInModal.innerHTML = `
-        <h4 class="modal-title">
-          ${hazardTitle}
-          <i class="material-icons icon opacity-10 mb-1" style="font-size: 24px;">warning</i>
-        </h4>
-        <hr class="horizontal dark m-0">
-        <p>${hazardDetails}</p>
-      `;
-  
-      // Append the zoom-in modal to the card
-      binCard.appendChild(zoomInModal);
-  
-      // Show the zoom-in modal
-      zoomInModal.style.display = 'block';
-  
-      // Add event listener to hide the modal when the mouse leaves the modal
-      zoomInModal.addEventListener('mouseleave', function () {
-        hideZoomInModal(zoomInModal);
-      });
-  
-      return zoomInModal; // Return the modal element
-    }
-  
-    // Function to hide the zoom-in modal
-    function hideZoomInModal(zoomInModal) {
-      if (zoomInModal) {
-        zoomInModal.style.animation = 'zoom-out 0.5s ease-in-out forwards'; // Start zoom-out animation
-        setTimeout(function () {
-          zoomInModal.style.display = 'none'; // Hide the modal after animation
-          zoomInModal.remove();
-        }, 500); // Adjust the duration to match the animation duration
-      }
-    }
-  
-    // Call the function to show the hazard badge and attach the zoom-in modal
-    //showHazardBadge('1', 'Gas Hazard Alert', 'Presence of Alcohol detected');
-
-      // Call the function to show the hazard badge and attach the zoom-in modal for each bin
+  // Call the function to show the hazard badge and attach the zoom-in modal for each bin
   const binNames = ['1', '2', '3', '4']; // Update with your bin names
   binNames.forEach((binName) => {
-    showHazardBadge(binName, 'Gas Hazard Alert', 'Presence of Alcohol detected');
+    showHazardBadge(binName, 'Hazard Alert', 'Hazard detected');
   });
-  </script>
+</script>
   
 
   {% endblock scripts %}
