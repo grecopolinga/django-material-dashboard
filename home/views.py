@@ -175,6 +175,51 @@ def getWeightTimeData(request):
     }
     return Response(bin_data)
 
+from django.db.models import Max
+@api_view(['GET'])
+def getMTTCData(request):
+    # Get the startDate and endDate from query parameters (assuming you pass them as query parameters)
+    start_date_str = request.GET.get('startDate')
+    end_date_str = request.GET.get('endDate')
+
+    # Convert the date strings to datetime objects
+    start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d')
+    # Add one day to the end date to make it inclusive
+    end_date = end_date + timedelta(days=1)
+
+    # Dictionary to store the latest data of each day for the bins
+    bin_data = {
+        'Bin1': [],
+        'Bin2': [],
+        'Bin3': [],
+        'Bin4': [],
+    }
+
+    # Iterate through each bin and calculate the latest data of each day
+    for bin_id in range(1, 5):
+        current_date = start_date
+        while current_date < end_date:
+            next_date = current_date + timedelta(days=1)
+
+            # Get the latest data for the current day
+            latest_data = ProcessedData.objects.filter(
+                node_ID=bin_id,
+                timestamp__range=(current_date, next_date)
+            ).order_by('-timestamp').first()
+
+            if latest_data:
+                bin_data[f'Bin{bin_id}'].append({
+                    latest_data.mttc,
+                })
+            else:
+                # If no data exists for the current day, append None
+                bin_data[f'Bin{bin_id}'].append(None)
+
+            current_date = next_date
+
+    return Response(bin_data)
+
 @api_view(['GET']) 
 def getFillLevelData(request):
     # Get the date from query parameters (assuming you pass it as a query parameter)
@@ -650,6 +695,7 @@ def processing():
     mttc_processed_data = ProcessedData.objects.filter(timestamp__range=(start_date, end_date))
     mttc_data = [data.mttc for data in mttc_processed_data]
     mttc_bin_ids = [data.node_ID for data in mttc_processed_data]
+    print(mttc_bin_ids)
     mttc_timestamps = [data.timestamp.astimezone(ph_tz).strftime('%m-%d') for data in mttc_processed_data]
     
     mttc_bin_ids_json = json.dumps(mttc_bin_ids)
