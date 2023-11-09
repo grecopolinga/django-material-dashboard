@@ -1,19 +1,19 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
-
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('', views.index, name='index'),
     path('billing/', views.billing, name='billing'),
-    path('tables/', views.tables, name='tables'),
+    path('tables/', login_required(views.tables), name='tables'),
     path('vr/', views.vr, name='vr'),
     path('rtl/', views.rtl, name='rtl'),
     path('notification/', views.notification, name='notification'),
-    path('profile/', views.profile, name='profile'),
+    path('profile/', login_required(views.profile), name='profile'),
     
     # Our modified URLS
-    path('navigator/', views.navigator, name='navigator'),
+    path('navigator/', login_required(views.navigator), name='navigator'),
     path('api/getPrioritizationData', views.getPrioritizationData, name='getPrioritizationData'), 
     path('api/getWeightData', views.getWeightData, name='getWeightData'),
     path('api/getWeightTimeData', views.getWeightTimeData, name='getWeightTimeData'),
