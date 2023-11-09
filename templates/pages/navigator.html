@@ -23,12 +23,19 @@
                   height="450"
                   usemap="#map_zones"
               >
-              <a href="#" id="Zone1" style="position: absolute; left: 5%; top: 50%; width: 43%; height: 37%;" title="Zone 1"></a>
-              <a href="#" id="Zone2" style="position: absolute; left: 33%; top: 27%; width: 23%; height: 23%;" title="Zone 2"></a>
-              <a href="#" id="Zone2b" style="position: absolute; left: 48%; top: 50%; width: 7%; height: 37%;" title="Zone 2"></a>
-              <a href="#" id="Zone2c" style="position: absolute; left: 55%; top: 45%; width: 13%; height: 21%;" title="Zone 2"></a>
-              <a href="#" id="Zone3" style="position: absolute; left: 66%; top: 67%; width: 25.5%; height: 20%;" title="Zone 3"></a>
-              <a href="#" id="Zone3b" style="position: absolute; left: 75%; top: 42.5%; width: 23%; height: 22%;" title="Zone 3"></a>              
+
+                <!-- New image to overlay -->
+              <img 
+                src="{% static '/img/PriorityLegend.png' %}"
+                alt="Overlay Image"
+                style="position: absolute; left: 45px; top: 25; width: 200px; height: 120px;"
+              >
+              <a href="#" id="Zone1" style="position: absolute; left: 5%; top: 50%; width: 43%; height: 37%; border: 3px solid rgb(255, 134, 215);" title="Zone 1"></a>
+              <a href="#" id="Zone2" style="position: absolute; left: 33%; top: 27%; width: 23%; height: 23%; border: 3px solid yellow;" title="Zone 2"></a>
+              <a href="#" id="Zone2b" style="position: absolute; left: 48%; top: 50%; width: 7%; height: 37%; border: 3px solid yellow;" title="Zone 2"></a>
+              <a href="#" id="Zone2c" style="position: absolute; left: 55%; top: 45%; width: 13%; height: 21%; border: 3px solid yellow;" title="Zone 2"></a>
+              <a href="#" id="Zone3" style="position: absolute; left: 66%; top: 67%; width: 25.5%; height: 20%; border: 3px solid rgb(129, 45, 189);" title="Zone 3"></a>
+              <a href="#" id="Zone3b" style="position: absolute; left: 75%; top: 42.5%; width: 23%; height: 22%; border: 3px solid rgb(111, 22, 175);" title="Zone 3"></a>                        
             </div>
           </div>
         </div>
