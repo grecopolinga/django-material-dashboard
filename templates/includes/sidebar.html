@@ -111,14 +111,6 @@
 
         {% if request.user.is_authenticated and not request.user.is_superuser %}
         <li class="nav-item">
-          <a class="nav-link text-white {% if 'tables' in segment %} active {% endif %} " href="{% url 'tables' %}">
-            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons opacity-10">analytics</i>
-            </div>
-            <span class="nav-link-text ms-1">History</span>
-          </a>
-        </li>
-        <li class="nav-item">
 
           <a class="nav-link text-white {% if 'navigator' in segment %} active {% endif %} " href="{% url 'navigator' %}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
