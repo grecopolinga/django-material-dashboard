@@ -33,7 +33,8 @@
               </div>
             </div>
             <div class="card-body">
-              <h6 class="mb-2">Weight-Based Waste Accumulation History</h6>
+              <h6 class="mb-2">Total Weight-Based Waste Accumulation History</h6>
+              <p class="text-sm ">This graph shows the total waste accumulation (in kg) each day for the chosen date range.</p>
               <div class="d-flex ">
                 <input type="text" name="daterange" value="01/01/2018 - 01/15/2018"/> 
                 <i class="material-icons opacity-10 me-1" style="font-size: 25px;">date_range</i>
@@ -109,7 +110,6 @@
           var binFilters = document.getElementById('binFilters');
           binFilters.classList.toggle('d-none');
       });
-      document.getElementById('filterBtn').click();
     // Function to fetch data from the API
     function fetchData() {
       fetch('/api/getWeightData') 
@@ -189,7 +189,7 @@
                     const total = context.dataset.data.reduce((acc, data) => acc + data, 0);
                     const percentage = ((value / total) * 100).toFixed(2); // Calculate percentage
 
-                    return `${label}: ${value}KG (${percentage}%)`;
+                    return `${label}: ${value.toFixed(2)}KG (${percentage}%)`;
                   },
                 },
               },
@@ -326,6 +326,7 @@
                 },
                 scales: {
                   y: {
+                    min: 0,
                     grid: {
                       drawBorder: false,
                       display: true,
