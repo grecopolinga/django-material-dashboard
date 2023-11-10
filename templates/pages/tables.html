@@ -686,7 +686,7 @@
         for (var i = 0; i < parsedTimestamps.length; i++) {
               var currentTimestamp = parsedTimestamps[i];
               var closestTimestamp = getClosestDataPoint(currentTimestamp, fillLevelMaps);
-              finalFillLevels.push(fillLevelMaps[closestTimestamp] || 0);
+              finalFillLevels.push(fillLevelMaps[closestTimestamp] || null);
         }
         console.log(finalFillLevels);
         return finalFillLevels;

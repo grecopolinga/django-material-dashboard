@@ -473,7 +473,7 @@
           var currentTimestamp = parsedTimestamps[i];
           for (var bin_id in fillLevelMaps) {
               var closestTimestamp = getClosestDataPoint(currentTimestamp, fillLevelMaps[bin_id]);
-              finalFillLevelsBins[bin_id].push(fillLevelMaps[bin_id][closestTimestamp] || 0);
+              finalFillLevelsBins[bin_id].push(fillLevelMaps[bin_id][closestTimestamp] || null);
           }
       }
       console.log(finalFillLevelsBins);
