@@ -676,10 +676,10 @@ def processing():
     Bin_MQ_Changes = [get_rate_of_change(float(bin_data[f"MQ{idx}_Data"])) for bin_data in bins for idx in [2, 3, 6]]
 
     ph_tz = pytz.timezone('Asia/Manila')
-    now = timezone.now()
+    now = timezone.now().astimezone(ph_tz)
     
-    start_of_day = datetime.datetime.combine(datetime.date(2023, 8, 28), datetime.time.min).astimezone()
-    end_of_day = datetime.datetime.combine(datetime.date(2023, 8, 28), datetime.time.max).astimezone()
+    start_of_day = datetime.datetime.combine(now.date(), datetime.time.min).astimezone(ph_tz)
+    end_of_day = datetime.datetime.combine(now.date(), datetime.time.max).astimezone(ph_tz)
     processed_data = ProcessedData.objects.filter(timestamp__gte=start_of_day, timestamp__lt=end_of_day)
     
     fill_levels = [data.fill_level for data in processed_data]
