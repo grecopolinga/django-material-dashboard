@@ -695,7 +695,6 @@ def processing():
     mttc_processed_data = ProcessedData.objects.filter(timestamp__range=(start_date, end_date))
     mttc_data = [data.mttc for data in mttc_processed_data]
     mttc_bin_ids = [data.node_ID for data in mttc_processed_data]
-    print(mttc_bin_ids)
     mttc_timestamps = [data.timestamp.astimezone(ph_tz).strftime('%m-%d') for data in mttc_processed_data]
     
     mttc_bin_ids_json = json.dumps(mttc_bin_ids)
