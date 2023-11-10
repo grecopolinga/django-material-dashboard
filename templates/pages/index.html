@@ -368,16 +368,16 @@
             </div>
               <h6 class="mb-0 "> Mean Time to Collect </h6>
               <div class="percent-increase1">
-                  <p class="text-sm"> (<span class="font-weight-bolder" id="percentage-bin1"></span>) increase in today's mean time collection for Bin 1. </p>
+                  <p class="text-sm"> The mean time collection yesterday for Bin 1 increased by (<span class="font-weight-bolder" id="percentage-bin1"></span>) compared to the day before. </p>
               </div>
               <div class="percent-increase2">
-                  <p class="text-sm"> (<span class="font-weight-bolder" id="percentage-bin2"></span>) increase in today's mean time collection for Bin 2. </p>
+                  <p class="text-sm"> The mean time collection yesterday for Bin 2 increased by (<span class="font-weight-bolder" id="percentage-bin2"></span>) compared to the day before. </p>
               </div>
               <div class="percent-increase3">
-                  <p class="text-sm"> (<span class="font-weight-bolder" id="percentage-bin3"></span>) increase in today's mean time collection for Bin 3. </p>
+                  <p class="text-sm"> The mean time collection yesterday for Bin 3 increased by (<span class="font-weight-bolder" id="percentage-bin3"></span>) compared to the day before. </p>
               </div>
               <div class="percent-increase4">
-                  <p class="text-sm"> (<span class="font-weight-bolder" id="percentage-bin4"></span>) increase in today's mean time collection for Bin 4. </p>
+                  <p class="text-sm"> The mean time collection yesterday for Bin 4 increased by (<span class="font-weight-bolder" id="percentage-bin4"></span>) compared to the day before. </p>
               </div>
             </div>
           </div>
@@ -575,7 +575,7 @@
           },
           scales: {
             y: {
-              suggestedMin: 0,
+              min: 0,
               suggestedMax: 100,
               grid: {
                 drawBorder: false,
@@ -964,18 +964,18 @@
       // Calculate percentage increase
       // Calculate percentage increase for each bin between the current day and the day before
       function calculatePercentageIncreaseForBin(mttcData) {
-          if (mttcData.length < 2) {
+          if (mttcData.length < 3) {
               return 0; // Not enough data for calculation
           }
 
-          var currentMTTC = mttcData[mttcData.length - 1];
-          var previousMTTC = mttcData[mttcData.length - 2];
+          var yesterdayMTTC = mttcData[mttcData.length - 2];
+          var dayBeforeYesterdayMTTC = mttcData[mttcData.length - 3];
 
-          if (previousMTTC === 0) {
+          if (dayBeforeYesterdayMTTC === 0 || dayBeforeYesterdayMTTC == null) {
               return 0; // Avoid division by zero
           }
 
-          var percentageIncrease = ((currentMTTC - previousMTTC) / previousMTTC) * 100;
+          var percentageIncrease = ((yesterdayMTTC - dayBeforeYesterdayMTTC) / dayBeforeYesterdayMTTC) * 100;
           return parseFloat(percentageIncrease.toFixed(2));
       }
 

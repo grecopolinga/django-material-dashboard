@@ -417,16 +417,18 @@ function getCookie(name) {
 
     // Find the maximum fill level in the zone
     const maxFillLevel = Math.max(...zone.map(bin => bin.fill_level));
-    console.log(maxFillLevel)
+
     // Determine the color based on prioritization criteria
-    if (hasFlame || maxFillLevel >= 90) {
-      return 'rgba(255, 0, 0, 0.35)'; // Red
+    if (hasFlame) {
+      return 'rgba(255, 0, 0, 0.7)'; // Brighter Red for fire
+    } else if (maxFillLevel >= 90) {
+      return 'rgba(255, 0, 0, 0.35)'; // Red 
     } else if (maxFillLevel >= 75) {
       return 'rgba(255, 165, 0, 0.45)'; // Yellow
     } else {
       return 'rgba(0, 128, 0, 0.35)'; // Green
     }
-  }
+}
 
 </script>
 {% endblock scripts %}
