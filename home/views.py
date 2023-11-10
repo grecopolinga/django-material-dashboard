@@ -147,33 +147,35 @@ def getWeightTimeData(request):
     end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d')
     # Add one day to the end date to make it inclusive
     end_date = end_date + timedelta(days=1)
-    bin_data = {
-        'Bin1': {
-            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
-                node_ID=1, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
-            'weights': list(ProcessedData.objects.filter(
-                Q(node_ID=1) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
-        },
-        'Bin2': {
-            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
-                node_ID=2, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
-            'weights': list(ProcessedData.objects.filter(
-                Q(node_ID=2) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
-        },
-        'Bin3': {
-            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
-                node_ID=3, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
-            'weights': list(ProcessedData.objects.filter(
-                Q(node_ID=3) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
-        },
-        'Bin4': {
-            'timestamps': [timestamp.strftime('%Y-%m-%d') for timestamp in ProcessedData.objects.filter(
-                node_ID=4, timestamp__range=(start_date, end_date)).values_list('timestamp', flat=True)],
-            'weights': list(ProcessedData.objects.filter(
-                Q(node_ID=4) & Q(timestamp__range=(start_date, end_date))).values_list('weight', flat=True)),
-        },
-    }
+
+    desired_length = 10  # Change this to your desired length
+
+    bin_data = {}
+
+    for bin_id in range(1, 5):
+        # Fetch only non -1 fill levels within the specified time range
+        weights_query = ProcessedData.objects.filter(
+            Q(node_ID=bin_id) & Q(timestamp__range=(start_date, end_date)) & Q(fill_level__gt=-1)
+        )
+
+        # Extract timestamps and weights from the queryset
+        timestamps = [timestamp.strftime('%Y-%m-%d') for timestamp in weights_query.values_list('timestamp', flat=True)]
+        weights = list(weights_query.values_list('weight', flat=True))
+
+        # Fill with null values if there's no data
+        if not timestamps:
+            timestamps = [None] * desired_length
+            weights = [None] * desired_length
+        else:
+            # If there's data, ensure the length is as desired
+            timestamps += [None] * (desired_length - len(timestamps))
+            weights += [None] * (desired_length - len(weights))
+
+        # Populate bin_data
+        bin_data[f'Bin{bin_id}'] = {'timestamps': timestamps, 'weights': weights}
+
     return Response(bin_data)
+
 
 from django.db.models import Max
 @api_view(['GET'])
@@ -205,7 +207,8 @@ def getMTTCData(request):
             # Get the latest data for the current day
             latest_data = ProcessedData.objects.filter(
                 node_ID=bin_id,
-                timestamp__range=(current_date, next_date)
+                timestamp__range=(current_date, next_date),
+                fill_level__gt=-1
             ).order_by('-timestamp').first()
 
             if latest_data:
@@ -239,7 +242,7 @@ def getFillLevelData(request):
                 'fill_level': fill_level,
             }
             for timestamp, fill_level in ProcessedData.objects.filter(
-                Q(node_ID=1) & Q(timestamp__date=date)
+                Q(node_ID=1) & Q(timestamp__date=date) & ~Q(fill_level=-1)
             ).values_list('timestamp', 'fill_level')
         ],
         'Bin2': [
@@ -248,7 +251,7 @@ def getFillLevelData(request):
                 'fill_level': fill_level,
             }
             for timestamp, fill_level in ProcessedData.objects.filter(
-                Q(node_ID=2) & Q(timestamp__date=date)
+                Q(node_ID=2) & Q(timestamp__date=date) & ~Q(fill_level=-1)
             ).values_list('timestamp', 'fill_level')
         ],
         'Bin3': [
@@ -257,7 +260,7 @@ def getFillLevelData(request):
                 'fill_level': fill_level,
             }
             for timestamp, fill_level in ProcessedData.objects.filter(
-                Q(node_ID=3) & Q(timestamp__date=date)
+                Q(node_ID=3) & Q(timestamp__date=date) & ~Q(fill_level=-1)
             ).values_list('timestamp', 'fill_level')
         ],
         'Bin4': [
@@ -266,7 +269,7 @@ def getFillLevelData(request):
                 'fill_level': fill_level,
             }
             for timestamp, fill_level in ProcessedData.objects.filter(
-                Q(node_ID=4) & Q(timestamp__date=date)
+                Q(node_ID=4) & Q(timestamp__date=date) & ~Q(fill_level=-1)
             ).values_list('timestamp', 'fill_level')
         ],
     }
@@ -676,15 +679,19 @@ def processing():
     Bin_MQ_Changes = [get_rate_of_change(float(bin_data[f"MQ{idx}_Data"])) for bin_data in bins for idx in [2, 3, 6]]
 
     ph_tz = pytz.timezone('Asia/Manila')
-    now = timezone.now()
+    now = timezone.now().astimezone(ph_tz)
     
-    start_of_day = datetime.datetime.combine(datetime.date(2023, 8, 28), datetime.time.min).astimezone()
-    end_of_day = datetime.datetime.combine(datetime.date(2023, 8, 28), datetime.time.max).astimezone()
+    start_of_day = datetime.datetime.combine(now.date(), datetime.time.min).astimezone(ph_tz)
+    end_of_day = datetime.datetime.combine(now.date(), datetime.time.max).astimezone(ph_tz)
     processed_data = ProcessedData.objects.filter(timestamp__gte=start_of_day, timestamp__lt=end_of_day)
     
-    fill_levels = [data.fill_level for data in processed_data]
-    bin_ids = [data.node_ID for data in processed_data]
-    timestamps = [data.timestamp.astimezone(ph_tz).strftime('%H:%M') for data in processed_data]
+    filtered_data = [data for data in processed_data if data.fill_level != -1]
+
+    # Extract lists from the filtered data
+    fill_levels = [data.fill_level for data in filtered_data]
+    bin_ids = [data.node_ID for data in filtered_data]
+    timestamps = [data.timestamp.astimezone(ph_tz).strftime('%H:%M') for data in filtered_data]
+    
     
     bin_ids_json = json.dumps(bin_ids)
     fill_levels_json = json.dumps(fill_levels)
@@ -695,7 +702,6 @@ def processing():
     mttc_processed_data = ProcessedData.objects.filter(timestamp__range=(start_date, end_date))
     mttc_data = [data.mttc for data in mttc_processed_data]
     mttc_bin_ids = [data.node_ID for data in mttc_processed_data]
-    print(mttc_bin_ids)
     mttc_timestamps = [data.timestamp.astimezone(ph_tz).strftime('%m-%d') for data in mttc_processed_data]
     
     mttc_bin_ids_json = json.dumps(mttc_bin_ids)
